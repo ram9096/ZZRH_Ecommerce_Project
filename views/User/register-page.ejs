@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>#ZZRH - Create Account</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+    @font-face { font-family: bloverly; src: url('/BLOVERLY.woff2'); }
+    @font-face { font-family: Clash-display; src: url('/ClashDisplay-Regular.woff'); }
+    .custom-font { font-family: bloverly; }
+    .clash { font-family: Clash-display; }
+
+    .input-field {
+      border-bottom: 1px solid #666;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: Clash-display;
+      position: relative;
+    }
+    .input-field:focus-within { border-bottom-color: #000; }
+    .btn-outline {
+      border: 1px solid #000;
+      padding: 10px 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover { background-color: #000; color: #fff; }
+    
+    .password-toggle {
+      position: absolute;
+      right: 0;
+      top: 24px;
+      cursor: pointer;
+      color: #666;
+      transition: color 0.2s;
+    }
+    .password-toggle:hover {
+      color: #000;
+    }
+  </style>
+</head>
+<body class="bg-white flex items-center justify-center min-h-screen p-4">
+  <div class="flex flex-col md:flex-row w-full max-w-6xl mx-auto">
+    <!-- Left Side - Form -->
+    <div class="w-full md:w-1/2 p-8">
+      <div class="mb-12">
+        <h1 class="text-[128px] custom-font tracking-tight">#ZZRH</h1>
+      </div>
+
+      <form class="space-y-6 clash" action="/register" method="post" novalidate>
+        <div class="input-field">
+          <label for="name" class="block text-sm text-gray-500 mb-1 clash">Name</label>
+          <input type="text" id="name" class="w-full outline-none" name="name" />
+          <span id="name-error" class="text-xs text-red-500"></span>
+        </div>
+
+        <div class="input-field">
+          <label for="email" class="block text-sm text-gray-500 mb-1">Email</label>
+          <input type="email" id="email" name="email" class="w-full outline-none" />
+          <span id="email-error" class="text-xs text-red-500"></span>
+        </div>
+
+        <div class="input-field">
+          <label for="password" class="block text-sm text-gray-500 mb-1">Password</label>
+          <input type="password" id="password" class="w-full outline-none pr-8" name="password" />
+          <span class="password-toggle" id="toggle-password">
+            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg id="eye-off-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </span>
+          <span id="password-error" class="text-xs text-red-500"></span>
+        </div>
+
+        <div class="input-field">
+          <label for="confirm-password" class="block text-sm text-gray-500 mb-1">Confirm password</label>
+          <input type="password" id="confirm-password" class="w-full outline-none pr-8" />
+          <span class="password-toggle" id="toggle-confirm">
+            <svg id="eye-icon-confirm" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg id="eye-off-icon-confirm" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </span>
+          <span id="confirm-error" class="text-xs text-red-500"></span>
+        </div>
+
+        <div class="input-field">
+          <label for="mobile" class="block text-sm text-gray-500 mb-1">Mobile no</label>
+          <input type="tel" id="mobile" class="w-full outline-none" name="mobileno" />
+          <span id="mobile-error" class="text-xs text-red-500"></span>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-sm text-gray-500">We will send you an SMS</p>
+        </div>
+
+        <button type="submit" class="btn-outline w-full custom-font">Create Account</button>
+      </form>
+    </div>
+
+    <!-- Right Side - Illustration -->
+    <div class="w-full md:w-1/2 p-8 flex items-center justify-center">
+      <div class="relative w-full h-full max-w-md">
+        <img src="/Login-illustration.png" style="margin-top: 350px;width: 100%;" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  const form = document.querySelector("form")
+
+  const fields = {
+    name: document.getElementById("name"),
+    email: document.getElementById("email"),
+    password: document.getElementById("password"),
+    confirm: document.getElementById("confirm-password"),
+    mobile: document.getElementById("mobile")
+  }
+
+  const errors = {
+    name: document.getElementById("name-error"),
+    email: document.getElementById("email-error"),
+    password: document.getElementById("password-error"),
+    confirm: document.getElementById("confirm-error"),
+    mobile: document.getElementById("mobile-error")
+  }
+
+  // Password toggle functionality
+  function setupPasswordToggle(toggleId, inputId, eyeIconId, eyeOffIconId) {
+    const toggle = document.getElementById(toggleId)
+    const input = document.getElementById(inputId)
+    const eyeIcon = document.getElementById(eyeIconId)
+    const eyeOffIcon = document.getElementById(eyeOffIconId)
+
+    toggle.addEventListener("click", function() {
+      if (input.type === "password") {
+        input.type = "text"
+        eyeIcon.classList.add("hidden")
+        eyeOffIcon.classList.remove("hidden")
+      } else {
+        input.type = "password"
+        eyeIcon.classList.remove("hidden")
+        eyeOffIcon.classList.add("hidden")
+      }
+    })
+  }
+
+  setupPasswordToggle("toggle-password", "password", "eye-icon", "eye-off-icon")
+  setupPasswordToggle("toggle-confirm", "confirm-password", "eye-icon-confirm", "eye-off-icon-confirm")
+
+  // Validation functions
+  function validateField(field) {
+    const value = fields[field].value.trim()
+
+    switch (field) {
+      case "name":
+        if (value.length < 3) {
+          errors.name.textContent = "Enter valid name"
+          return false
+        }
+        errors.name.textContent = ""
+        return true
+
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(value)) {
+          errors.email.textContent = "Enter valid email"
+          return false
+        }
+        errors.email.textContent = ""
+        return true
+
+      case "password":
+        if (value.length < 6) {
+          errors.password.textContent = "Minimum 6 characters"
+          return false
+        }
+        errors.password.textContent = ""
+        return true
+
+      case "confirm":
+        if (value !== fields.password.value) {
+          errors.confirm.textContent = "Passwords don't match"
+          return false
+        }
+        errors.confirm.textContent = ""
+        return true
+
+      case "mobile":
+        if (!/^[0-9]{10}$/.test(value)) {
+          errors.mobile.textContent = "Enter 10 digit number"
+          return false
+        }
+        errors.mobile.textContent = ""
+        return true
+    }
+  }
+
+  // Validate when user leaves a field
+  Object.keys(fields).forEach(field => {
+    fields[field].addEventListener("blur", () => validateField(field))
+  })
+
+  // On submit validate all
+  form.addEventListener("submit", function (e) {
+    let valid = true
+    Object.keys(fields).forEach(field => {
+      if (!validateField(field)) valid = false
+    })
+    if (!valid) e.preventDefault()
+  })
+})()
+</script>
+
+</body>
+</html>

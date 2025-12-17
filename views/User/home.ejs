@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>#ZZRH</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @font-face {
+      font-family: "bloverly";
+      src: url('/BLOVERLY.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Clash-display";
+      src: url('/ClashDisplay-Regular.woff') format('woff');
+      font-display: swap;
+    }
+
+    /* Apply fallback fonts */
+    .font-bloverly {
+      font-family: "bloverly", system-ui, sans-serif;
+    }
+    .font-clash {
+      font-family: "Clash-display", system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-white border-t-2 border-black">
+  <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
+    <!-- Logo -->
+    <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight">
+      #ZZRH
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex space-x-8 text-xl font-clash">
+      <a href="#" class="hover:underline">New Arrival</a>
+      <a href="#" class="hover:underline">Men's collection</a>
+      <a href="#" class="hover:underline">About Us</a>
+    </nav>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
+      Menu
+    </button>
+
+    <!-- Login/Sign-up Button (Hidden on mobile until we toggle menu) -->
+    <a href="/logout">
+      <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition" >
+        Logout
+      </button>
+    </a>
+  </header>
+
+  
+  <!-- Mobile Menu (initially hidden) -->
+  <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 space-y-4 font-clash">
+    <a href="#" class="block hover:underline">New Arrival</a>
+    <a href="#" class="block hover:underline">Men's collection</a>
+    <a href="#" class="block hover:underline">About Us</a>
+    <button class="w-full mt-2 border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
+      Login/sign-up
+    </button>
+  </div>
+
+
+
+
+
+  <script>
+    const menuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    menuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

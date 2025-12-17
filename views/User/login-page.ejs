@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>#ZZRH Login</title>
+  <!-- Tailwind CSS (fixed URL) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    @font-face {
+      font-family: bloverly;
+      src: url('/BLOVERLY.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: Clash-display;
+      src: url('/ClashDisplay-Regular.woff') format('woff');
+    }
+  </style>
+</head>
+<body class="bg-white flex flex-col md:flex-row min-h-screen">
+  <!-- Left Side - Login Form -->
+  <div class="w-full md:w-1/2 flex flex-col justify-center px-6 md:px-16 py-12 md:py-0 space-y-6">
+    <!-- Logo -->
+    <div class="text-[128px] md:text-[128px] tracking-tight font-bloverly">
+      #<span class="font-light">ZZRH</span>
+    </div>
+
+    <!-- Login Title -->
+    <h1 class="text-2xl md:text-3xl font-light font-bloverly mt-8 md:mt-0">Log in</h1>
+
+    <!-- Email Input -->
+    <form action="/login" method="post">
+
+      <div class="space-y-2 font-clash">
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+        />
+      </div>
+
+      <!-- Password Input -->
+      <div class="space-y-2 font-clash mt-5">
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+        />
+      </div>
+
+      <!-- Forgot Password Link -->
+      <a href="/email-verification" class="text-xs uppercase tracking-wider hover:underline font-clash mt-5">
+        Have you forgotten your password?
+      </a>
+
+
+      <% if (error) { %>
+        <div id="popup"
+            class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
+          <%= error %>
+        </div>
+
+        <script>
+          setTimeout(() => {
+            document.getElementById("popup").classList.add("opacity-0");
+          }, 2500);
+        </script>
+
+        <style>
+          .animate-fade-in { 
+            animation: fadeIn 0.4s ease-out;
+          }
+          @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+        </style>
+      <% } %>
+
+
+      <!-- Login Button -->
+      <button class="w-full py-3 bg-black text-white font-bloverly font-medium tracking-wider hover:bg-gray-800 transition-colors text-lg md:text-2xl mt-[25px]">
+        LOG IN
+      </button>
+    </form>
+
+    <!-- Register Button -->
+    <a href="/register">
+      <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
+      Register
+    </button>
+    </a>
+
+    <!-- Social Login Section -->
+    <div class="pt-8 space-y-4 font-clash mt-6">
+      <h2 class="text-sm uppercase tracking-wider">ACCESS WITH</h2>
+      <p class="text-xs text-gray-600">
+        By logging in with my social login, I agree to link my account in accordance with the
+        <a href="#" class="underline">Privacy Policy</a>
+      </p>
+
+      <!-- Google Login -->
+      <a href="/auth/google">
+        <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
+          Continue with google
+        </button>
+      </a>
+
+      <!-- Apple Login -->
+      <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
+        Continue with apple
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Side - Image -->
+  <div class="w-full md:w-1/2 bg-cover bg-center hidden md:block">
+    <img src="/background.jpg" alt="Login background" class="w-full h-full object-cover" />
+  </div>
+</body>
+
+<style>
+  .font-bloverly {
+    font-family: bloverly, serif;
+  }
+  .font-clash {
+    font-family: Clash-display, sans-serif;
+  }
+</style>
+</html>

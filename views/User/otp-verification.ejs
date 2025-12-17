@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTP Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+            font-family: bloverly;
+            src: url('../public/BLOVERLY.woff2');
+    }
+    @font-face {
+        font-family: Clash-display;
+        src: url('../public/ClashDisplay-Regular.woff');
+    }
+    .otp-input {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 24px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #e5e5e5;
+    }
+    
+    @media (max-width: 640px) {
+      .otp-input {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white flex flex-col items-center justify-center min-h-screen p-4">
+
+  <div class="w-full max-w-md mx-auto">
+
+    <!-- Header -->
+    <h1 class="text-3xl md:text-4xl font-light text-center mb-6 font-playfair" style="font-family: 'bloverly', serif;">
+      Otp verification
+    </h1>
+
+    <!-- Instructions -->
+    <p class="text-center text-sm md:text-base mb-6">
+      Please enter the 6-digit otp sent to<br>
+      <span class="font-medium"> <%= email %> </span>
+    </p>
+
+    <!-- FORM STARTS HERE -->
+    <form action="/verify-otp" method="POST" id="otpForm">
+
+      <!-- OTP Input Fields -->
+      <div class="flex justify-center gap-3 mb-6">
+        <input type="text" maxlength="1" class="otp-input" name="otp1" id="otp1" oninput="moveToNext(1)" />
+        <input type="text" maxlength="1" class="otp-input" name="otp2" id="otp2" oninput="moveToNext(2)" />
+        <input type="text" maxlength="1" class="otp-input" name="otp3" id="otp3" oninput="moveToNext(3)" />
+        <input type="text" maxlength="1" class="otp-input" name="otp4" id="otp4" oninput="moveToNext(4)" />
+        <input type="text" maxlength="1" class="otp-input" name="otp5" id="otp5" oninput="moveToNext(5)" />
+        <input type="text" maxlength="1" class="otp-input" name="otp6" id="otp6" oninput="moveToNext(6)" />
+      </div>
+
+      <!-- Timer -->
+      <p class="text-center text-sm mb-6">
+        Code expires in <span id="timer">0:57</span>
+      </p>
+
+      <!-- Submit Button -->
+      <button type="submit" class="w-full py-3 bg-black text-white font-medium tracking-wide hover:bg-gray-800 transition-colors mb-6">
+        Verify Code
+      </button>
+
+    </form>
+    <input type="hidden" name="email" value="<%= email %>">
+
+    <!-- FORM ENDS HERE -->
+
+    <!-- Resend Link -->
+    <p class="text-center text-sm">
+      Did not receive otp? <a href="#" class="underline">Resent otp</a>
+    </p>
+
+  </div>
+
+ 
+
+
+  <script>
+    // Simple timer functionality
+    let timeLeft = 180;
+    const timerElement = document.getElementById('timer');
+    
+    function updateTimer() {
+      if (timeLeft > 0) {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        setTimeout(updateTimer, 1000);
+      } else {
+        timerElement.textContent = "Expired";
+        timerElement.classList.add("text-red-500");
+      }
+    }
+    
+    // Start timer when page loads
+    window.onload = updateTimer;
+
+    // Auto-focus next input field when character is entered
+    // function moveToNext(currentInput, nextIndex) {
+    //   if (currentInput.value.length === 1 && nextIndex <= 6) {
+    //     document.getElementById(`otp${nextIndex}`).focus();
+    //   }
+    // }
+  function moveToNext(index) {
+    const input = document.getElementById(`otp${index}`);
+    
+    input.value = input.value.replace(/[^0-9]/g, "");
+
+    if (input.value && index < 6) {
+      document.getElementById(`otp${index + 1}`).focus();
+    }
+  }
+
+  </script>
+</body>
+</html>

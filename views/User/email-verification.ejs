@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+        .playfair {
+            font-family: 'Playfair Display', serif;
+        }
+        @font-face {
+        font-family: bloverly;
+        src: url('/BLOVERLY.woff2') format('woff2');
+        }
+        @font-face {
+        font-family: Clash-display;
+        src: url('/ClashDisplay-Regular.woff') format('woff');
+        }
+    </style>
+</head>
+
+<body class="relative bg-white min-h-screen flex items-center justify-center p-4">
+
+    <!-- Center Content -->
+    <div class="max-w-md w-full space-y-7 text-center">
+        <h1 class="text-5xl" style="font-family: bloverly;">Forgot Password ? </h1>
+        
+        <% if (error) { %>
+        <div id="popup"
+            class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
+          <%= error %>
+        </div>
+
+        <script>
+          setTimeout(() => {
+            document.getElementById("popup").classList.add("opacity-0");
+          }, 2500);
+        </script>
+
+        <style>
+          .animate-fade-in { 
+            animation: fadeIn 0.4s ease-out;
+          }
+          @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+        </style>
+      <% } %>
+
+        <form class="mt-8 space-y-6" action="/email-verification" method="post">
+            <div class="space-y-4">
+                <div class="text-left">
+                    <label for="email" class="block   text-gray-700" style="font-family: Clash-display;">Email</label>
+                    <input type="email" id="email" name="email"  style="font-family: Clash-display;" required
+                        class="mt-1 block w-full px-3 py-2 border-b-2 border-gray-300 focus:outline-none focus:border-black">
+                    <p class="mt-1 text-xs text-gray-500"  style="font-family: Clash-display;" >WE WILL SEND YOU AN OTP</p>
+                </div>
+
+                <button type="submit"  style="font-family: Clash-display;"
+                    class="w-full py-3 rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800">
+                    Send OTP
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bottom-left Image -->
+    <img src="/email-verification.png" 
+         class="absolute top-[500px] left-[20px] bottom-0 w-72 md:w-[600px] pointer-events-none select-none" 
+         alt="Illustration">
+
+</body>
+</html>

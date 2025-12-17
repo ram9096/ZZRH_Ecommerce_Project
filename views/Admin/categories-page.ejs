@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans">
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">#ZZRH</h1>
+        <button class="p-2 hover:bg-gray-100 rounded-lg">
+            <i class="far fa-bell text-xl"></i>
+        </button>
+    </header>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white min-h-screen border-r border-gray-100 p-6">
+            <nav class="space-y-4">
+                <a href="/admin/home" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-900">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/users" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="/admin/products" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Products</span>
+                </a>
+                <a href="/admin/orders" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-cube"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Coupons</span>
+                </a>
+                <a href="/admin/category" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-100 text-gray-700">
+                    <i class="fas fa-list-ul"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-gift"></i>
+                    <span>Offers</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-image"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class=" flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:text-gray-900">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1">
+            <!-- Header -->
+            <header class="bg-white shadow-sm p-6 flex justify-between items-center">
+                <h2 class="text-3xl font-bold">Category Management</h2>
+                <button class="p-2 rounded-full hover:bg-gray-100">
+                    <i class="fas fa-bell text-gray-600"></i>
+                </button>
+            </header>
+
+            <!-- Content Area -->
+            <div class="p-8">
+                <!-- Search and Add Button -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="relative flex-1 max-w-md">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input 
+                            type="text" 
+                            placeholder="Search categories..." 
+                            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-200"
+                        >
+                    </div>
+                    <a href="/admin/category-add">
+                        <button class="ml-4 px-6 py-3 bg-pink-100 text-pink-600 rounded-lg hover:bg-pink-200 transition font-medium">
+                            Add Category
+                        </button>
+                    </a>
+                </div>
+                 <% if (error) { %>
+                    <div id="popup"
+                        class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
+                    <%= error %>
+                    </div>
+
+                    <script>
+                    setTimeout(() => {
+                        document.getElementById("popup").classList.add("opacity-0");
+                    }, 2500);
+                    </script>
+
+                    <style>
+                    .animate-fade-in { 
+                        animation: fadeIn 0.4s ease-out;
+                    }
+                    @keyframes fadeIn {
+                        0% { opacity: 0; transform: translateY(-10px); }
+                        100% { opacity: 1; transform: translateY(0); }
+                    }
+                    </style>
+                <% } %>
+                <!-- Table -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category Name</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Description</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product Count</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-pink-600">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <!-- <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 text-gray-900">Men</td>
+                                <td class="px-6 py-4 text-gray-600">Clothing, fashion wear, and accessories for men</td>
+                                <td class="px-6 py-4 text-gray-900">120</td>
+                                <td class="px-6 py-4">
+                                    <button class="text-pink-600 hover:text-pink-700 font-medium mr-4">Edit</button>
+                                    <button class="text-pink-600 hover:text-pink-700 font-medium">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 text-gray-900">Women</td>
+                                <td class="px-6 py-4 text-gray-600">Fashion apparel, accessories, and essentials for women</td>
+                                <td class="px-6 py-4 text-gray-900">150</td>
+                                <td class="px-6 py-4">
+                                    <button class="text-pink-600 hover:text-pink-700 font-medium mr-4">Edit</button>
+                                    <button class="text-pink-600 hover:text-pink-700 font-medium">Delete</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 text-gray-900">Kids</td>
+                                <td class="px-6 py-4 text-gray-600">Apparel and accessories for boys and girls</td>
+                                <td class="px-6 py-4 text-gray-900">95</td>
+                                <td class="px-6 py-4">
+                                    <button class="text-pink-600 hover:text-pink-700 font-medium mr-4">Edit</button>
+                                    <button class="text-pink-600 hover:text-pink-700 font-medium">Delete</button>
+                                </td>
+                            </tr> -->
+
+                            <% data.forEach(user=>{%>
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 text-gray-900"> <%= user.categoryName %> </td>
+                                    <td class="px-6 py-4 text-gray-600"> <%= user.description %></td>
+                                    <td class="px-6 py-4">
+                                    <% 
+                                        const badgeClass = user.isActive 
+                                            ? "bg-green-100 text-green-700" 
+                                            : "bg-red-100 text-red-700"; 
+                                        const badgeText = user.isActive ? "Active" : "Inactive";
+                                    %>
+
+                                    <span class="px-3 py-1 rounded-full text-sm font-medium <%= badgeClass %>">
+                                        <%= badgeText %>
+                                    </span>
+                                </td>
+                                    <td class="px-6 py-4 text-gray-900">120</td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/category-edit/<%= user._id %>">
+                                            <button class="text-pink-600 hover:text-pink-700 font-medium mr-4">Edit</button>
+                                        </a>
+                                        <!-- <button class="text-pink-600 hover:text-pink-700 font-medium">Delete</button> -->
+                                    </td>
+
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-between items-center mt-6">
+                    <p class="text-sm text-gray-600">Showing 1 to 3 of 3 categories</p>
+                    <div class="flex gap-2">
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                            <i class="fas fa-chevron-left text-gray-600"></i>
+                        </button>
+                        <button class="px-4 py-2 bg-pink-50 text-pink-600 border border-pink-100 rounded-lg font-medium">
+                            1
+                        </button>
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                            <i class="fas fa-chevron-right text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

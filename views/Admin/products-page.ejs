@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">#ZZRH</h1>
+        <button class="p-2 hover:bg-gray-100 rounded-lg">
+            <i class="far fa-bell text-xl"></i>
+        </button>
+    </header>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white min-h-screen border-r border-gray-100 p-6">
+            <nav class="space-y-4">
+                <a href="/admin/home" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-900">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/users" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="/admin/products" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-100 text-gray-700">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Products</span>
+                </a>
+                <a href="/admin/orders" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-cube"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Coupons</span>
+                </a>
+                <a href="/admin/category" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-list-ul"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-gift"></i>
+                    <span>Offers</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-image"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class=" flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
+                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:text-gray-900">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">Products</h2>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="far fa-bell text-gray-600"></i>
+                    </button>
+                    <a href="/admin/product-add">
+                        <button class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-medium">
+                            Add Product
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-6">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input 
+                        type="text" 
+                        placeholder="Search products..." 
+                        class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                </div>
+            </div>
+
+            <!-- Filter and Sort -->
+            <div class="flex gap-4 mb-6">
+                <button class="flex items-center justify-between w-48 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <span class="text-gray-700">Filter</span>
+                    <div class="flex flex-col">
+                        <i class="fas fa-chevron-up text-xs text-gray-400"></i>
+                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                    </div>
+                </button>
+                <button class="flex items-center justify-between w-48 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <span class="text-gray-700">Sort</span>
+                    <div class="flex flex-col">
+                        <i class="fas fa-chevron-up text-xs text-gray-400"></i>
+                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                    </div>
+                </button>
+            </div>
+
+            <% if (error) { %>
+                <div id="popup"
+                    class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
+                <%= error %>
+                </div>
+
+                <script>
+                setTimeout(() => {
+                    document.getElementById("popup").classList.add("opacity-0");
+                }, 2500);
+                </script>
+
+                <style>
+                .animate-fade-in { 
+                    animation: fadeIn 0.4s ease-out;
+                }
+                @keyframes fadeIn {
+                    0% { opacity: 0; transform: translateY(-10px); }
+                    100% { opacity: 1; transform: translateY(0); }
+                }
+                </style>
+            <% } %>
+
+            <!-- Products Table -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">SKU</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Stock</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <% data.forEach((user,i)=>{ %>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23b8c5b0' width='100' height='100'/%3E%3C/svg%3E" alt="Product" class="w-full h-full rounded-lg object-cover">
+                                        </div>
+                                    </div>
+                                </td>
+                                    <td class="px-6 py-4 text-gray-900"> <%= user.SKU %> </td>
+                                    <td class="px-6 py-4 text-gray-900"> <%= user.stock %> </td>
+                                    <td class="px-6 py-4 text-gray-900">$ <%= user.productId.price %></td>
+                                    <td class="px-6 py-4 text-gray-600"> <%= user.productId.categoryId.categoryName %> </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                                            <span class="text-gray-400">|</span>
+                                            <button class="text-gray-600 hover:text-red-600">Delete</button>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            <% }) %>
+                        
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex items-center justify-center gap-2 mt-6">
+                <button class="p-2 hover:bg-gray-100 rounded-lg">
+                    <i class="fas fa-chevron-left text-gray-600"></i>
+                </button>
+                <button class="w-10 h-10 bg-red-600 text-white rounded-lg font-medium">1</button>
+                <button class="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-gray-700">2</button>
+                <button class="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-gray-700">3</button>
+                <button class="p-2 hover:bg-gray-100 rounded-lg">
+                    <i class="fas fa-chevron-right text-gray-600"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
