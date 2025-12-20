@@ -53,7 +53,7 @@ export const adminCategoryEditLogic = async(_id,category_name,description,status
     await tempCategoryProgress.save()
     return{success:true,message:"CATEGORY UPDATED"}
 }
-export const adminProductsAddLogic =  async(name,category,sku,description,price,offer,status,color,size,stock,imagepath)=>{
+export const adminProductsAddLogic =  async(name,category,sku,description,price,offer,status,variant)=>{
     let tempProductProgress = await productModel.findOne({name})
     if(tempProductProgress){
         return {success:false,message:"PRODUCT ALREADY EXIST"}
@@ -67,23 +67,25 @@ export const adminProductsAddLogic =  async(name,category,sku,description,price,
         SKU:sku,
         categoryId:category,
     })
+    
     await newProduct.save()
     tempProductProgress = await productModel.findOne({name})
     let _id = tempProductProgress._id
-    let tempVariantProgress = await variantModel.findOne({productId:_id,color,size})
-    if(tempVariantProgress){
-        return {success:false,message:"VARIANT ALREADY EXIST"}
+    for(let i in variant){
+        let tempVariantProgress = await variantModel.findOne({productId:_id,color:variant[i].color,size:variant[i].size})
+        if(tempVariantProgress){
+            return {success:false,message:"VARIANT ALREADY EXIST"}
+        }
+        let newVariant = new variantModel({
+            productId:_id,
+            color:variant[i].color,
+            size:variant[i].size,
+            stock:variant[i].stock,
+            SKU:sku,
+            image:variant[i].images
+        })
+        await newVariant.save()
     }
-    
-    let newVariant = new variantModel({
-        productId:_id,
-        color:color,
-        size:size,
-        stock:stock,
-        SKU:sku,
-        image:imagepath
-    })
-    await newVariant.save()
     return {success:true}
 }
 export const adminUserEditLogic = async(status,id)=>{
@@ -96,13 +98,8 @@ export const adminUserEditLogic = async(status,id)=>{
     return{success:true}
 }
 export const productModelLoad = async ()=>{
-    let user = await variantModel.find()
-        .populate({
-            path:"productId",
-            populate:{
-                path:"categoryId"
-            }
-        })
+    let user = await productModel.find()
+        .populate('categoryId')
     if(!user){
         return {success:false}
     }

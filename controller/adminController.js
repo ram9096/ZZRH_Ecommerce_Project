@@ -6,6 +6,9 @@ import productModel from "../model/productModel.js";
 //------------------------Page renderings---------------:
 
 export const adminLoginLoad = (req,res)=>{
+    if(req.session.isAdmin){
+        return res.redirect('/admin/home')
+    }
     return res.render('Admin/login-page',{error:''})
 }
 export const adminHomeLoad = (req,res)=>{
@@ -99,14 +102,32 @@ export const adminCategoryEdit = async (req,res)=>{
 }
 
 export const adminProductsAdd = async (req,res)=>{
-    let {productName,category,sku,description,price,offer,status,color,size,stock} = req.body
-    const imagepath = req.files.map(file=>file.path)
-    let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,price,offer,status,color,size,stock,imagepath)
+    let {productName,category,sku,description,price,offer,status} = req.body
+    const variants = {}
+    for(let key in req.body){
+        const match = key.match(/^variants\[(\d+)\]\.(.+)$/)
+        if(match){
+            if(!variants[Number(match[1])]){
+                variants[Number(match[1])] = {}
+            }
+            variants[Number(match[1])][match[2]] = req.body[key]
+        }
+    }
+    for(let key in req.files){
+        const match = req.files[key].fieldname.match(/^variants\[(\d+)\]\.images$/)   
+        
+        if(match){
+            variants[Number(match[1])].images = req.files
+                .filter(file => file.fieldname === `variants[${Number(match[1])}].images`)
+                .map(file => file.path);
+        }
+    }
+    let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,price,offer,status,variants)
     let data  = await dataLoad({})
     if(!tempProductProgress.success||!data){
         return res.render('Admin/products-add-page',{error:tempProductProgress.message,category:data.data})
     }
-    return res.redirect('/admin/product-add')
+    return res.redirect('/admin/products')
 }
 export const adminUserEdit = async(req,res)=>{
     const {isActive,id}=req.body

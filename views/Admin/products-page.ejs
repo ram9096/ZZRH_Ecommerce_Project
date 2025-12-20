@@ -147,10 +147,8 @@
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product Name</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">SKU</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Stock</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
                         </tr>
@@ -158,26 +156,19 @@
                     <tbody class="divide-y divide-gray-200">
                         <% data.forEach((user,i)=>{ %>
                             <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-gray-900"><%= user.name %></td>
+                                <td class="px-6 py-4 text-gray-900"> <%= user.SKU %> </td>
+                                <td class="px-6 py-4 text-gray-900"> <%= user.categoryId.categoryName %></td>
+                                
                                 <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23b8c5b0' width='100' height='100'/%3E%3C/svg%3E" alt="Product" class="w-full h-full rounded-lg object-cover">
-                                        </div>
+                                    <div class="flex items-center gap-2">
+                                        <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                                        <span class="text-gray-400">|</span>
+                                        <button class="text-gray-600 hover:text-red-600">Delete</button>
                                     </div>
                                 </td>
-                                    <td class="px-6 py-4 text-gray-900"> <%= user.SKU %> </td>
-                                    <td class="px-6 py-4 text-gray-900"> <%= user.stock %> </td>
-                                    <td class="px-6 py-4 text-gray-900">$ <%= user.productId.price %></td>
-                                    <td class="px-6 py-4 text-gray-600"> <%= user.productId.categoryId.categoryName %> </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <button class="text-gray-600 hover:text-gray-900">Edit</button>
-                                            <span class="text-gray-400">|</span>
-                                            <button class="text-gray-600 hover:text-red-600">Delete</button>
-                                        </div>
-                                    </td>
 
-                                </tr>
+                            </tr>
                             <% }) %>
                         
                     </tbody>

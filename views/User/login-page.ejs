@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>#ZZRH Login</title>
-  <!-- Tailwind CSS (fixed URL) -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Fonts -->
@@ -34,15 +34,21 @@
     <!-- Login Title -->
     <h1 class="text-2xl md:text-3xl font-light font-bloverly mt-8 md:mt-0">Log in</h1>
 
-    <!-- Email Input -->
-    <form action="/login" method="post">
+    <!-- Validation Error Message Container -->
+     
+    <div id="client-error" class="hidden bg-red-500 text-white px-4 py-2 rounded text-sm"></div>
 
+    <!-- Login Form -->
+    <form id="login-form" action="/login" method="post">
+      <!-- Email Input -->
       <div class="space-y-2 font-clash">
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Email"
+          class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+          required
         />
       </div>
 
@@ -50,34 +56,31 @@
       <div class="space-y-2 font-clash mt-5">
         <input
           type="password"
-          placeholder="Password"
           name="password"
+          id="password"
+          placeholder="Password"
           class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+          required
         />
       </div>
 
       <!-- Forgot Password Link -->
-      <a href="/email-verification" class="text-xs uppercase tracking-wider hover:underline font-clash mt-5">
+      <a href="/email-verification" class="text-xs uppercase tracking-wider hover:underline font-clash mt-5 inline-block">
         Have you forgotten your password?
       </a>
 
-
+      <!-- Server-side error (EJS) -->
       <% if (error) { %>
-        <div id="popup"
-            class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
+        <div id="popup" class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
           <%= error %>
         </div>
-
         <script>
           setTimeout(() => {
-            document.getElementById("popup").classList.add("opacity-0");
+            document.getElementById("popup")?.classList.add("opacity-0");
           }, 2500);
         </script>
-
         <style>
-          .animate-fade-in { 
-            animation: fadeIn 0.4s ease-out;
-          }
+          .animate-fade-in { animation: fadeIn 0.4s ease-out; }
           @keyframes fadeIn {
             0% { opacity: 0; transform: translateY(-10px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -85,18 +88,17 @@
         </style>
       <% } %>
 
-
       <!-- Login Button -->
-      <button class="w-full py-3 bg-black text-white font-bloverly font-medium tracking-wider hover:bg-gray-800 transition-colors text-lg md:text-2xl mt-[25px]">
+      <button type="submit" class="w-full py-3 bg-black text-white font-bloverly font-medium tracking-wider hover:bg-gray-800 transition-colors text-lg md:text-2xl mt-[25px]">
         LOG IN
       </button>
     </form>
 
     <!-- Register Button -->
-    <a href="/register">
+    <a href="/register" class="block mt-4">
       <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
-      Register
-    </button>
+        Register
+      </button>
     </a>
 
     <!-- Social Login Section -->
@@ -107,14 +109,12 @@
         <a href="#" class="underline">Privacy Policy</a>
       </p>
 
-      <!-- Google Login -->
-      <a href="/auth/google">
+      <a href="/auth/google" class="block mt-2">
         <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
           Continue with google
         </button>
       </a>
 
-      <!-- Apple Login -->
       <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
         Continue with apple
       </button>
@@ -125,14 +125,56 @@
   <div class="w-full md:w-1/2 bg-cover bg-center hidden md:block">
     <img src="/background.jpg" alt="Login background" class="w-full h-full object-cover" />
   </div>
-</body>
 
-<style>
-  .font-bloverly {
-    font-family: bloverly, serif;
-  }
-  .font-clash {
-    font-family: Clash-display, sans-serif;
-  }
-</style>
+  <style>
+    .font-bloverly {
+      font-family: bloverly, serif;
+    }
+    .font-clash {
+      font-family: Clash-display, sans-serif;
+    }
+  </style>
+
+  <!-- Client-side Validation Script -->
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorDiv = document.getElementById('client-error');
+  
+      // Reset
+      errorDiv.classList.add('hidden');
+      errorDiv.textContent = '';
+
+      let isValid = true;
+      let errorMsg = '';
+
+      // Validate email
+      if (!email) {
+        errorMsg = 'Email is required.';
+        isValid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errorMsg = 'Please enter a valid email address.';
+        isValid = false;
+      }
+
+      // Validate password
+      if (!password) {
+        errorMsg = 'Password is required.';
+        isValid = false;
+      } else if (password.length < 6) {
+        errorMsg = 'Password must be at least 6 characters long.';
+        isValid = false;
+      }
+
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission
+        errorDiv.textContent = errorMsg;
+        errorDiv.classList.remove('hidden');
+        // Auto-hide after 4 seconds
+        setTimeout(() => errorDiv.classList.add('hidden'), 4000);
+      }
+    });
+  </script>
+</body>
 </html>

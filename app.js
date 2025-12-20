@@ -7,12 +7,13 @@ import dotenv from "dotenv"
 import nocache from "nocache"
 import passport from "passport"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
-
 dotenv.config()
 
 
 let app = express()
 let port = process.env.PORT
+
+// middlewares
 
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}))
@@ -27,11 +28,17 @@ app.use((req, res, next) => {
     res.set("Expires", "0");
     next();
 });
+
+//Session set-up
+
 app.use(session({
     secret:"#ZZRH",
     resave:false,
     saveUninitialized:false
 }))
+
+//Google authentication
+
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -53,7 +60,7 @@ passport.use(new GoogleStrategy({
 }
 ))
 
-
+//routes
 
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
@@ -61,6 +68,14 @@ app.use('/admin',adminRouter)
 app.get("/auth/google",passport.authenticate("google",{scope:["profile","email",]}))
 app.get('/auth/google/callback',passport.authenticate("google",{failureRedirect:'/login'}))
 
+
+// port setup
+
+app.listen(port,()=>{
+    console.log("Server starting.....")
+})
+
+//error handling middleware
 
 app.use((err, req, res, next) => {
     console.error("Error:", err.message);
@@ -71,7 +86,3 @@ app.use((err, req, res, next) => {
         message: err.message || "Internal Server Error",
     });
 });
-
-app.listen(port,()=>{
-    console.log("Server starting.....")
-})

@@ -17,7 +17,7 @@ router.get('/product-add',adminProductsAddLoad)
 router.post('/login',adminLogin)
 router.post('/category-add',adminCategoryAdd)
 router.post('/category-edit/:id',isAdminAuthenticated,adminCategoryEdit)
-router.post('/product-add',upload.array('image-upload',10),adminProductsAdd)
+router.post('/product-add',upload.any(),adminProductsAdd)
 router.post('/users/edit',adminUserEdit)
 export default router
 
