@@ -17,10 +17,6 @@ const productSchema = new schema({
         required:true
 
     },
-    price:{
-        type:Number,
-        required:true
-    },
     status:{
         type:Boolean,
         required:true

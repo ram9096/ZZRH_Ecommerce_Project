@@ -1,5 +1,5 @@
 import express from "express"
-import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword } from "../controller/userController.js"
+import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad } from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/userMiddleware.js"
 let router = express.Router()
 
@@ -11,6 +11,7 @@ router.get('/verify-otp',generateotpload)
 router.get('/email-verification',emailVerificationLoad)
 router.get('/forgot-password',forgotPasswordLoad)
 router.get('/logout',userLogout)
+router.get('/product-details',productViewLoad)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)

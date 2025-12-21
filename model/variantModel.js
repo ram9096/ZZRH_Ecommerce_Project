@@ -21,6 +21,10 @@ let variantSchema = new schema({
         type:Number,
         required:true
     },
+    price:{
+        type:Number,
+        required:true
+    },
     SKU:{
         type:String,
         required:true

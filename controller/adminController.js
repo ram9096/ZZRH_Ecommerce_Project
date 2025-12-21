@@ -102,7 +102,7 @@ export const adminCategoryEdit = async (req,res)=>{
 }
 
 export const adminProductsAdd = async (req,res)=>{
-    let {productName,category,sku,description,price,offer,status} = req.body
+    let {productName,category,sku,description,offer,status} = req.body
     const variants = {}
     for(let key in req.body){
         const match = key.match(/^variants\[(\d+)\]\.(.+)$/)
@@ -119,10 +119,10 @@ export const adminProductsAdd = async (req,res)=>{
         if(match){
             variants[Number(match[1])].images = req.files
                 .filter(file => file.fieldname === `variants[${Number(match[1])}].images`)
-                .map(file => file.path);
+                .map(file => file.path.replace(/\\/g, "/").replace(/^uploads\//, ""));
         }
     }
-    let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,price,offer,status,variants)
+    let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,offer,status,variants)
     let data  = await dataLoad({})
     if(!tempProductProgress.success||!data){
         return res.render('Admin/products-add-page',{error:tempProductProgress.message,category:data.data})

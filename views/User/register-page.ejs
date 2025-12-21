@@ -162,7 +162,7 @@
   setupPasswordToggle("toggle-password", "password", "eye-icon", "eye-off-icon")
   setupPasswordToggle("toggle-confirm", "confirm-password", "eye-icon-confirm", "eye-off-icon-confirm")
   const USERNAME_PATTERN = /^[A-Za-z]+( [A-Za-z]+)*$/;           // Letters + single spaces only
-  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;           // Basic email
+  const EMAIL_PATTERN = /^[a-zA-Z0-9](?!.*\.\.)[a-zA-Z0-9._]{4,28}[a-zA-Z0-9]@gmail\.com$/;           // Basic email
   const PHONE_PATTERN = /^\d{10}$/;                             // Exactly 10 digits
   const PASSWORD_PATTERN = /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/
   function validateField(field) {

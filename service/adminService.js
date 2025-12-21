@@ -53,7 +53,7 @@ export const adminCategoryEditLogic = async(_id,category_name,description,status
     await tempCategoryProgress.save()
     return{success:true,message:"CATEGORY UPDATED"}
 }
-export const adminProductsAddLogic =  async(name,category,sku,description,price,offer,status,variant)=>{
+export const adminProductsAddLogic =  async(name,category,sku,description,offer,status,variant)=>{
     let tempProductProgress = await productModel.findOne({name})
     if(tempProductProgress){
         return {success:false,message:"PRODUCT ALREADY EXIST"}
@@ -62,7 +62,7 @@ export const adminProductsAddLogic =  async(name,category,sku,description,price,
         offerId:offer,
         name:name,
         description:description,
-        price:price,
+        
         status:status,
         SKU:sku,
         categoryId:category,
@@ -81,6 +81,7 @@ export const adminProductsAddLogic =  async(name,category,sku,description,price,
             color:variant[i].color,
             size:variant[i].size,
             stock:variant[i].stock,
+            price:variant[i].price,
             SKU:sku,
             image:variant[i].images
         })
@@ -90,6 +91,9 @@ export const adminProductsAddLogic =  async(name,category,sku,description,price,
 }
 export const adminUserEditLogic = async(status,id)=>{
     const tempUserProgress = await userModel.findOne({_id:id})
+    if(status === ''){
+        return {success:false}
+    }
     if(!tempUserProgress){
         return {success:false,message:"USER DOESN'T EXIST"}
     }

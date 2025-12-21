@@ -1,4 +1,6 @@
 import userModel from "../model/userModel.js";
+import productModel from "../model/productModel.js"
+import variantModel from "../model/variantModel.js"
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { sentOtp } from "../utils/otpMailing.js";
@@ -112,4 +114,13 @@ export const forgotPasswordLogic = async(email,password)=>{
     user.password = hashedPassword
     await user.save()
     return {success:true,data:user}
+}
+
+export const ProductsLoad = async ()=>{
+    let products = await variantModel.find()
+        .populate('productId')
+    if(!products){
+        return {success:false,message:"ERROR WHILE LOADING DATA"}
+    }
+    return {success:true,data:products}
 }

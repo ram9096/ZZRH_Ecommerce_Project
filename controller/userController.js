@@ -1,4 +1,4 @@
-import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail } from "../service/userService.js";
+import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad } from "../service/userService.js";
 
 //--------------Page renderings------------------
 
@@ -32,8 +32,8 @@ export const generateotpload = (req, res) => {
     });
 };
 export const homePageLoad = async (req, res) => {
-
     try{
+        let products = await ProductsLoad()
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -43,7 +43,7 @@ export const homePageLoad = async (req, res) => {
             req.session.destroy()
             return res.redirect('/login')
         }
-        return res.render("User/home");
+        return res.render("User/home",{product:products.data});
     }catch(e){
         console.log("Home page load Error: ",e)
         return res.status(500).redirect('/login')
@@ -62,6 +62,9 @@ export const forgotPasswordLoad = (req,res)=>{
     return res.render('User/forgot-password',{error:''})
 }
 
+export const productViewLoad = (req,res)=>{
+    return res.render('User/product-view')
+}
 // -----------------controllers-----------------
 
 export const userLogin = async (req, res) => {
