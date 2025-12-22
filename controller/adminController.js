@@ -49,7 +49,7 @@ export const adminCategoryLoad = async (req,res)=>{
     })
 }
 export const adminCategoryAddLoad = (req,res)=>{
-    return res.render('Admin/categories-add-page')
+    return res.render('Admin/categories-add-page',{error:''})
 }
 export const adminCategoryEditLoad = async (req,res)=>{
     let _id = req.params.id
@@ -172,7 +172,7 @@ export const adminCategoryAdd = async(req,res)=>{
     const {category_name,description,status} = req.body
     let tempCategoryProgress = await adminCategoryAddLogic(category_name,description,status)
     if(!tempCategoryProgress.success){
-        return res.redirect('/admin/category-add')
+        return res.render('Admin/categories-add-page',{error:tempCategoryProgress.message})
     }
     return res.redirect('/admin/category')
 

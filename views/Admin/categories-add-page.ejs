@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category Management - ZZRH</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -72,6 +76,19 @@
                 </a>
             </div>
         </aside>
+        <% if (error) { %>
+            <script>
+            Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: '<%=error%>',
+                    position: 'top-right',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            </script>
+        <% } %>
+        
 
         <!-- Main Content -->
         <main class="flex-1 p-12">
@@ -95,11 +112,13 @@
                 <div class="mb-8">
                     <label class="block text-gray-900 font-medium mb-3">Category name</label>
                     <input 
+                        id="category_name"
                         name="category_name"
                         type="text" 
                         placeholder="e.g., Men / Women / Kids" 
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     >
+                    <span id="category-error" class="text-xs text-red-500"></span>
                 </div>
 
                 <!-- Description -->
@@ -107,10 +126,12 @@
                     <label class="block text-gray-900 font-medium mb-3">Description of category</label>
                     <textarea 
                         name="description"
+                        id="description"
                         placeholder="Description of category" 
                         rows="6" 
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
                     ></textarea>
+                    <span id="description-error" class="text-xs text-red-500"></span>
                 </div>
 
                 <!-- Status -->
@@ -118,6 +139,7 @@
                     <label class="block text-gray-900 font-bold text-lg mb-4">Status</label>
                     <div class="flex gap-4">
                         <button 
+                            id="inactive"
                             onclick="set_status(false)"
                             type="button" 
                             class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
@@ -125,6 +147,7 @@
                             Inactive
                         </button>
                         <button 
+                            id="active"
                             onclick="set_status(true)"
                             type="button" 
                             class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
@@ -134,15 +157,18 @@
                     </div>
                 </div>
                 <input type="hidden" name="status" id="status_Input">
+                <span id="status-error" class="text-xs text-red-500"></span>
 
                 <!-- Action Buttons -->
                 <div class="flex justify-end gap-4">
-                    <button 
+                    <a href="/admin/category">
+                        <button 
                         type="button" 
                         class="px-8 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition font-medium"
-                    >
-                        Cancel
-                    </button>
+                        >
+                            Cancel
+                        </button>
+                    </a>
                     <button 
                         type="submit" 
                         class="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
@@ -156,8 +182,87 @@
 
     <script>
         // Toggle status buttons
+
+        (function(){
+            const fields = {
+                name:document.getElementById('category_name'),
+                description:document.getElementById('description'),
+                status:document.getElementById('status_Input')
+            }
+            const errors = {
+                name:document.getElementById('category-error'),
+                description:document.getElementById('description-error'),
+                status:document.getElementById('status-error')
+            }
+            function validateField(field){
+                const value = fields[field].value.trim()
+                switch (field){
+                    case "name":
+                        if (value.length < 3) {
+                            errors.name.textContent = "Enter valid name"
+                            return false
+                        }
+                        if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(value)){
+                            errors.name.textContent = "Only characters accepted"
+                            return false
+                        }
+                        errors.name.textContent = ""
+                        return true
+                    case "description":
+                        if(value.length == 0){
+                        errors.description.textContent = "Enter a valid description"
+                        return false
+                        }
+                        if(value.length<5){
+                        errors.description.textContent = "Please enter atleast 5 characters"
+                        return false
+
+
+                        }
+                        if(value.length>100){
+                        errors.description.textContent = "Sorry it cannot be too long...."
+                        return false
+                        }
+                        if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(value)){
+                            errors.description.textContent = "Only characters"
+                            return false
+                        }
+                        errors.description.textContent = ""
+                        return true
+                    case "status":
+                        if(!value){
+                            errors.status.textContent = "Enter status"
+                            return false
+                        }
+                        errors.status.textContent = ""
+                        return true
+                        
+                }
+            }
+
+             Object.keys(fields).forEach(field => {
+                fields[field].addEventListener("input", () => validateField(field))
+                fields[field].addEventListener("blur", () => validateField(field))
+            })
+            form.addEventListener("submit", function (e) {
+                let valid = true
+                Object.keys(fields).forEach(field => {
+                if (!validateField(field)) valid = false
+                })
+                if (!valid) e.preventDefault()
+            })
+        })()
         const status_Input = document.getElementById("status_Input")
         function set_status(msg){
+            const active = document.getElementById('active')
+            const inactive = document.getElementById('inactive')
+            active.classList.remove('bg-red-500','text-white','border-red-500');
+            inactive.classList.remove('bg-red-500', 'text-white','border-red-500');
+            if(msg){
+                active.classList.add('bg-red-500','text-white','border-red-500');
+            }else{
+                inactive.classList.add('bg-red-500', 'text-white','border-red-500');
+            }
             status_Input.value = msg
         }
         const statusButtons = document.querySelectorAll('.button');

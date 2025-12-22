@@ -44,18 +44,34 @@ export const dataLoad = async(filter)=>{
     return{success:true,data:tempCategoryProgress}
 }
 export const adminCategoryAddLogic = async(category_name,description,status)=>{
-    let tempCategoryProgress = await categoryModel.findOne({category_name})
+    try{
+        if(category_name.length<3
+            ||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(category_name)
+        ){
+            return {success:false,message:"DATA ERROR"}
+        }
+        if(description.length==0||description.length<5||description.length>100||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(description)){
+            return {success:false,message:"DATA ERROR"}
+        }
+        if(status==''){
+            return {success:false,message:"DATA ERROR"}
+        }
+        let tempCategoryProgress = await categoryModel.findOne({category_name})
     
-    if(tempCategoryProgress){
-        return {success:false,message:"CATEGORY ALREADY EXIST"}
+        if(tempCategoryProgress){
+            return {success:false,message:"CATEGORY ALREADY EXIST"}
+        }
+        let newCategory = new categoryModel({
+            categoryName:category_name,
+            description:description,
+            isActive:status
+        })
+        await newCategory.save()
+        return {success:true}
+    }catch(e){
+        console.log("Server Error: ",e)
+        return {success:false,message:"SERVER ERROR"}
     }
-    let newCategory = new categoryModel({
-        categoryName:category_name,
-        description:description,
-        isActive:status
-    })
-    await newCategory.save()
-    return {success:true}
 }
 export const adminCategoryEditLogic = async(_id,category_name,description,status)=>{
     let tempCategoryProgress = await categoryModel.findOne({_id})
