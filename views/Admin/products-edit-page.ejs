@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add New Product</title>
+  <title>Edit Product</title>
 
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
@@ -105,7 +105,7 @@
     <main class="flex-1 p-8 bg-gray-50">
       <div class="max-w-2xl">
         <div class="mb-8">
-          <h2 class="text-3xl font-bold text-gray-900 mb-1">Add New Product</h2>
+          <h2 class="text-3xl font-bold text-gray-900 mb-1">Edit Product</h2>
           <p class="text-sm text-red-500">Enter the details for the new product.</p>
         </div>
 
@@ -113,10 +113,11 @@
           <!-- Product Info -->
           <div class="grid grid-cols-2 gap-6">
             <div>
-              <label class="block text-sm font-medium text-gray-900 mb-2">Product Name *</label>
+              <label class="block text-sm font-medium text-gray-900 mb-2">Product Name*</label>
               <input
                 id="p-name"
                 type="text"
+                value="<%= variant[0].productId.name %>"
                 name="productName"
                 placeholder="Enter product name..."
                 class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
@@ -128,6 +129,7 @@
               <label class="block text-sm font-medium text-gray-900 mb-2">Category *</label>
                <select
                id="category"
+               
                 name="category"
                 class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white text-sm text-gray-500 validate"
                 required
@@ -147,9 +149,10 @@
               id="description"
               rows="4"
               name="description"
+            
               placeholder="Add product description"
               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm resize-none"
-            ></textarea>
+            ><%= variant[0].productId.description %></textarea>
             <span id="description-error" class="text-xs text-red-500"></span>
           </div>
 
@@ -173,6 +176,7 @@
                 id="sku"
                 type="text"
                 name="sku"
+                value="<%= variant[0].productId.SKU %>"
                 placeholder="Enter SKU"
                 class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm"
               />
@@ -187,14 +191,18 @@
               <button
                 type="button"
                 onclick="set_status(false)"
-                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition <%= variant[0].productId.status === false 
+          ? 'bg-red-500 text-white border-red-500' 
+          : 'border-gray-300 text-gray-700 hover:bg-gray-50' %>"
               >
                 Inactive
               </button>
               <button
                 type="button"
                 onclick="set_status(true)"
-                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition <%= variant[0].productId.status === true 
+          ? 'bg-red-500 text-white border-red-500' 
+          : 'border-gray-300 text-gray-700 hover:bg-gray-50' %>"
               >
                 Active
               </button>
@@ -205,113 +213,149 @@
 
           <!-- Variants Container -->
           <div id="variantsContainer" class="space-y-6">
-            <div class="variant-group bg-white border border-gray-200 rounded-lg p-6">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 variant-title">Variant 1</h3>
-                <button
-                  type="button"
-                  class="delete-variant-btn px-3 py-1.5 bg-red-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-200 transition-colors hidden"
-                  onclick="deleteVariant(this)"
-                >
-                  <i class="fas fa-trash-alt mr-1"></i> Delete
-                </button>
-              </div>
-              
-              <div class="grid grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label class="block text-sm font-medium text-gray-900 mb-2">Color *</label>
-                  <input
-                    name="variants[0].color"
-                    type="text"
-                    placeholder="e.g. Red"
-                    class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
-                    required
-                  />
-                  <span class="text-xs text-red-500 hidden">Color is required</span>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-900 mb-2">Size *</label>
-                  <select
-                    name="variants[0].size"
-                    class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white text-sm text-gray-500 validate"
-                    required
+            <% variant.forEach((v,i)=>{ %>
+              <div class="variant-group bg-white border border-gray-200 rounded-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-lg font-semibold text-gray-900 variant-title">Variant <%= i+1 %></h3>
+                  <button
+                    type="button"
+                    class="delete-variant-btn px-3 py-1.5 bg-red-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-200 transition-colors hidden"
+                    onclick="deleteVariant(this)"
                   >
-                    <option value="">Select Size</option>
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                    <option>XL</option>
-                  </select>
-                  <span class="hidden text-xs text-red-500">Size is required</span>
+                    <i class="fas fa-trash-alt mr-1"></i> Delete
+                  </button>
                 </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-900 mb-2">Stock Quantity *</label>
-                  <input
-                    type="number"
-                    name="variants[0].stock"
-                    placeholder="e.g. 10"
-                    class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
-                    required
-                  />
-                  <span class="text-xs text-red-500 hidden">Stock is required</span>
+                
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Color *</label>
+                    <input
+                      name="variants[0].color"
+                      type="text"
+                      placeholder="e.g. Red"
+                      value="<%= v.color %>"
+                      class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
+                      required
+                    />
+                    <span class="text-xs text-red-500 hidden">Color is required</span>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Size *</label>
+                    <select
+                      name="variants[0].size"
+                      
+                      class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white text-sm text-gray-500 validate"
+                      required
+                    >
+                      <option value="">Select Size</option>
+                      <option <%= variant.size === 'Small' ? 'selected' : '' %>>Small</option>
+                      <option <%= variant.size === 'Medium' ? 'selected' : '' %>>Medium</option>
+                      <option <%= variant.size === 'Large' ? 'selected' : '' %>>Large</option>
+                      <option <%= variant.size === 'XL' ? 'selected' : '' %>>XL</option>
+                    </select>
+                    <span class="hidden text-xs text-red-500">Size is required</span>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Stock Quantity *</label>
+                    <input
+                      type="number"
+                      name="variants[0].stock"
+                      placeholder="e.g. 10"
+                      value="<%= v.stock%>"
+                      class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
+                      required
+                    />
+                    <span class="text-xs text-red-500 hidden">Stock is required</span>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Price *</label>
+                    <input
+                      type="number"
+                      name="variants[0].price"
+                      placeholder="e.g. 100"
+                      value="<%= v.price  %>"
+                      class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
+                      required
+                    />
+                    <span class="text-xs text-red-500 hidden">Price is required</span>
+                  </div>
                 </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-gray-900 mb-2">Price *</label>
-                  <input
-                    type="number"
-                    name="variants[0].price"
-                    placeholder="e.g. 100"
-                    class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
-                    required
-                  />
-                  <span class="text-xs text-red-500 hidden">Price is required</span>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-3 gap-4">
-                <!-- Image 1 -->
-                <div>
-                  <label class="block text-xs font-medium text-gray-900 text-2xl mb-1">Product Image</label>
+                <div class="grid grid-cols-3 gap-4">
+                  <!-- Image 1 -->
                   <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28
-                              text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
-                    <div class="flex flex-col items-center justify-center h-full">
-                      <i class="fas fa-upload text-teal-600 text-lg mb-1"></i>
-                      <p class="text-xs text-gray-700">Upload</p>
-                      <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
-                      <p class="text-[10px] text-gray-600 mt-1 file-names truncate"></p>
-                    </div>
-                  </div>
-                </div>
+            text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
 
-                <div>
-                  <label class="block text-xs font-medium text-gray-900 mb-1"></label>
-                  <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28 mt-5
-                              text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
-                    <div class="flex flex-col items-center justify-center h-full">
-                      <i class="fas fa-upload text-teal-600 text-lg mb-1"></i>
-                      <p class="text-xs text-gray-700">Upload</p>
-                      <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
-                      <p class="text-[10px] text-gray-600 mt-1 file-names truncate"></p>
-                    </div>
-                  </div>
-                </div>
+                    <% if (v.image && v.image[0]) { %>
+                      <img
+                        src="/<%= v.image[0] %>"
+                        class="w-full h-full object-cover rounded-lg"
+                      />
+                    <% } else { %>
+                      <div class="flex flex-col items-center justify-center h-full">
+                        <i class="fas fa-upload text-teal-600 text-lg mb-1"></i>
+                        <p class="text-xs text-gray-700">Upload</p>
+                      </div>
+                    <% } %>
 
-                <div>
-                  <label class="block text-xs font-medium text-gray-900 mb-1"></label>
-                  <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28 mt-5
-                              text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
-                    <div class="flex flex-col items-center justify-center h-full">
-                      <i class="fas fa-upload text-teal-600 text-lg mb-1"></i>
-                      <p class="text-xs text-gray-700">Upload</p>
-                      <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
-                      <p class="text-[10px] text-gray-600 mt-1 file-names truncate"></p>
-                    </div>
+                    <input
+                      type="file"
+                      name="variants[<%= i %>].images"
+                      accept="image/*"
+                      class="hidden image-input"
+                    />
+                  </div>
+
+                   <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28
+            text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
+
+                    <% if (v.image && v.image[1]) { %>
+                      <img
+                        src="/<%= v.image[1] %>"
+                        class="w-full h-full object-cover rounded-lg"
+                      />
+                    <% } else { %>
+                      <div class="flex flex-col items-center justify-center h-full">
+                        <i class="fas fa-upload text-teal-600 text-lg mb-1"></i>
+                        <p class="text-xs text-gray-700">Upload</p>
+                      </div>
+                    <% } %>
+
+                    <input
+                      type="file"
+                      name="variants[<%= i %>].images"
+                      accept="image/*"
+                      class="hidden image-input"
+                    />
+                  </div>
+
+                   <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28
+            text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
+
+                    <% if (v.image && v.image[2]) { %>
+                      <img
+                        src="/<%= v.image[2] %>"
+                        class="w-full h-full object-cover rounded-lg"
+                      />
+                    <% } else { %>
+                      <div class="flex flex-col items-center justify-center h-full">
+                        <i class="fas fa-upload text-teal-600 text-lg mb-1"></i>
+                        <p class="text-xs text-gray-700">Upload</p>
+                      </div>
+                    <% } %>
+
+                    <input
+                      type="file"
+                      name="variants[<%= i %>].images"
+                      accept="image/*"
+                      class="hidden image-input"
+                    />
                   </div>
                 </div>
+                <span class="text-xs text-red-500 hidden variant-images-error">All 3 images are required</span>
               </div>
-              <span class="text-xs text-red-500 hidden variant-images-error">All 3 images are required</span>
-            </div>
+            <% }) %>
           </div>
 
           <!-- Add Variant Button -->
@@ -347,8 +391,8 @@
 
   <script>
     // ===== Variant Management =====
-    let variantIndex = 1;
-
+    let variantIndex = Number("<%= variant.length %>");
+    console.log(variantIndex)
     document.getElementById('addVariantBtn').addEventListener('click', function () {
       const container = document.getElementById('variantsContainer');
       const firstVariant = container.querySelector('.variant-group');
@@ -360,7 +404,7 @@
           input.value = '';
         }
       });
-
+      
       clone.querySelectorAll('.file-names').forEach(el => el.textContent = '');
       clone.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
       clone.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));

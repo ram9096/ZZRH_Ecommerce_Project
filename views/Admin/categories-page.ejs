@@ -91,8 +91,29 @@
                         <input 
                             type="text" 
                             placeholder="Search categories..." 
+                            value="<%= search %>"
+                            onkeyup="handleSearch(this.value)"
                             class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-200"
                         >
+                    </div>
+                    <div class="flex gap-3 mb-6">
+                        <form action="/admin/category" method="GET">
+                                <select name="status" onchange="this.form.submit()" class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition">
+                                    <option value="" <% if(status == ""){ %> selected <% } %>>All</option>
+                                    <option value="true" <% if(status == "true"){ %> selected <% } %>>Active</option>
+                                    <option value="false" <% if(status == "false"){ %> selected <% } %>>Inactive</option>
+                                </select>
+                                
+                                <select name="sort" onchange="this.form.submit()" class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition"  >
+                                    
+                                    <option value="latest" <%= sort === "latest" ? "selected" : "" %> >Latest</option>
+                                    <option value="oldest" <%= sort === "oldest" ? "selected" : "" %> >Oldest</option>
+                                </select>
+                            </form>
+                        
+                        <!-- <button class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition">
+                            Sort by
+                        </button> -->
                     </div>
                     <a href="/admin/category-add">
                         <button class="ml-4 px-6 py-3 bg-pink-100 text-pink-600 rounded-lg hover:bg-pink-200 transition font-medium">
@@ -194,22 +215,53 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="flex justify-between items-center mt-6">
-                    <p class="text-sm text-gray-600">Showing 1 to 3 of 3 categories</p>
-                    <div class="flex gap-2">
-                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-chevron-left text-gray-600"></i>
-                        </button>
-                        <button class="px-4 py-2 bg-pink-50 text-pink-600 border border-pink-100 rounded-lg font-medium">
-                            1
-                        </button>
-                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-chevron-right text-gray-600"></i>
-                        </button>
-                    </div>
+                <div class="flex items-center justify-between mt-6">
+                <div class="text-sm text-gray-600">
+                    Showing 
+                    <%= (currentPage - 1) * 5 + 1 %> 
+                    to 
+                    <%= Math.min(currentPage * 5, totalUser) %> 
+                    of 
+                    <%= totalUser %> categories
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>&status=<%= status %>"
+                        class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalPage; i++) { %>
+                    <a href="?page=<%= i %>&status=<%= status %>"
+                        class="w-10 h-10 flex items-center justify-center rounded-lg
+                        <%= i === currentPage ? 'bg-red-100 font-bold' : 'hover:bg-gray-100' %>">
+                        <%= i %>
+                    </a>
+                    <% } %>
+                    <% if (currentPage < totalPage) { %>
+                    <a href="?page=<%= currentPage + 1 %>&status=<%= status %>"
+                        class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <% } %>
+                </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script>
+        let timer;
+        function handleSearch(value) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("search", value);
+                params.set("page", 1);
+                window.location.search = params.toString();
+            }, 400);
+        }
+    </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 import { error } from "console";
-import { adminCategoryAddLogic, adminCategoryEditLogic, adminLoginLogic, adminProductsAddLogic, adminUserEditLogic, adminUsersLogic, dataLoad, productModelLoad } from "../service/adminService.js";
-import productModel from "../model/productModel.js";
+import { adminCategoryAddLogic, adminCategoryEditLogic, adminLoginLogic, adminProductsAddLogic, adminUserEditLogic, adminUsersLogic, categoryModelLoad, dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
+
 
 
 //------------------------Page renderings---------------:
@@ -18,8 +18,35 @@ export const adminHomeLoad = (req,res)=>{
     return res.redirect('/admin/login')
 }
 export const adminCategoryLoad = async (req,res)=>{
-    let data = await dataLoad({})
-    return res.render('Admin/categories-page',{data:data.data,error:''})
+    let filter = {}
+    let sortOption = { createdAt: -1 };
+    if(req.query.status == "true"){
+        filter.isActive = true
+    }else if(req.query.status == "false"){
+        filter.isActive = false
+    }
+    if (req.query.search&&req.query.search.trim()!=="") {
+        filter.$or = [
+            { categoryName: { $regex: req.query.search, $options: "i" } }
+            
+        ];
+    }
+    let status = String(filter.isActive)
+    
+    if (req.query.sort === "oldest") {
+        sortOption = { createdAt: 1 };
+    }
+    let data = await categoryModelLoad(filter,sortOption,req.query.page)
+    return res.render('Admin/categories-page',{
+        data:data.data,
+        error:'',
+        status:status,
+        search:req.query.search || "",
+        sort: req.query.sort || "latest",
+        currentPage:data.currentPage,
+        totalUser:data.totalUser,
+        totalPage:data.totalPages,
+    })
 }
 export const adminCategoryAddLoad = (req,res)=>{
     return res.render('Admin/categories-add-page')
@@ -30,11 +57,38 @@ export const adminCategoryEditLoad = async (req,res)=>{
     return res.render('Admin/categories-edit-page',{id:_id,name:data.data[0].categoryName,description:data.data[0].description,status:data.data[0].isActive})
 }
 export const adminProductsLoad =  async(req,res)=>{
-    let products = await productModelLoad()
+    let filter = {}
+    let sortOption = { createdAt: -1 };
+    if(req.query.status == "true"){
+        filter.status = true
+    }else if(req.query.status == "false"){
+        filter.status = false
+    }
+    if (req.query.search&&req.query.search.trim()!=="") {
+        filter.$or = [
+            { name: { $regex: req.query.search, $options: "i" } },
+            { "categoryId.categoryName": { $regex: req.query.search, $options: "i" } }
+        ];
+    }
+    
+    let status = String(filter.status)
+    
+    if (req.query.sort === "oldest") {
+        sortOption = { createdAt: 1 };
+    }
+    let products = await productModelLoad(filter,sortOption,req.query.page)
     if(!products.success){
         return res.render('Admin/products-page',{error:"ERROR WHILE LOADING",data:products.data}) 
     }
-    return res.render('Admin/products-page',{error:"",data:products.data})
+    return res.render('Admin/products-page',{error:"",
+        data:products.data,
+        sort: req.query.sort || "latest",
+        status :status,
+        currentPage:products.currentPage,
+        totalUser:products.totalUser,
+        totalPage:products.totalPages,
+        search: req.query.search || ""
+    })
 }
 export const adminProductsAddLoad = async (req,res)=>{
     let data = await dataLoad({})
@@ -96,6 +150,12 @@ export const adminUsersLoad = async (req,res)=>{
     }
 }
 
+export const adminProductEditLoad = async(req,res)=>{
+    let variants  = await variantLoad({productId:req.params.id})
+    let category = await dataLoad({})
+    return res.render('Admin/products-edit-page',{error:'',variant:variants.data,category:category.data})
+}
+
 
 //--------------------------controllers-------------------:
 
@@ -128,32 +188,41 @@ export const adminCategoryEdit = async (req,res)=>{
 }
 
 export const adminProductsAdd = async (req,res)=>{
-    let {productName,category,sku,description,offer,status} = req.body
-    const variants = {}
-    for(let key in req.body){
-        const match = key.match(/^variants\[(\d+)\]\.(.+)$/)
-        if(match){
-            if(!variants[Number(match[1])]){
-                variants[Number(match[1])] = {}
+    try{
+        let {productName,category,sku,description,status} = req.body
+        const variants = {}
+        for(let key in req.body){
+            const match = key.match(/^variants\[(\d+)\]\.(.+)$/)
+            if(match){
+                if(!variants[Number(match[1])]){
+                    variants[Number(match[1])] = {}
+                }
+                variants[Number(match[1])][match[2]] = req.body[key]
             }
-            variants[Number(match[1])][match[2]] = req.body[key]
         }
-    }
-    for(let key in req.files){
-        const match = req.files[key].fieldname.match(/^variants\[(\d+)\]\.images$/)   
-        
-        if(match){
-            variants[Number(match[1])].images = req.files
-                .filter(file => file.fieldname === `variants[${Number(match[1])}].images`)
-                .map(file => file.path.replace(/\\/g, "/").replace(/^uploads\//, ""));
+        for(let key in req.files){
+            const match = req.files[key].fieldname.match(/^variants\[(\d+)\]\.images$/)   
+            
+            if(match){
+                variants[Number(match[1])].images = req.files
+                    .filter(file => file.fieldname === `variants[${Number(match[1])}].images`)
+                    .map(file => file.path.replace(/\\/g, "/").replace(/^uploads\//, ""));
+            }
         }
+        let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,status,variants)
+        let data  = await dataLoad({})
+        if(!tempProductProgress.success||!data){
+            return res.render('Admin/products-add-page',{error:tempProductProgress.message,category:data.data})
+        }
+        return res.redirect('/admin/products')
+    }catch(e){
+        console.log("Error while adding product: ",e)
+        const data = await dataLoad({});
+        return res.status(500).render("Admin/products-add-page", {
+        error: "Internal server error",
+        category: data?.data || []
+        });
     }
-    let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,offer,status,variants)
-    let data  = await dataLoad({})
-    if(!tempProductProgress.success||!data){
-        return res.render('Admin/products-add-page',{error:tempProductProgress.message,category:data.data})
-    }
-    return res.redirect('/admin/products')
 }
 export const adminUserEdit = async(req,res)=>{
     const {isActive,id}=req.body

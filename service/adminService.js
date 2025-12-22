@@ -30,7 +30,7 @@ export const adminUsersLogic = async(filter,pageNo,sort)=>{
             .sort(sort)
         
         return {success:true,data:tempUserProgress,currentPage: page,totalPages:totalPages,totalUser:total,}
-        
+
     }catch(e){
         
         return {success:false,message:"ERROR WHILE LOADING USER"}
@@ -68,41 +68,61 @@ export const adminCategoryEditLogic = async(_id,category_name,description,status
     await tempCategoryProgress.save()
     return{success:true,message:"CATEGORY UPDATED"}
 }
-export const adminProductsAddLogic =  async(name,category,sku,description,offer,status,variant)=>{
-    let tempProductProgress = await productModel.findOne({name})
-    if(tempProductProgress){
-        return {success:false,message:"PRODUCT ALREADY EXIST"}
-    }
-    let newProduct = new productModel({
-        offerId:offer,
-        name:name,
-        description:description,
-        
-        status:status,
-        SKU:sku,
-        categoryId:category,
-    })
-    
-    await newProduct.save()
-    tempProductProgress = await productModel.findOne({name})
-    let _id = tempProductProgress._id
-    for(let i in variant){
-        let tempVariantProgress = await variantModel.findOne({productId:_id,color:variant[i].color,size:variant[i].size})
-        if(tempVariantProgress){
-            return {success:false,message:"VARIANT ALREADY EXIST"}
+export const adminProductsAddLogic =  async(name,category,sku,description,status,variant)=>{
+    try{
+        if(!name||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(name)){
+            return {success:false,message:"Name error from server"}
         }
-        let newVariant = new variantModel({
-            productId:_id,
-            color:variant[i].color,
-            size:variant[i].size,
-            stock:variant[i].stock,
-            price:variant[i].price,
+        if(category === ""||category.toUpperCase() == 'SELECT CATEGORY'){
+            return {success:false,message:"Category error from server"}
+        }
+        if(description.length==0||description.length<5||description.length>100){
+            return {success:false,message:"description error from server"}
+        }
+        if(sku.length<12){
+            return {success:false,message:"SKU  error from server"}
+        }
+        if(variant.length==0){
+            return {success:false,message:"Variant error from server"}
+        }
+
+        let tempProductProgress = await productModel.findOne({name})
+        
+        if(tempProductProgress){
+            return {success:false,message:"PRODUCT ALREADY EXIST"}
+        }
+        let newProduct = new productModel({
+            name:name,
+            description:description,
+            status:status,
             SKU:sku,
-            image:variant[i].images
+            categoryId:category,
         })
-        await newVariant.save()
+        
+        await newProduct.save()
+        tempProductProgress = await productModel.findOne({name})
+        let _id = tempProductProgress._id
+        for(let i in variant){
+            let tempVariantProgress = await variantModel.findOne({productId:_id,color:variant[i].color,size:variant[i].size})
+            if(tempVariantProgress){
+                return {success:false,message:"VARIANT ALREADY EXIST"}
+            }
+            let newVariant = new variantModel({
+                productId:_id,
+                color:variant[i].color,
+                size:variant[i].size,
+                stock:variant[i].stock,
+                price:variant[i].price,
+                SKU:sku,
+                image:variant[i].images
+            })
+            await newVariant.save()
+        }
+        return {success:true}
+    }catch(error){
+         console.error("Server validation error:", error);
+        return { success: false, message: "Internal server error" };
     }
-    return {success:true}
 }
 export const adminUserEditLogic = async(status,id)=>{
     const tempUserProgress = await userModel.findOne({_id:id})
@@ -116,11 +136,46 @@ export const adminUserEditLogic = async(status,id)=>{
     await tempUserProgress.save()
     return{success:true}
 }
-export const productModelLoad = async ()=>{
-    let user = await productModel.find()
+export const productModelLoad = async (filter,sort,pageNo)=>{
+    const page = parseInt(pageNo)||1
+    const limit = 5
+    const skip = (page-1)*limit
+    const total = await  productModel.countDocuments()
+    const totalPages = Math.ceil(total/limit)
+
+    let products = await productModel.find(filter)
         .populate('categoryId')
-    if(!user){
+        .find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+    if(!products){
         return {success:false}
     }
-    return {success:true,data:user}
+    return {success:true,data:products,currentPage: page,totalPages:totalPages,totalUser:total}
 } 
+export const variantLoad = async(filter)=>{
+
+    let variants = await variantModel.find(filter)
+        .populate('productId')
+    if(!variants){
+        return {success:false}
+    } 
+    return {success:true,data:variants}
+}
+
+export const categoryModelLoad = async(filter,sort,pageNo)=>{
+    const page = parseInt(pageNo)||1
+    const limit = 5
+    const skip = (page-1)*limit
+    const total = await  categoryModel.countDocuments()
+    const totalPages = Math.ceil(total/limit)
+    let tempCategoryProgress = await categoryModel.find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+    if(!tempCategoryProgress){
+        return {success:false,message:"ERROR WHILE LOADING DATA"}
+    }
+    return{success:true,data:tempCategoryProgress,currentPage: page,totalPages:totalPages,totalUser:total}
+}
