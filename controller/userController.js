@@ -43,7 +43,7 @@ export const homePageLoad = async (req, res) => {
             req.session.destroy()
             return res.redirect('/login')
         }
-        return res.render("User/home",{product:products.data});
+        return res.render("User/home",{product:products.data,color:products.color,size:products.size});
     }catch(e){
         console.log("Home page load Error: ",e)
         return res.status(500).redirect('/login')
@@ -62,8 +62,9 @@ export const forgotPasswordLoad = (req,res)=>{
     return res.render('User/forgot-password',{error:''})
 }
 
-export const productViewLoad = (req,res)=>{
-    return res.render('User/product-view')
+export const productViewLoad = async(req,res)=>{
+    let products = await ProductsLoad()
+    return res.render('User/product-view',{product:products.data})
 }
 // -----------------controllers-----------------
 

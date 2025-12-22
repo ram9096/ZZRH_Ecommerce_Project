@@ -11,7 +11,7 @@ router.get('/verify-otp',generateotpload)
 router.get('/email-verification',emailVerificationLoad)
 router.get('/forgot-password',forgotPasswordLoad)
 router.get('/logout',userLogout)
-router.get('/product-details',productViewLoad)
+router.get('/home/product-details/:id',productViewLoad)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)

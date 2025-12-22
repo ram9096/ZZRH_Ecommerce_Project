@@ -73,7 +73,18 @@
                 </a>
             </div>
         </aside>
-
+        <% if(error) {%>
+            <script>
+            Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: '<%=error%>',
+                    position: 'top-right',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            </script>
+        <% } %>
         <!-- Main Content -->
         <main class="flex-1 p-8">
             <h2 class="text-4xl font-bold mb-8">Customers</h2>
@@ -82,7 +93,7 @@
             <div class="bg-red-50 rounded-lg p-4 mb-6">
                 <div class="flex items-center gap-3">
                     <i class="fas fa-search text-red-400"></i>
-                    <input type="text" id="searchBox" placeholder="Search customers..." class="bg-transparent flex-1 outline-none text-gray-700 placeholder-gray-500">
+                    <input onkeyup="handleSearch(this.value)" value="<%= search %>" type="text" id="searchBox" placeholder="Search customers..." class="bg-transparent flex-1 outline-none text-gray-700 placeholder-gray-500">
                 </div>
             </div>
 
@@ -97,8 +108,8 @@
                         
                         <select name="sort" onchange="this.form.submit()" class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition"  >
                             
-                            <option value="latest">Latest</option>
-                            <option value="oldest">Oldest</option>
+                            <option value="latest" <%= sort === "latest" ? "selected" : "" %> >Latest</option>
+                            <option value="oldest" <%= sort === "oldest" ? "selected" : "" %> >Oldest</option>
                         </select>
                     </form>
                 
@@ -195,12 +206,12 @@
 
 
             <!-- Footer -->
-            <div class="flex items-center justify-between mt-6">
+            <!-- <div class="flex items-center justify-between mt-6">
                 <div class="text-sm text-gray-600">
                     Showing 1 to 5 of 124 customers
                 </div>
                 
-                <!-- Pagination -->
+                Pagination 
                 <div class="flex items-center gap-2">
                     <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition">
                         <i class="fas fa-chevron-left text-gray-600"></i>
@@ -214,7 +225,40 @@
                         <i class="fas fa-chevron-right text-gray-600"></i>
                     </button>
                 </div>
-            </div>
+            </div> -->
+            <div class="flex items-center justify-between mt-6">
+                <div class="text-sm text-gray-600">
+                    Showing 
+                    <%= (currentPage - 1) * 5 + 1 %> 
+                    to 
+                    <%= Math.min(currentPage * 5, totalUser) %> 
+                    of 
+                    <%= totalUser %> customers
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>&status=<%= status %>"
+                        class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalPage; i++) { %>
+                    <a href="?page=<%= i %>&status=<%= status %>"
+                        class="w-10 h-10 flex items-center justify-center rounded-lg
+                        <%= i === currentPage ? 'bg-red-100 font-bold' : 'hover:bg-gray-100' %>">
+                        <%= i %>
+                    </a>
+                    <% } %>
+                    <% if (currentPage < totalPage) { %>
+                    <a href="?page=<%= currentPage + 1 %>&status=<%= status %>"
+                        class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <% } %>
+                </div>
+                </div>
+
         </main>
     </div>
 
@@ -228,21 +272,33 @@
             status.value = msg
         }
 
-        searchTxt.addEventListener('keyup',(e)=>{
-            let tempText = searchTxt.value
-            for(i of rows){
-                let cell = i.getElementsByTagName('td')
-                let match  = false
-                for(j in cell[0]){
-                    if(cell[0].innerText.toLowerCase().includes(tempText.toLowerCase())){
-                        match = true;
-                        break;
-                    }
-                }
+        // searchTxt.addEventListener('keyup',(e)=>{
+        //     let tempText = searchTxt.value
+        //     for(i of rows){
+        //         let cell = i.getElementsByTagName('td')
+        //         let match  = false
+        //         for(j in cell[0]){
+        //             if(cell[0].innerText.toLowerCase().includes(tempText.toLowerCase())){
+        //                 match = true;
+        //                 break;
+        //             }
+        //         }
                 
-                i.style.display = match ? '' : 'none';
-            }
-        })
+        //         i.style.display = match ? '' : 'none';
+        //     }
+        // })
+        let timer;
+        function handleSearch(value) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("search", value);
+                params.set("page", 1);
+                window.location.search = params.toString();
+            }, 400);
+        }
+
+        
         function openFilterModal() {
             document.getElementById("filterModal").classList.remove("hidden");
         }

@@ -45,25 +45,51 @@ export const adminProductsAddLoad = async (req,res)=>{
 }
 export const adminUsersLoad = async (req,res)=>{
     try{
+
         let filter = {}
-        // if(req.query.sort == "latest"||req.query.sort == undefined){
-        //     filter.createdAt = 1
-        // }
+        let sortOption = { createdAt: -1 };
         if(req.query.status == "true"){
             filter.isActive = true
         }else if(req.query.status == "false"){
             filter.isActive = false
         }
-        let tempUserProgress = await adminUsersLogic(filter);
-        if(!tempUserProgress.success){
-            return res.redirect('/admin')
+        if (req.query.search&&req.query.search.trim()!=="") {
+            filter.$or = [
+                { username: { $regex: req.query.search, $options: "i" } },
+                { email: { $regex: req.query.search, $options: "i" } }
+            ];
+            }
+        
+        if (req.query.sort === "oldest") {
+            sortOption = { createdAt: 1 };
+        }
+        let result = await adminUsersLogic(filter,req.query.page,sortOption);
+        if(!result.success){
+            return res.status(500).render("Admin/users-page", {
+                data: [],
+                status: req.query.status || "",
+                currentPage: 1,
+                totalUser: 0,
+                totalPage: 1,
+                search: req.query.search || "",
+                sort: req.query.sort || "latest",
+                error: "Failed to load users"
+            });
         }
         
         let status = String(filter.isActive)
-        // if(Object.values(filter).length==0){
-        //     status = ''
-        // }
-        return res.render('Admin/users-page',{data:tempUserProgress.data,status:status})
+      
+        return res.render('Admin/users-page',{
+            data:result.data,
+            status:status,
+            currentPage:result.currentPage,
+            totalUser:result.totalUser,
+            totalPage:result.totalPages,
+            search: req.query.search || "",
+            sort: req.query.sort || "latest",
+            error:''
+
+        })
     }catch(e){
         console.log("Error while loading: ",e)
         return res.status(500).redirect('/admin/home')

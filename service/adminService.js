@@ -14,12 +14,27 @@ export const adminLoginLogic = (name,password)=>{
     return {success:false,message:"CREDENTIAL INVALID"}
 }
 
-export const adminUsersLogic = async(filter)=>{
-    let tempUserProgress = await userModel.find(filter)
-    if(!tempUserProgress){
+export const adminUsersLogic = async(filter,pageNo,sort)=>{
+    try{
+        const page = parseInt(pageNo)||1
+        const limit = 5
+        const skip = (page-1)*limit
+        const total = await  userModel.countDocuments()
+        const totalPages = Math.ceil(total/limit)
+
+
+        let tempUserProgress = await userModel
+            .find(filter)
+            .skip(skip)
+            .limit(limit)
+            .sort(sort)
+        
+        return {success:true,data:tempUserProgress,currentPage: page,totalPages:totalPages,totalUser:total,}
+        
+    }catch(e){
+        
         return {success:false,message:"ERROR WHILE LOADING USER"}
     }
-    return {success:true,data:tempUserProgress}
 }
 export const dataLoad = async(filter)=>{
     let tempCategoryProgress = await categoryModel.find(filter)

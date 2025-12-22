@@ -119,8 +119,10 @@ export const forgotPasswordLogic = async(email,password)=>{
 export const ProductsLoad = async ()=>{
     let products = await variantModel.find()
         .populate('productId')
+    let color = products.map(products=>products.color)
+    let size = products.map(products=>products.size)
     if(!products){
         return {success:false,message:"ERROR WHILE LOADING DATA"}
     }
-    return {success:true,data:products}
+    return {success:true,data:products,color:color,size:size}
 }

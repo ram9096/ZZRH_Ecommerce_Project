@@ -175,37 +175,35 @@
 
             <!-- Product Details -->
             <div class="space-y-6 font-clash">
-                <div>
-                    <h1 class="text-4xl font-light mb-4">Brown Jacket</h1>
-                    <p class="text-3xl font-semibold">₹1699</p>
-                </div>
-
-                <!-- Description -->
-                <div class="border border-gray-300 rounded-lg p-6">
-                    <h3 class="font-semibold mb-2">Description</h3>
-                    <p class="text-sm text-gray-600">This brown jacket brings a blend of rich texture and modern tailoring. Perfect for layering, it adds effortless sophistication to any outfit.</p>
-                </div>
-
-                <!-- Color Selection -->
-                <div>
-                    <h3 class="font-semibold mb-3">Color</h3>
-                    <div class="flex gap-3">
-                        <div class="color-option" style="background-color: #8B4513;"></div>
-                        <div class="color-option" style="background-color: #4B5563;"></div>
-                        <div class="color-option" style="background-color: #6B5B6E;"></div>
+                <% product.forEach(product=>{ %>
+                    <div>
+                        <h1 class="text-4xl font-light mb-4"> <%= product.productId.name %> </h1>
+                        <p class="text-3xl font-semibold">₹<%= product.price %>  </p>
                     </div>
-                </div>
 
-                <!-- Size Selection -->
-                <div>
-                    <h3 class="font-semibold mb-3">Size</h3>
-                    <div class="flex gap-3">
-                        <button class="size-option">S</button>
-                        <button class="size-option">M</button>
-                        <button class="size-option">L</button>
-                        <button class="size-option">XL</button>
+                    <!-- Description -->
+                    <div class="border border-gray-300 rounded-lg p-6">
+                        <h3 class="font-semibold mb-2">Description</h3>
+                        <p class="text-sm text-gray-600"><%= product.productId.description %></p>
                     </div>
-                </div>
+
+                    <!-- Color Selection -->
+                    <div>
+                        <h3 class="font-semibold mb-3">Color</h3>
+                        <h3><%= product.color %></h3>
+                    </div>
+
+                    <!-- Size Selection -->
+                    <div>
+                        <h3 class="font-semibold mb-3">Size</h3>
+                        <div class="flex gap-3">
+                            <button class="size-option">S</button>
+                            <button class="size-option">M</button>
+                            <button class="size-option">L</button>
+                            <button class="size-option">XL</button>
+                        </div>
+                    </div>
+                <% }) %>
 
                 <!-- Quantity -->
                 <div class="flex items-center justify-between">
