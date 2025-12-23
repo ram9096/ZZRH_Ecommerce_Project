@@ -33,6 +33,7 @@ export const generateotpload = (req, res) => {
 };
 export const homePageLoad = async (req, res) => {
     try{
+       
         let products = await ProductsLoad()
         if(!req.session.user){
             return res.redirect('/login')

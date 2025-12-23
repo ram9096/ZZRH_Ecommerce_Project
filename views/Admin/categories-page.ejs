@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -110,6 +114,10 @@
                                     <option value="oldest" <%= sort === "oldest" ? "selected" : "" %> >Oldest</option>
                                 </select>
                             </form>
+                            <a href="/admin/category">
+                                <button class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition">Reset</button>
+                            </a>
+
                         
                         <!-- <button class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition">
                             Sort by
@@ -121,27 +129,17 @@
                         </button>
                     </a>
                 </div>
-                 <% if (error) { %>
-                    <div id="popup"
-                        class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
-                    <%= error %>
-                    </div>
-
+                 <% if(error) {%>
                     <script>
-                    setTimeout(() => {
-                        document.getElementById("popup").classList.add("opacity-0");
-                    }, 2500);
+                    Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: '<%=error%>',
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
                     </script>
-
-                    <style>
-                    .animate-fade-in { 
-                        animation: fadeIn 0.4s ease-out;
-                    }
-                    @keyframes fadeIn {
-                        0% { opacity: 0; transform: translateY(-10px); }
-                        100% { opacity: 1; transform: translateY(0); }
-                    }
-                    </style>
                 <% } %>
                 <!-- Table -->
                 <div class="bg-white rounded-lg shadow-sm overflow-hidden">

@@ -230,7 +230,7 @@
                         errors.description.textContent = ""
                         return true
                     case "status":
-                        if(!value){
+                        if(value===""){
                             errors.status.textContent = "Enter status"
                             return false
                         }
@@ -252,10 +252,10 @@
                 if (!valid) e.preventDefault()
             })
         })()
-        const status_Input = document.getElementById("status_Input")
         function set_status(msg){
             const active = document.getElementById('active')
             const inactive = document.getElementById('inactive')
+            const status_Input = document.getElementById("status_Input")
             active.classList.remove('bg-red-500','text-white','border-red-500');
             inactive.classList.remove('bg-red-500', 'text-white','border-red-500');
             if(msg){
@@ -265,19 +265,7 @@
             }
             status_Input.value = msg
         }
-        const statusButtons = document.querySelectorAll('.button');
-        const statusGroup = Array.from(statusButtons).slice(-2);
         
-        statusGroup.forEach(button => {
-            button.addEventListener('click', function() {
-                statusGroup.forEach(btn => {
-                    btn.classList.remove('bg-red-600', 'text-white', 'border-red-600');
-                    btn.classList.add('border-gray-300', 'text-gray-700');
-                });
-                this.classList.remove('border-gray-300', 'text-gray-700');
-                this.classList.add('bg-red-600', 'text-black', 'border-red-600');
-            });
-        });
     </script>
 </body>
 </html>

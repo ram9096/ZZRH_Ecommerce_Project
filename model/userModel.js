@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 let schema  = mongoose.Schema
 
 const userSchema = new schema({
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true   // allows users without googleId
+    },
     username:{
         type:String,
         required:true,

@@ -48,13 +48,13 @@ export const adminCategoryAddLogic = async(category_name,description,status)=>{
         if(category_name.length<3
             ||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(category_name)
         ){
-            return {success:false,message:"DATA ERROR"}
+            return {success:false,message:"LENGTH ERROR"}
         }
         if(description.length==0||description.length<5||description.length>100||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(description)){
-            return {success:false,message:"DATA ERROR"}
+            return {success:false,message:"DESCRIPTION ERROR"}
         }
         if(status==''){
-            return {success:false,message:"DATA ERROR"}
+            return {success:false,message:"STATUS ERROR"}
         }
         let tempCategoryProgress = await categoryModel.findOne({category_name})
     
@@ -70,19 +70,36 @@ export const adminCategoryAddLogic = async(category_name,description,status)=>{
         return {success:true}
     }catch(e){
         console.log("Server Error: ",e)
-        return {success:false,message:"SERVER ERROR"}
+        return {success:false,message:"SERVER ERROR OR THE CATEGORY ALL READY EXIST"}
     }
 }
 export const adminCategoryEditLogic = async(_id,category_name,description,status)=>{
-    let tempCategoryProgress = await categoryModel.findOne({_id})
-    if(!tempCategoryProgress){
-        return {success:false,message:"ERROR WHILE EDITING THE CATEGORY"}
+    try{
+
+        if(category_name.length<3
+            ||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(category_name)
+        ){
+            return {success:false,message:"DATA ERROR"}
+        }
+        if(description.length==0||description.length<5||description.length>100||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(description)){
+            return {success:false,message:"DATA ERROR"}
+        }
+        if(status==''){
+            return {success:false,message:"DATA ERROR"}
+        }
+        let tempCategoryProgress = await categoryModel.findOne({_id})
+        if(!tempCategoryProgress){
+            return {success:false,message:"ERROR WHILE EDITING THE CATEGORY"}
+        }
+        tempCategoryProgress.categoryName = category_name
+        tempCategoryProgress.description = description
+        tempCategoryProgress.isActive = status
+        await tempCategoryProgress.save()
+        return{success:true,message:"CATEGORY UPDATED"}
+    }catch(e){
+        console.log("Server error",e)
+        return {success:false,message:"SERVER ERROR"}
     }
-    tempCategoryProgress.categoryName = category_name
-    tempCategoryProgress.description = description
-    tempCategoryProgress.isActive = status
-    await tempCategoryProgress.save()
-    return{success:true,message:"CATEGORY UPDATED"}
 }
 export const adminProductsAddLogic =  async(name,category,sku,description,status,variant)=>{
     try{
