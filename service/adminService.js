@@ -112,7 +112,7 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
         if(description.length==0||description.length<5||description.length>100){
             return {success:false,message:"description error from server"}
         }
-        if(sku.length<12){
+        if(sku.length==0){
             return {success:false,message:"SKU  error from server"}
         }
         if(variant.length==0){

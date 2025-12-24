@@ -1,12 +1,18 @@
-import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad } from "../service/userService.js";
+import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails } from "../service/userService.js";
 
 //--------------Page renderings------------------
 
-export const userLandingLoad = (req, res) => {
-    if(req.session.user){
-        return res.redirect('/home')
+export const userLandingLoad = async(req, res) => {
+    try{
+        let products = await ProductsLoad({})
+        if(req.session.user){
+            return res.redirect('/home')
+        }
+        return res.render("User/landing-page",{product:products.data,error:''});
+    }catch(er){
+        console.log("Server error ",er)
+        return res.status(500).render("User/landing-page",{product:[],error:"Server error"})
     }
-    return res.render("User/landing-page");
 };
 
 export const userLoginload = (req, res) => {
@@ -28,13 +34,15 @@ export const generateotpload = (req, res) => {
         return res.redirect('/home')
     }
     return res.render("User/otp-verification", {
-        email: req.session.tempEmail
+        email: req.session.tempEmail,
+        error:'',
+        success:''
     });
 };
 export const homePageLoad = async (req, res) => {
     try{
        
-        let products = await ProductsLoad()
+        let products = await ProductsLoad({})
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -44,7 +52,7 @@ export const homePageLoad = async (req, res) => {
             req.session.destroy()
             return res.redirect('/login')
         }
-        return res.render("User/home",{product:products.data,color:products.color,size:products.size});
+        return res.render("User/home",{product:products.data,color:products.color,size:products.size,error:''});
     }catch(e){
         console.log("Home page load Error: ",e)
         return res.status(500).redirect('/login')
@@ -64,8 +72,21 @@ export const forgotPasswordLoad = (req,res)=>{
 }
 
 export const productViewLoad = async(req,res)=>{
-    let products = await ProductsLoad()
-    return res.render('User/product-view',{product:products.data})
+    try{
+        let productId = req.params.id
+        let color = req.query.color
+        let size = req.query.size
+        let products = await ProductvariantDetails(productId,color,size)
+        console.log(products)
+        if(!products.success){
+            return res.render('User/product-view',{product:[],color:[],size:[],error:products.error})
+        }
+        return res.render('User/product-view',{product:products.product,color:products.color,size:products.size,variant:products.variant})
+    }catch(e){
+        console.log("Error: ",e)
+        return res.redirect('/')
+    }
+    
 }
 // -----------------controllers-----------------
 
@@ -103,7 +124,7 @@ export const userRegister = async (req, res) => {
         let reg = await registerService(name, email, password, mobileno);
 
         if (!reg.success) {
-            return res.status(400).redirect("/login");
+            return res.status(400).render("User/login-page",{error:reg.message});
         }
 
         req.session.tempEmail = email; 
@@ -117,7 +138,22 @@ export const userRegister = async (req, res) => {
         return res.status(500).redirect("/login");
     }
 };
-
+export const resentOtp = async(req,res)=>{
+    try{
+        const email = req.session.tempEmail
+        if (!email) {
+            return res.status(401).render('User/otp-verification',{email,error:"SESSION EXPIRED TRY AGAIN",success:''});
+        }
+        const result = await generateOtp(email)
+        if (!result.success) {
+           return res.status(401).render('User/otp-verification',{email,error:result.message,success:''});
+        }
+        return res.status(200).render('User/otp-verification',{email,success:"OTP SUCCESSFULLY SENT AGAIN",error:''})
+    }catch(e){
+        console.log("Server error: ",e)
+        return res.status(500).redirect('/login')
+    }
+}
 
 export const verifyotp = async (req, res) => {
     const { otp1, otp2, otp3, otp4, otp5, otp6 } = req.body;
@@ -130,7 +166,7 @@ export const verifyotp = async (req, res) => {
 
     if (!verify.success) {
         console.log("OTP Error:", verify.message);
-        return res.status(401).redirect("/verify-otp");
+        return res.status(401).render('User/otp-verification',{email,error:verify.message,success:''});
     }
     if(req.session.otpContext == "FORGOT_PASSWORD"){
         return res.redirect('/forgot-password')
@@ -176,4 +212,34 @@ export const forgotPassword = async (req,res)=>{
     }
     return res.redirect('/login')
 
+}
+
+export const productLisitingLoad = async(req,res)=>{
+    try{
+        let filter = {}
+        if(req.query.color){
+            filter.color = req.query.color
+        }
+        if(req.query.size){
+            filter.size = req.query.size
+        }
+        if(req.query.price){
+            filter.price = 1
+        }
+        let products = await ProductsLoad(filter)
+        if(!products.success){
+            return res.render("User/product-listing",{error:products.message,product:[]})
+        }
+        return res.render("User/product-listing",{
+            product:products.data,
+            error:'',
+            color:products.color,
+            size:products.size,
+            colorValue:req.query.color||"",
+            sizeValue:req.query.size||""
+        })
+    }catch(e){
+        console.log("Server error ",e)
+        return res.render("User/product-listing",{product:[],error:'Server error',color:'',size:''})
+    }
 }

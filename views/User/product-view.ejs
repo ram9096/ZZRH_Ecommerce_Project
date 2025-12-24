@@ -164,34 +164,43 @@
     <main class="container mx-auto px-8 ">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <!-- Image Gallery -->
-            <div class="space-y-4">
-                <div class="bg-gray-200 rounded-lg aspect-square"></div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="bg-gray-200 rounded-lg aspect-square"></div>
-                    <div class="bg-gray-200 rounded-lg aspect-square"></div>
-                    <div class="bg-gray-200 rounded-lg aspect-square"></div>
+             
+                <div class="space-y-4">
+                    <div class="bg-gray-200 rounded-lg aspect-square">
+                        <img src="/<%= variant[0].image[0] %>" alt="">
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-gray-200 rounded-lg aspect-square">
+                            <img src="/<%= variant[0].image[1] %>" alt="">
+                        </div>
+                        <div class="bg-gray-200 rounded-lg aspect-square">
+                            <img src="/<%= variant[0].image[2] %>" alt="">
+                        </div>
+                        
+                    </div>
                 </div>
-            </div>
 
             <!-- Product Details -->
             <div class="space-y-6 font-clash">
-                <% product.forEach(product=>{ %>
+                
                     <div>
-                        <h1 class="text-4xl font-light mb-4"> <%= product.productId.name %> </h1>
-                        <p class="text-3xl font-semibold">₹<%= product.price %>  </p>
+                        <h1 class="text-4xl font-light mb-4"> <%= product.name %> </h1>
+                        <p class="text-3xl font-semibold">₹<%= variant[0].price %>  </p>
                     </div>
 
                     <!-- Description -->
                     <div class="border border-gray-300 rounded-lg p-6">
                         <h3 class="font-semibold mb-2">Description</h3>
-                        <p class="text-sm text-gray-600"><%= product.productId.description %></p>
+                        <p class="text-sm text-gray-600"><%= product.description %></p>
                     </div>
 
                     <!-- Color Selection -->
-                    <div>
-                        <h3 class="font-semibold mb-3">Color</h3>
-                        <h3><%= product.color %></h3>
-                    </div>
+                     <% color.forEach(c=>{ %>
+                        <div>
+                            <h3 class="font-semibold mb-3">Color</h3>
+                            <h3><%= c %></h3>
+                        </div>
+                    <% }) %>
 
                     <!-- Size Selection -->
                     <div>
@@ -203,7 +212,7 @@
                             <button class="size-option">XL</button>
                         </div>
                     </div>
-                <% }) %>
+               
 
                 <!-- Quantity -->
                 <div class="flex items-center justify-between">

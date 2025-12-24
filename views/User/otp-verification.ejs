@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OTP Verification</title>
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -37,6 +41,30 @@
   </style>
 </head>
 <body class="bg-white flex flex-col items-center justify-center min-h-screen p-4">
+  <% if (error) { %>
+    <script>
+      Swal.fire({
+            toast: true,
+            icon: 'error',
+            title: '<%=error%>',
+            position: 'top-right',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    </script>
+  <% } %>
+  <% if (success) { %>
+    <script>
+      Swal.fire({
+            toast: true,
+            icon: 'success',
+            title: '<%=success%>',
+            position: 'top-right',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    </script>
+  <% } %>
 
   <div class="w-full max-w-md mx-auto">
 
@@ -80,9 +108,16 @@
     <!-- FORM ENDS HERE -->
 
     <!-- Resend Link -->
-    <p class="text-center text-sm">
+    <!-- <p class="text-center text-sm">
       Did not receive otp? <a href="#" class="underline">Resent otp</a>
-    </p>
+    </p> -->
+    <form action="/resent-otp" method="POST">
+      <button type="submit" class="underline text-black">
+        Resend OTP
+      </button>
+    </form>
+
+
 
   </div>
 
@@ -91,24 +126,45 @@
 
   <script>
     // Simple timer functionality
-    let timeLeft = 180;
-    const timerElement = document.getElementById('timer');
+    // let timeLeft = 30;
+    // const timerElement = document.getElementById('timer');
     
-    function updateTimer() {
-      if (timeLeft > 0) {
-        timeLeft--;
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        setTimeout(updateTimer, 1000);
-      } else {
+    // function updateTimer() {
+    //   if (timeLeft > 0) {
+    //     timeLeft--;
+    //     const minutes = Math.floor(timeLeft / 60);
+    //     const seconds = timeLeft % 60;
+    //     timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    //     setTimeout(updateTimer, 1000);
+    //   } else {
+    //     timerElement.textContent = "Expired";
+    //     timerElement.classList.add("text-red-500");
+    //   }
+    // }
+    
+    // // Start timer when page loads
+    // window.onload = updateTimer;
+
+    let timeLeft = 30;
+    const timerElement = document.getElementById("timer");
+
+    const timerInterval = setInterval(() => {
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
         timerElement.textContent = "Expired";
         timerElement.classList.add("text-red-500");
+        return;
       }
-    }
-    
-    // Start timer when page loads
-    window.onload = updateTimer;
+
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      timerElement.textContent = `${minutes}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+
+      timeLeft--;
+    }, 1000);
 
     // Auto-focus next input field when character is entered
     // function moveToNext(currentInput, nextIndex) {
@@ -116,6 +172,7 @@
     //     document.getElementById(`otp${nextIndex}`).focus();
     //   }
     // }
+    
   function moveToNext(index) {
     const input = document.getElementById(`otp${index}`);
     

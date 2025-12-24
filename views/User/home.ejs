@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>#ZRI1 - Fashion Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
         
@@ -41,6 +45,18 @@
 </head>
 <body class="bg-white">
     <!-- Header/Navigation -->
+     <% if (error) { %>
+        <script>
+          Swal.fire({
+                toast: true,
+                icon: 'error',
+                title: '<%=error%>',
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+      <% } %>
      
     <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
     <!-- Logo -->
@@ -218,19 +234,19 @@
 
     <!-- CTA Section -->
     <section class="container mx-auto px-4 py-12 font-bloverly">
-        <div class="bg-gradient-to-r from-cyan-400 to-blue-500 rounded-3xl overflow-hidden relative" style="height: 400px;">
-            <img src="" 
+        <div class=" rounded-3xl overflow-hidden relative" style="height: 800px;">
+            <img src="/Background-image.jpg" 
                  alt="Fashion" 
-                 class="w-full h-full object-cover mix-blend-overlay">
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8">
-                <h2 class="text-5xl serif-font font-light mb-6 text-center">
+                 class="w-full h-full object-cover ">
+            <div class="absolute inset-0 items-left justify-center text-white p-8">
+                <h2 class="text-[90px] font-light  text-left">
                     Feel more retromantic - feel<br>free to step into timeless<br>fashion with a twist.
                 </h2>
-                <p class="text-sm mb-8 text-center max-w-xl opacity-90">
+                <p class="text-[20px] mb-8 text-left max-w-xl opacity-90 font-clash">
                     Sign up today to receive exclusive deals and unlock fashion<br>
                     collections that define your unique style every season
                 </p>
-                <button class="border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm">
+                <button class="text-[40px] border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash">
                     Thank you for clicking
                 </button>
             </div>
