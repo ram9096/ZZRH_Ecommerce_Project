@@ -140,12 +140,34 @@ export const forgotPasswordLogic = async(email,password)=>{
 }
 
 export const ProductsLoad = async (filter)=>{
-    let color = (await variantModel.find()).map(v=>v.color)
-    let size = (await variantModel.find()).map(v=>v.size)
-    let products = await variantModel
-        .find(filter)
-        .populate('productId')
-        
+    let color = new Set([...(await variantModel.find()).map(v=>v.color)])
+    let size = new Set([...(await variantModel.find()).map(v=>v.size)])
+    let products = await variantModel.aggregate([
+        {$match:filter},
+        {
+            $lookup:{
+                from:"products",
+                localField:"productId",
+                foreignField:"_id",
+                as:"products"
+            }
+        },
+        {$unwind:"$products"},
+        {
+            $lookup:{
+                from:"categories",
+                localField:"products.categoryId",
+                foreignField:"_id",
+                as:"category"
+            }
+        },
+        {$unwind:"$category"},
+        {
+            $match:{
+                "category.isActive":true
+            }
+        }
+    ])
     //let color = products.map(products=>products.color)
     if(!products){
         return {success:false,message:"ERROR WHILE LOADING DATA"}
@@ -156,9 +178,32 @@ export const ProductsLoad = async (filter)=>{
 export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
     try{
         const product =  await productModel.findById(id)
-        const variant= await variantModel.find({productId:id,color:Variantcolor,size:Variantsize})
-        const color = [...new Set(variant.map(v => v.color))]
-        const size  = [...new Set(variant.map(v => v.size))]
+        const color = (await variantModel.find({productId:id})).map(v=>v.color)
+        const size  = (await variantModel.find({productId:id})).map(v => v.size)
+        const variants= await variantModel.find({productId:id})
+        let variant = null
+        if(variants.length==0){
+            return {success:false,message:"PRODUCT DOESN'T EXIST"}
+        }
+        if (Variantcolor && Variantsize) {
+        variant = variants.find(
+            v => v.color === Variantcolor && v.size === Variantsize
+        )
+        }
+
+        if (!variant && Variantsize) {
+        variant = variants.find(v => v.size === Variantsize)
+        }
+
+        if (!variant && Variantcolor) {
+        variant = variants.find(v => v.color === Variantcolor)
+        }
+
+        if (!variant) {
+        variant = variants[0]
+        }
+
+        
         return {success:true,product,variant,color,size}
     }catch(e){
         console.log("Error: ",e)

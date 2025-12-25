@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brown Jacket - ZZRH</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
@@ -84,6 +88,18 @@
     </style>
 </head>
 <body class="bg-white">
+    <% if (error) { %>
+        <script>
+          Swal.fire({
+                toast: true,
+                icon: 'error',
+                title: '<%=error%>',
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+      <% } %>
     <!-- Header -->
     <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
     <!-- Logo -->
@@ -91,6 +107,7 @@
       #ZZRH
     </div>
     <!-- <a href="/logout">logout</a> -->
+     
 
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex space-x-8 text-xl font-clash">
@@ -159,22 +176,57 @@
         </div>
     
   </div>
+  <%
+  const selectedVariant = variant?.[0] || variant
+%>
+
 
     <!-- Main Content -->
     <main class="container mx-auto px-8 ">
+        <nav class="text-sm text-gray-500 mb-6 font-clash" aria-label="Breadcrumb">
+  <ol class="flex flex-wrap items-center gap-1">
+
+    <!-- Home -->
+    <li>
+      <a href="/" class="hover:text-black">Home</a>
+    </li>
+
+    <li>/</li>
+
+    <!-- Category -->
+    <% if (product?.categoryId?.categoryName) { %>
+      <li>
+        <a
+          href="/home?category=<%= product.categoryId._id %>"
+          class="hover:text-black"
+        >
+          <%= product.categoryId.categoryName %>
+        </a>
+      </li>
+      <li>/</li>
+    <% } %>
+
+    <!-- Product -->
+    <li class="text-black font-medium truncate max-w-[200px]">
+      <%= product.name %>
+    </li>
+
+  </ol>
+</nav>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <!-- Image Gallery -->
              
                 <div class="space-y-4">
                     <div class="bg-gray-200 rounded-lg aspect-square">
-                        <img src="/<%= variant[0].image[0] %>" alt="">
+                        <img src="/<%= selectedVariant?.image[0] %>" alt="">
                     </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div class="bg-gray-200 rounded-lg aspect-square">
-                            <img src="/<%= variant[0].image[1] %>" alt="">
+                            <img src="/<%= selectedVariant?.image[1] %>" alt="">
                         </div>
                         <div class="bg-gray-200 rounded-lg aspect-square">
-                            <img src="/<%= variant[0].image[2] %>" alt="">
+                            <img src="/<%= selectedVariant?.image[2] %>" alt="">
                         </div>
                         
                     </div>
@@ -185,7 +237,7 @@
                 
                     <div>
                         <h1 class="text-4xl font-light mb-4"> <%= product.name %> </h1>
-                        <p class="text-3xl font-semibold">₹<%= variant[0].price %>  </p>
+                        <p class="text-3xl font-semibold">₹<%= selectedVariant?.price %>  </p>
                     </div>
 
                     <!-- Description -->
@@ -195,23 +247,44 @@
                     </div>
 
                     <!-- Color Selection -->
-                     <% color.forEach(c=>{ %>
-                        <div>
-                            <h3 class="font-semibold mb-3">Color</h3>
-                            <h3><%= c %></h3>
-                        </div>
-                    <% }) %>
+                    <div>
+                        <h3 class="font-semibold mb-3">Color</h3>
+
+                        <select
+                            class="border rounded px-3 py-2"
+                            onchange="location.href=this.value"
+                        >
+                            <% color.forEach(c => { %>
+                            <option
+                                value="/home/product-details/<%= product._id %>?color=<%= c %>&size=<%= selectedVariant.size %>"
+                                <%= c === selectedVariant.color ? "selected" : "" %>
+                            >
+                                <%= c %>
+                            </option>
+                            <% }) %>
+                    </select>
+                    </div>
+
 
                     <!-- Size Selection -->
                     <div>
                         <h3 class="font-semibold mb-3">Size</h3>
-                        <div class="flex gap-3">
-                            <button class="size-option">S</button>
-                            <button class="size-option">M</button>
-                            <button class="size-option">L</button>
-                            <button class="size-option">XL</button>
+
+                        <select
+                            class="border rounded px-3 py-2"
+                            onchange="location.href=this.value"
+                        >
+                            <% size.forEach(s => { %>
+                            <option
+                                value="/home/product-details/<%= product._id %>?size=<%= s %>&color=<%= selectedVariant.color %>"
+                                <%= s === selectedVariant.size ? "selected" : "" %>
+                            >
+                                <%= s %>
+                            </option>
+                            <% }) %>
+                        </select>
                         </div>
-                    </div>
+
                
 
                 <!-- Quantity -->

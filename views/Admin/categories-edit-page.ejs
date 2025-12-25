@@ -256,9 +256,9 @@
         })()
         const statusButtons = document.querySelectorAll('.button');
         const statusGroup = Array.from(statusButtons).slice(-2);
-        const status_Input = document.getElementById("status_Input")
         function set_status(msg){
-
+            
+            const status_Input = document.getElementById("status_Input")
             const active = document.getElementById('active')
             const inactive = document.getElementById('inactive')
             active.classList.remove('bg-red-500','text-white','border-red-500');

@@ -43,6 +43,7 @@ export const homePageLoad = async (req, res) => {
     try{
        
         let products = await ProductsLoad({})
+        
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -77,11 +78,23 @@ export const productViewLoad = async(req,res)=>{
         let color = req.query.color
         let size = req.query.size
         let products = await ProductvariantDetails(productId,color,size)
-        console.log(products)
         if(!products.success){
-            return res.render('User/product-view',{product:[],color:[],size:[],error:products.error})
+            return res.render('User/product-view',{
+                product:[],
+                color:[],
+                size:[],
+                error:products.error,
+                variant:[],
+                error:products.message
+            })
         }
-        return res.render('User/product-view',{product:products.product,color:products.color,size:products.size,variant:products.variant})
+        return res.render('User/product-view',{
+            product:products.product,
+            color:products.color,
+            size:products.size,
+            variant:products.variant,
+            error:''
+        })
     }catch(e){
         console.log("Error: ",e)
         return res.redirect('/')

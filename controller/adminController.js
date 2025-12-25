@@ -54,7 +54,7 @@ export const adminCategoryAddLoad = (req,res)=>{
 export const adminCategoryEditLoad = async (req,res)=>{
     let _id = req.params.id
     let data = await dataLoad({_id})
-    return res.render('Admin/categories-edit-page',{id:_id,name:data.data[0].categoryName,description:data.data[0].description,status:data.data[0].isActive})
+    return res.render('Admin/categories-edit-page',{error:'',id:_id,name:data.data[0].categoryName,description:data.data[0].description,status:data.data[0].isActive})
 }
 export const adminProductsLoad =  async(req,res)=>{
     let filter = {}
@@ -181,6 +181,7 @@ export const adminCategoryEdit = async (req,res)=>{
     const {category_name,description,status} = req.body
     let _id = req.params.id
     let tempCategoryProgress = await adminCategoryEditLogic(_id,category_name,description,status)
+    console.log(tempCategoryProgress)
     if(!tempCategoryProgress.success){
         return res.render('/admin/categories-page',{error:tempCategoryProgress.message})
     }
