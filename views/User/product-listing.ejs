@@ -132,7 +132,7 @@
                     <select name="size" onchange="this.form.submit()" class="border-none bg-transparent">
                         <option value="">size</option>
                         <% size.forEach(c=>{ %>
-                            <option value="<%= c %>" <%= size === c ? "selected" : "" %> ><%= c %></option>
+                            <option value="<%= c %>" <%= sizeValue === c ? "selected" : "" %> ><%= c %></option>
                         <% }) %>
                     </select>
                     <select name="price" onchange="this.form.submit()" class="border-none bg-transparent">

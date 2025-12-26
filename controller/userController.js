@@ -110,20 +110,29 @@ export const userLogin = async (req, res) => {
         let login = await userLoginLogic(email, password);
         
         if (!login.success&&login.message!="OTP NOT VERIFIED") {
-            return res.render("User/login-page",{error:login.message});
+            return res.status(401).json({
+                success:false,
+                message:login.message
+            })
         }
         
         if(login.message == "OTP NOT VERIFIED"){
             req.session.tempEmail = login.data.email
             await generateOtp(login.data.email)
-            return res.redirect('/verify-otp')
+            return res.status(200).json({
+                success:true,
+                redirect:"/verify-otp"
+            })
         }        
         req.session.user = {
             id: login.data._id,
             email: login.data.email,
             isActive:login.data.isActive
         };
-        return res.redirect("/home");
+        return res.status(200).json({
+            success:true,
+            redirect:"/home"
+        })
 
     } catch (e) {
         return res.status(500).redirect("/");
@@ -169,27 +178,42 @@ export const resentOtp = async(req,res)=>{
 }
 
 export const verifyotp = async (req, res) => {
-    const { otp1, otp2, otp3, otp4, otp5, otp6 } = req.body;
+    try{
+        const { otp } = req.body;
 
-    let otp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
+        let email = req.session.tempEmail;
 
-    let email = req.session.tempEmail;
+        let verify = await verifyOtpLogic(email, otp);
 
-    let verify = await verifyOtpLogic(email, otp);
-
-    if (!verify.success) {
-        console.log("OTP Error:", verify.message);
-        return res.status(401).render('User/otp-verification',{email,error:verify.message,success:''});
+        if (!verify.success) {
+            console.log("OTP Error:", verify.message);
+            return res.status(401).json({
+                success:false,
+                message:verify.message
+            })
+        }
+        if(req.session.otpContext == "FORGOT_PASSWORD"){
+            return res.status(200).json({
+                success: true,
+                redirect: "/forgot-password",
+            });
+        }
+        req.session.tempEmail = null;
+        req.session.user = {
+            id: verify.data._id,
+            email: verify.data.email
+        };
+        return res.status(200).json({
+            success: true,
+            redirect: "/home",
+        });
+    }catch(e){
+        console.log("Error ",e)
+        return res.status(500).json({
+            success: false,
+            message: "Server error. Please try again.",
+        })
     }
-    if(req.session.otpContext == "FORGOT_PASSWORD"){
-        return res.redirect('/forgot-password')
-    }
-    req.session.tempEmail = null;
-    req.session.user = {
-        id: verify.data._id,
-        email: verify.data.email
-    };
-    return res.status(200).redirect("/home");
 };
 
 export const emailVerification = async (req,res)=>{
@@ -229,7 +253,7 @@ export const forgotPassword = async (req,res)=>{
 
 export const productLisitingLoad = async(req,res)=>{
     try{
-        let filter = {}
+        let filter = {},sortOption = {}
         if(req.query.color){
             filter.color = req.query.color
         }
@@ -237,7 +261,7 @@ export const productLisitingLoad = async(req,res)=>{
             filter.size = req.query.size
         }
         if(req.query.price){
-            filter.price = 1
+            sortOption.price = 1
         }
         let products = await ProductsLoad(filter)
         if(!products.success){

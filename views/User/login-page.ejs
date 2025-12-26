@@ -169,42 +169,75 @@
       }
     });
 
-    document.getElementById('login-form').addEventListener('submit', function (e) {
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault()
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
-      const errorDiv = document.getElementById('client-error');
-  
-      // Reset
-      errorDiv.classList.add('hidden');
-      errorDiv.textContent = '';
 
-      let isValid = true;
-      let errorMsg = '';
 
-      // Validate email
-      if (!email) {
-        errorMsg = 'Email is required.';
-        isValid = false;
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errorMsg = 'Please enter a valid email address.';
-        isValid = false;
-      }
+       if (!email || !password) {
+        Swal.fire({
+          toast: true,
+          icon: "error",
+          title: "Email and password are required",
+          position: "top-right",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        return
+       }
+       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        Swal.fire({
+          toast: true,
+          icon: "error",
+          title: "Enter a valid email",
+          position: "top-right",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        return
+       }
 
-      // Validate password
-      if (!password) {
-        errorMsg = 'Password is required.';
-        isValid = false;
-      } else if (password.length < 6) {
-        errorMsg = 'Password must be at least 6 characters long.';
-        isValid = false;
-      }
 
-      if (!isValid) {
-        e.preventDefault(); // Prevent form submission
-        errorDiv.textContent = errorMsg;
-        errorDiv.classList.remove('hidden');
-        // Auto-hide after 4 seconds
-        setTimeout(() => errorDiv.classList.add('hidden'), 4000);
+      try{
+        const res = await fetch("/login",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+          },
+          body:JSON.stringify({email,password})
+        })
+        const data = await res.json()
+        if(!data.success){
+            Swal.fire({
+            toast: true,
+            icon: "error",
+            title: data.message || "ERROR",
+            position: "top-right",
+            showConfirmButton: false,
+            timer: 3000,
+          })
+          return 
+        }
+        Swal.fire({
+          icon: "success",
+          title: "Login successful",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        setTimeout(() => {
+          window.location.href = data.redirect;
+        }, 1500);
+      }catch(er){
+        Swal.fire({
+          toast: true,
+          icon: "error",
+          title: er.message,
+          position: "top-right",
+          showConfirmButton: false,
+          timer: 3000,
+        });
       }
     });
   </script>
