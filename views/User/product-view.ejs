@@ -176,8 +176,8 @@
         </div>
     
   </div>
-  <%
-  const selectedVariant = variant?.[0] || variant
+<%
+    const selectedVariant = variant?.[0] || variant
 %>
 
 
@@ -219,14 +219,14 @@
              
                 <div class="space-y-4">
                     <div class="bg-gray-200 rounded-lg aspect-square">
-                        <img src="/<%= selectedVariant?.image[0] %>" alt="">
+                        <img id="img1" src="/<%= selectedVariant?.image[0] %>" alt="">
                     </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div class="bg-gray-200 rounded-lg aspect-square">
-                            <img src="/<%= selectedVariant?.image[1] %>" alt="">
+                            <img id="img2" src="/<%= selectedVariant?.image[1] %>" alt="">
                         </div>
                         <div class="bg-gray-200 rounded-lg aspect-square">
-                            <img src="/<%= selectedVariant?.image[2] %>" alt="">
+                            <img id="img3" src="/<%= selectedVariant?.image[2] %>" alt="">
                         </div>
                         
                     </div>
@@ -237,7 +237,7 @@
                 
                     <div>
                         <h1 class="text-4xl font-light mb-4"> <%= product.name %> </h1>
-                        <p class="text-3xl font-semibold">₹<%= selectedVariant?.price %>  </p>
+                        <p id="price" class="text-3xl font-semibold">₹<%= selectedVariant?.price %>  </p>
                     </div>
 
                     <!-- Description -->
@@ -252,12 +252,12 @@
 
                         <select
                             class="border rounded px-3 py-2"
-                            onchange="location.href=this.value"
+                            id="color"
                         >
                             <% color.forEach(c => { %>
                             <option
-                                value="/home/product-details/<%= product._id %>?color=<%= c %>&size=<%= selectedVariant.size %>"
-                                <%= c === selectedVariant.color ? "selected" : "" %>
+                                value="<%= c %>"
+                                
                             >
                                 <%= c %>
                             </option>
@@ -272,18 +272,17 @@
 
                         <select
                             class="border rounded px-3 py-2"
-                            onchange="location.href=this.value"
+                            id="size"
                         >
                             <% size.forEach(s => { %>
                             <option
-                                value="/home/product-details/<%= product._id %>?size=<%= s %>&color=<%= selectedVariant.color %>"
-                                <%= s === selectedVariant.size ? "selected" : "" %>
+                                value="<%= s %>"
                             >
                                 <%= s %>
                             </option>
                             <% }) %>
                         </select>
-                        </div>
+                    </div>
 
                
 
@@ -408,6 +407,37 @@
     <script>
       const menuButton = document.getElementById('mobileMenuButton');
       const mobileMenu = document.getElementById('mobileMenu');
+      const price = document.getElementById('price')
+      const img1 = document.getElementById('img1')
+      const img2 = document.getElementById('img2')
+      const img3 = document.getElementById('img3')
+      document.getElementById('color').addEventListener('change',async()=>{
+        const id = '<%= product._id %>'
+        const color = document.getElementById('color').value
+        try{
+            const res = await fetch('/home/product-details/${product._id}',{
+                method:"POST",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body:JSON.stringify({
+                    id,
+                    color
+                })
+            })
+            const data = await res.json()
+            if(!data.success){
+
+            }
+            price.innerHTML = data.product.price
+            img1.src = `/${data.product.image[0]}`;
+            img2.src = `/${data.product.image[1]}`;
+            img3.src = `/${data.product.image[2]}`;
+        }catch(e){
+
+        }
+
+      })
 
       menuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');

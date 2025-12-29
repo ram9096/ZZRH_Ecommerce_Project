@@ -1,5 +1,5 @@
 import express from "express"
-import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad } from "../controller/userController.js"
+import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad, productShowcaseLoad, productFilter, VariantFilter } from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/userMiddleware.js"
 let router = express.Router()
 
@@ -13,6 +13,7 @@ router.get('/forgot-password',forgotPasswordLoad)
 router.get('/logout',userLogout)
 router.get('/home/product-details/:id',productViewLoad)
 router.get('/product-listing',productLisitingLoad)
+router.get('/products',productShowcaseLoad)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)
@@ -20,4 +21,6 @@ router.post('/verify-otp',verifyotp)
 router.post('/email-verification',emailVerification)
 router.post('/forgot-password',forgotPassword)
 router.post('/resent-otp',resentOtp)
+router.post('/products/filter',productFilter)
+router.post('/home/product-details/:id',VariantFilter)
 export default router;

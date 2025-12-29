@@ -22,6 +22,65 @@
       0% { opacity: 0; transform: translateY(-10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #000000;
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -109,7 +168,9 @@
           <p class="text-sm text-red-500">Enter the details for the new product.</p>
         </div>
 
-        <form class="space-y-6" action="/admin/product-add" method="post" enctype="multipart/form-data">
+        <form class="space-y-6" id="formData" action="/admin/products/<%= variant[0].productId._id %>"  enctype="multipart/form-data">
+          <input type="hidden" id="productId" value="<%= variant[0].productId._id %>">
+
           <!-- Product Info -->
           <div class="grid grid-cols-2 gap-6">
             <div>
@@ -136,13 +197,13 @@
               >
                 <option value="select category">Select Category</option>
                 <% category.forEach(cat => { %>
-                  <option value="<%= cat._id %>"><%= cat.categoryName %></option>
+                  <option value="<%= cat._id %>"  ><%= cat.categoryName %></option>
                 <% }) %>
               </select>
               <span id="category-error" class="text-xs text-red-500"></span>
             </div>
           </div>
-
+          
           <div>
             <label class="block text-sm font-medium text-gray-900 mb-2">Description</label>
             <textarea
@@ -184,32 +245,7 @@
             </div>
           </div>
 
-          <!-- Status -->
-          <div class="mb-6">
-            <label class="block text-gray-900 font-bold text-lg mb-4">Status</label>
-            <div class="flex gap-4">
-              <button
-                type="button"
-                onclick="set_status(false)"
-                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition <%= variant[0].productId.status === false 
-          ? 'bg-red-500 text-white border-red-500' 
-          : 'border-gray-300 text-gray-700 hover:bg-gray-50' %>"
-              >
-                Inactive
-              </button>
-              <button
-                type="button"
-                onclick="set_status(true)"
-                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition <%= variant[0].productId.status === true 
-          ? 'bg-red-500 text-white border-red-500' 
-          : 'border-gray-300 text-gray-700 hover:bg-gray-50' %>"
-              >
-                Active
-              </button>
-            </div>
-            <input type="hidden" name="status" id="status_Input" value="true" />
-            <span id="status-error" class="text-xs text-red-500"></span>
-          </div>
+          
 
           <!-- Variants Container -->
           <div id="variantsContainer" class="space-y-6">
@@ -224,6 +260,10 @@
                   >
                     <i class="fas fa-trash-alt mr-1"></i> Delete
                   </button>
+                  <label class="switch">
+                    <input type="checkbox" <% if(v.status) {%> checked <% } %>>
+                    <span class="slider round"></span>
+                  </label>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-6 mb-6">
@@ -287,9 +327,9 @@
                   <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28
             text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
 
-                    <% if (v.image && v.image[0]) { %>
+                    <% if (variant[i].image && variant[i].image[0]) { %>
                       <img
-                        src="/<%= v.image[0] %>"
+                        src="/<%= variant[i].image[0] %>"
                         class="w-full h-full object-cover rounded-lg"
                       />
                     <% } else { %>
@@ -308,11 +348,11 @@
                   </div>
 
                    <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28
-            text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
+                    text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
 
-                    <% if (v.image && v.image[1]) { %>
+                    <% if (variant[i].image && variant[i].image[1]) { %>
                       <img
-                        src="/<%= v.image[1] %>"
+                        src="/<%= variant[i].image[1] %>"
                         class="w-full h-full object-cover rounded-lg"
                       />
                     <% } else { %>
@@ -331,11 +371,11 @@
                   </div>
 
                    <div class="border-2 border-dashed border-teal-400 rounded-lg p-3 h-28
-            text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
+                    text-center bg-teal-50 hover:bg-teal-100 cursor-pointer image-upload-area">
 
-                    <% if (v.image && v.image[2]) { %>
+                    <% if (variant[i].image && variant[i].image[2]) { %>
                       <img
-                        src="/<%= v.image[2] %>"
+                        src="/<%= variant[i].image[2] %>"
                         class="w-full h-full object-cover rounded-lg"
                       />
                     <% } else { %>
@@ -391,33 +431,46 @@
 
   <script>
     // ===== Variant Management =====
+    console.log("Script started")
     let variantIndex = Number("<%= variant.length %>");
     console.log(variantIndex)
     document.getElementById('addVariantBtn').addEventListener('click', function () {
       const container = document.getElementById('variantsContainer');
       const firstVariant = container.querySelector('.variant-group');
       const clone = firstVariant.cloneNode(true);
-   
+
       clone.querySelectorAll('[name]').forEach(input => {
         input.name = input.name.replace(/\[\d+\]/, `[${variantIndex}]`);
         if (!input.classList.contains('image-input')) {
           input.value = '';
         }
       });
-      
-      clone.querySelectorAll('.file-names').forEach(el => el.textContent = '');
-      clone.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
-      clone.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+
+      clone.querySelectorAll('.image-upload-area').forEach(area => {
+        area.innerHTML = `
+          <div class="flex flex-col items-center justify-center h-full">
+            <i class="fas fa-upload text-teal-600 text-lg mb-1"></i>
+            <p class="text-xs text-gray-700">Upload</p>
+          </div>
+          <input
+            type="file"
+            name="variants[${variantIndex}].images"
+            accept="image/*"
+            class="hidden image-input"
+          />
+        `;
+      });
+
       clone.querySelector('.variant-title').textContent = `Variant ${variantIndex + 1}`;
-      
       clone.querySelector('.delete-variant-btn').classList.remove('hidden');
-      
-      const uploadAreas = clone.querySelectorAll('.image-upload-area');
-      const fileInputs = clone.querySelectorAll('.image-input');
-      
-      uploadAreas.forEach((area, idx) => {
-        const input = fileInputs[idx];
-        area.addEventListener('click', () => input.click());
+
+      clone.querySelectorAll('.image-upload-area').forEach(area => {
+        area.addEventListener('click', () => {
+          area.querySelector('.image-input').click();
+        });
+      });
+
+      clone.querySelectorAll('.image-input').forEach(input => {
         input.addEventListener('change', handleFileSelect);
       });
 
@@ -425,6 +478,7 @@
       variantIndex++;
       updateDeleteButtons();
     });
+
 
     function deleteVariant(btn) {
       const container = document.getElementById('variantsContainer');
@@ -480,10 +534,12 @@
         area.querySelector('.image-input').click();
       });
     });
+
     document.querySelectorAll('.image-input').forEach(input => {
       input.addEventListener('change', handleFileSelect);
     });
 
+    
     // ===== Form Validation =====
     (function (){
       const form = document.querySelector('form');
@@ -492,19 +548,16 @@
         category: document.getElementById('category'),
         description: document.getElementById('description'),
         offer: document.getElementById('offer'),
-        sku: document.getElementById('sku'),
-        status: document.getElementById('status_Input')
+        sku: document.getElementById('sku')
       }
       const errors = {
         name: document.getElementById('name-error'),
         category: document.getElementById('category-error'),
         description: document.getElementById('description-error'),
         offer: document.getElementById('offer-error'),
-        sku: document.getElementById('sku-error'),
-        status: document.getElementById('status-error')
+        sku: document.getElementById('sku-error')
       }
     
-
       function validate(field){
         const value = fields[field].value.trim()
         switch (field){
@@ -534,18 +587,13 @@
             if(value.length<5){
               errors.description.textContent = "Please enter atleast 5 characters"
               return false
-
-
             }
             if(value.length>100){
               errors.description.textContent = "Sorry it cannot be too long...."
               return false
             }
             errors.description.textContent = ""
-            return true
-
-
-
+            return true            
           case "sku":
             if(value.length>12){
               errors.sku.textContent = "It cannot be too long..."
@@ -617,38 +665,59 @@
           const imageInputs = variant.querySelectorAll('.image-input');
           const imageError = variant.querySelector('.variant-images-error');
           let uploadedCount = 0;
-          
+
           imageInputs.forEach(input => {
             if (input.files && input.files.length > 0) {
-              uploadedCount++;
+              uploadedCount += input.files.length;
             }
           });
-          
-          if (uploadedCount < 3) {
 
-
-            imageError.textContent = `All 3 images are required (${uploadedCount}/3 uploaded)`;
-            imageError.classList.remove('hidden');
-            variantsValid = false;
-          } else {
-            imageError.classList.add('hidden');
-          }
+          const existingImages = variant.querySelectorAll('img');
+          uploadedCount += existingImages.length;
         });
 
         return variantsValid;
       }
 
-      form.addEventListener("submit", function (e) {
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault()
+        console.log("SUBMIT TRIGGERED");
         let valid = true
         Object.keys(fields).forEach(field => {
           if (!validate(field)) valid = false
         })
-        
         if (!validateVariants()) {
           valid = false
         }
         
-        if (!valid) e.preventDefault()
+        if (!valid) return;
+        const formData = new FormData(form)
+        try{
+          const productId = document.getElementById('productId').value
+          const res = await fetch(`/admin/products/${productId}`,{
+            method:"POST",
+            body:formData
+          })
+          const data = await res.json()
+          if(data.success){
+            Swal.fire({
+              icon: "success",
+              title: "Product Updated Successfully",
+            });
+            window.location.href = data.redirect;
+          }else{
+            Swal.fire({
+              icon: "error",
+              title: data.message || "Something went wrong"
+            });
+          }
+        }catch(e){
+           Swal.fire({
+            icon: "error",
+            title: "Server Error",
+            text: "Please try again later"
+          });
+        }
       })
     })()
 
@@ -656,13 +725,13 @@
       document.getElementById('status_Input').value = active;
     }
 
-    const buttons = document.querySelectorAll('.button');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', function () {
-        buttons.forEach(b => b.classList.remove('bg-red-600', 'text-white', 'border-red-600'));
-        this.classList.add('bg-red-600', 'text-white', 'border-red-600');
-      });
-    });
+    // const buttons = document.querySelectorAll('.button');
+    // buttons.forEach(btn => {
+    //   btn.addEventListener('click', function () {
+    //     buttons.forEach(b => b.classList.remove('bg-red-600', 'text-white', 'border-red-600'));
+    //     this.classList.add('bg-red-600', 'text-white', 'border-red-600');
+    //   });
+    // });
   </script>
 </body>
 </html>

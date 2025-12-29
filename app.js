@@ -8,6 +8,7 @@ import nocache from "nocache"
 import passport from "passport"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import userModel from "./model/userModel.js"
+import flash from 'connect-flash'
 dotenv.config()
 
 
@@ -46,9 +47,9 @@ app.use(session({
 
 //Google authentication
 
+app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
-
 passport.serializeUser(async(user,done)=>{
     done(null,user._id)
 })
@@ -71,6 +72,11 @@ passport.use(
     async (accessToken,refreshToken,profile,done)=>{
         try{
             let user = await userModel.findOne({googleId:profile.id})
+            if(user && !user.isActive){
+                return done(null, false, {
+                    message: "User access is denied"
+                });
+            }
             if(!user){
                 user = await userModel.create({
                     googleId: profile.id,
@@ -93,7 +99,11 @@ app.use('/',userRouter)
 app.use('/admin',adminRouter)
 
 app.get("/auth/google",passport.authenticate("google",{scope:["profile","email",]}))
-app.get('/auth/google/callback',passport.authenticate("google",{failureRedirect:'/login',successRedirect: '/home'}))
+app.get('/auth/google/callback',passport.authenticate("google",{
+    failureRedirect:'/login',
+    failureFlash:true,
+    successRedirect: '/home'
+}))
 
 
 // port setup

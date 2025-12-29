@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
         .playfair {
@@ -22,33 +26,24 @@
 </head>
 
 <body class="relative bg-white min-h-screen flex items-center justify-center p-4">
+  <% if (error) { %>
+    <script>
+      Swal.fire({
+            toast: true,
+            icon: 'error',
+            title: '<%=error%>',
+            position: 'top-right',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    </script>
+  <% } %>
 
     <!-- Center Content -->
     <div class="max-w-md w-full space-y-7 text-center">
         <h1 class="text-5xl" style="font-family: bloverly;">Forgot Password ? </h1>
         
-        <% if (error) { %>
-        <div id="popup"
-            class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
-          <%= error %>
-        </div>
-
-        <script>
-          setTimeout(() => {
-            document.getElementById("popup").classList.add("opacity-0");
-          }, 2500);
-        </script>
-
-        <style>
-          .animate-fade-in { 
-            animation: fadeIn 0.4s ease-out;
-          }
-          @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-10px); }
-            100% { opacity: 1; transform: translateY(0); }
-          }
-        </style>
-      <% } %>
+        
 
         <form class="mt-8 space-y-6" action="/email-verification" method="post">
             <div class="space-y-4">

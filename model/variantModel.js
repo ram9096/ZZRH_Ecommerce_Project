@@ -28,7 +28,11 @@ let variantSchema = new schema({
     SKU:{
         type:String,
         required:true
-    }
+    },
+    status:{
+        type:Boolean,
+        required:true
+    },
 },{timestamps:true})
 
 export default mongoose.model("Variant",variantSchema)

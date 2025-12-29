@@ -1,10 +1,10 @@
-import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails } from "../service/userService.js";
+import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails, variantFilterLogic } from "../service/userService.js";
 
 //--------------Page renderings------------------
 
 export const userLandingLoad = async(req, res) => {
     try{
-        let products = await ProductsLoad({})
+        let products = await ProductsLoad({},5)
         if(req.session.user){
             return res.redirect('/home')
         }
@@ -19,7 +19,7 @@ export const userLoginload = (req, res) => {
     if(req.session.user){
         return res.redirect('/home')
     }
-    return res.render("User/login-page",{error:''});
+    return res.render("User/login-page",{error:req.flash("error")[0]});
 };
 
 export const userRegisterLoad = (req, res) => {
@@ -30,7 +30,7 @@ export const userRegisterLoad = (req, res) => {
 };
 
 export const generateotpload = (req, res) => {
-    if(req.session.user){
+    if(req.session.user||!req.session.tempEmail){
         return res.redirect('/home')
     }
     return res.render("User/otp-verification", {
@@ -42,7 +42,7 @@ export const generateotpload = (req, res) => {
 export const homePageLoad = async (req, res) => {
     try{
        
-        let products = await ProductsLoad({})
+        let products = await ProductsLoad({},5)
         
         if(!req.session.user){
             return res.redirect('/login')
@@ -53,7 +53,12 @@ export const homePageLoad = async (req, res) => {
             req.session.destroy()
             return res.redirect('/login')
         }
-        return res.render("User/home",{product:products.data,color:products.color,size:products.size,error:''});
+        return res.render("User/home",{
+            product:products.data,
+            color:products.color,
+            size:products.size,
+            error:''
+        });
     }catch(e){
         console.log("Home page load Error: ",e)
         return res.status(500).redirect('/login')
@@ -66,7 +71,7 @@ export const emailVerificationLoad = (req,res)=>{
     return res.render('User/email-verification',{error:''})
 }
 export const forgotPasswordLoad = (req,res)=>{
-    if(req.session.user){
+    if(req.session.user||req.session.otpContext != "FORGOT_PASSWORD"){
         return res.redirect('/home')
     }
     return res.render('User/forgot-password',{error:''})
@@ -100,6 +105,36 @@ export const productViewLoad = async(req,res)=>{
         return res.redirect('/')
     }
     
+}
+export const VariantFilter = async(req,res)=>{
+    try{
+        const {color,id}=req.body;
+        let variant = await variantFilterLogic({productId:id,color:color})
+        if(!variant.success){
+            return res.status(400).json({
+                success:false,
+                message:"Error while loading"
+            })
+        }
+        res.status(200).json({
+            success:true,
+            product:variant.data
+        })
+    }catch(e){
+        console.log("Error ",e)
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
+export const productShowcaseLoad = async (req,res)=>{
+    try{
+        let products = await ProductsLoad({})
+        return res.render('User/product-showcase',{product:products.data,color:[...products.color],size:products.size,category:products.category,error:''})
+    }catch(e){
+
+    }
 }
 // -----------------controllers-----------------
 
@@ -247,6 +282,7 @@ export const forgotPassword = async (req,res)=>{
     if(!tempUserProgress.success){
         return res.render("User/forgot-password",{error:tempUserProgress.message})
     }
+    req.session.otpContext = ''
     return res.redirect('/login')
 
 }
@@ -279,4 +315,50 @@ export const productLisitingLoad = async(req,res)=>{
         console.log("Server error ",e)
         return res.render("User/product-listing",{product:[],error:'Server error',color:'',size:''})
     }
+}
+
+export const productFilter = async(req,res)=>{
+    try{
+        const {category,minPrice,maxPrice,color,price,size} = req.body
+        let filter  = {}
+        if(category){
+            filter["category.categoryName"] = category
+        }
+        if(color){
+            filter.color = color
+        }
+        if(price){
+            filter.price = price
+        }
+        if(size){
+            filter.size = size
+        }
+        if(minPrice||maxPrice){
+            filter.price = {}
+            if(minPrice){
+                filter.price.$gte = Number(minPrice)
+            }
+            if(maxPrice){
+                filter.price.$lte = Number(maxPrice)
+            }
+        }
+        let products = await ProductsLoad(filter)
+        if(!products.success){
+            return res.status(401).json({
+                success:false,
+                message:"Error while loading data"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            product:products.data
+        })
+    }catch(e){
+        console.log("Error from server ",e)
+        return res.status(500).json({
+            success:false,
+            message:"Error from server"
+        })
+    }
+
 }

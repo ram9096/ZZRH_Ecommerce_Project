@@ -56,7 +56,7 @@ export const adminCategoryAddLogic = async(category_name,description,status)=>{
         if(status==''){
             return {success:false,message:"STATUS ERROR"}
         }
-        let tempCategoryProgress = await categoryModel.findOne({category_name})
+        let tempCategoryProgress = await categoryModel.findOne({categoryName:{$regex:category_name,$options:"i"}})
     
         if(tempCategoryProgress){
             return {success:false,message:"CATEGORY ALREADY EXIST"}
@@ -124,7 +124,6 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
         let newProduct = new productModel({
             name:name,
             description:description,
-            status:status,
             SKU:sku,
             categoryId:category,
         })
@@ -140,6 +139,7 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
             let newVariant = new variantModel({
                 productId:_id,
                 color:variant[i].color,
+                status:status,
                 size:variant[i].size,
                 stock:variant[i].stock,
                 price:variant[i].price,
@@ -208,4 +208,48 @@ export const categoryModelLoad = async(filter,sort,pageNo)=>{
         return {success:false,message:"ERROR WHILE LOADING DATA"}
     }
     return{success:true,data:tempCategoryProgress,currentPage: page,totalPages:totalPages,totalUser:total}
+}
+
+export const adminProductEditLogic = async(productData,variant,id)=>{
+    try{
+        if(!productData.name||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(productData.name)){
+            return {success:false,message:"Name error from server"}
+        }
+        if(productData.category === ""||productData.category.toUpperCase() == 'SELECT CATEGORY'){
+            return {success:false,message:"Category error from server"}
+        }
+        if(productData.description.length==0||productData.description.length<5||productData.description.length>100){
+            return {success:false,message:"description error from server"}
+        }
+        if(productData.SKU.length==0){
+            return {success:false,message:"SKU  error from server"}
+        }
+        if(variant.length==0){
+            return {success:false,message:"Variant error from server"}
+        }
+        await productModel.findByIdAndUpdate({_id:id},productData)
+        for(let i = 0 ; i<variant.length;i++){
+            const existingVariant = await variantModel.findById( variant[i]._id)
+            if(!existingVariant) continue;
+            let images = existingVariant.image
+            const uploadedImages = files?.filter(
+                file => file.fieldname === `variants[${i}].images`
+            )
+            if(uploadedImages.length>0){
+                images = uploadedImages.map(file=>file.path)
+            }
+            await variantModel.findByIdAndUpdate(variant[i]._id,{
+                color:variant[i].color,
+                size:variant[i].size,
+                stock:variant[i].stock,
+                price:variant[i].price,
+                status:variant[i].status,
+                image:images
+            })
+        }
+        return {success:true}
+
+    }catch(e){
+        return {success:false,message:"SERVER ERROR"}
+    }
 }

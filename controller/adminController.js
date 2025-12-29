@@ -1,5 +1,5 @@
 import { error } from "console";
-import { adminCategoryAddLogic, adminCategoryEditLogic, adminLoginLogic, adminProductsAddLogic, adminUserEditLogic, adminUsersLogic, categoryModelLoad, dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
+import { adminCategoryAddLogic, adminCategoryEditLogic, adminLoginLogic, adminProductEditLogic, adminProductsAddLogic, adminUserEditLogic, adminUsersLogic, categoryModelLoad, dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
 
 
 
@@ -160,13 +160,27 @@ export const adminProductEditLoad = async(req,res)=>{
 //--------------------------controllers-------------------:
 
 export const adminLogin = async (req,res)=>{
-    const {name,password} = req.body
-    let tempUserProgress = await adminLoginLogic(name,password);
-    if(!tempUserProgress.success){
-        return res.render('Admin/login-page',{error:tempUserProgress.message})
+    try{
+        const {name,password} = req.body
+        let tempUserProgress = await adminLoginLogic(name,password);
+        if(!tempUserProgress.success){
+            return res.status(401).json({
+                success:false,
+                message:tempUserProgress.message
+            })
+        }
+        req.session.isAdmin = true
+        return res.status(200).json({
+            success:true,
+            redirect:"/admin/home"
+        })
+    }catch (err) {
+        console.error(err);
+        return res.status(500).json({
+        success: false,
+        message: "Server error. Please try again."
+        });
     }
-    req.session.isAdmin = true
-    return res.redirect('/admin/home')
 }
 export const adminCategoryAdd = async(req,res)=>{
     const {category_name,description,status} = req.body
@@ -190,7 +204,71 @@ export const adminCategoryEdit = async (req,res)=>{
 
 export const adminProductsAdd = async (req,res)=>{
     try{
-        let {productName,category,sku,description,status} = req.body
+        let {productName,category,sku,description} = req.body
+        let status = true
+        const variants = {}
+        for(let key in req.body){
+            const match = key.match(/^variants\[(\d+)\]\.(.+)$/)
+            if(match){
+                if(!variants[Number(match[1])]){
+                    variants[Number(match[1])] = {}
+                }
+                variants[Number(match[1])][match[2]] = req.body[key]
+            }
+        }
+
+
+        for(let key in req.files){
+            const match = req.files[key].fieldname.match(/^variants\[(\d+)\]\.images$/)   
+            
+            if(match){
+                variants[Number(match[1])].images = req.files
+                    .filter(file => file.fieldname === `variants[${Number(match[1])}].images`)
+                    .map(file => file.path.replace(/\\/g, "/").replace(/^uploads\//, ""));
+            }
+        }
+        let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,status,variants)
+        let data  = await dataLoad({})
+        if(!tempProductProgress.success){
+            return res.status(401).json({
+                success:false,
+                message:tempProductProgress.message
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            redirect:"/admin/products"
+        })
+    }catch(e){
+        console.log("Error while adding product: ",e)
+        const data = await dataLoad({});
+        return res.status(500).render("Admin/products-add-page", {
+        error: "Internal server error",
+        category: data?.data || []
+        });
+    }
+}
+export const adminUserEdit = async(req,res)=>{
+    const {isActive,id}=req.body
+    let tempUserProgress = await adminUserEditLogic(isActive,id)
+    if(!tempUserProgress.success){
+        return res.redirect('/admin/users')
+    }
+    return res.redirect('/admin/users')
+}
+
+export const adminProductEdit = async (req,res)=>{
+    try{
+        
+        const productData = {
+            productName:req.body.productName,
+            category:req.body.category,
+            SKU:req.body.sku,
+            description:req.body.description,
+            status:req.body.status
+        }
+        const id = req.params.id
+        console.log(productData)
         const variants = {}
         for(let key in req.body){
             const match = key.match(/^variants\[(\d+)\]\.(.+)$/)
@@ -210,26 +288,24 @@ export const adminProductsAdd = async (req,res)=>{
                     .map(file => file.path.replace(/\\/g, "/").replace(/^uploads\//, ""));
             }
         }
-        let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,status,variants)
-        let data  = await dataLoad({})
-        if(!tempProductProgress.success||!data){
-            return res.render('Admin/products-add-page',{error:tempProductProgress.message,category:data.data})
+        let productUpdateProgress = await adminProductEditLogic(productData,variants,id)
+        if(!productUpdateProgress.success){
+            return res.status(401).json({
+                success:false,
+                message:productUpdateProgress.message
+            })
         }
-        return res.redirect('/admin/products')
+
+        return res.status(200).json({
+            success:true,
+            redirect:"/admin/products"
+        })
     }catch(e){
-        console.log("Error while adding product: ",e)
-        const data = await dataLoad({});
-        return res.status(500).render("Admin/products-add-page", {
-        error: "Internal server error",
-        category: data?.data || []
-        });
+        console.log("SERVER ERROR: ",e)
+        return res.status(500).json({
+            success:false,
+            message:"SERVER ERROR"
+        })
     }
 }
-export const adminUserEdit = async(req,res)=>{
-    const {isActive,id}=req.body
-    let tempUserProgress = await adminUserEditLogic(isActive,id)
-    if(!tempUserProgress.success){
-        return res.redirect('/admin/users')
-    }
-    return res.redirect('/admin/users')
-}
+

@@ -94,7 +94,7 @@
 
       <!-- Timer -->
       <p class="text-center text-sm mb-6">
-        Code expires in <span id="timer">0:57</span>
+        Code expires in <span id="timer"></span>
       </p>
 
       <!-- Submit Button -->
@@ -111,8 +111,9 @@
     <!-- <p class="text-center text-sm">
       Did not receive otp? <a href="#" class="underline">Resent otp</a>
     </p> -->
-    <form action="/resent-otp" method="POST">
-      <button type="submit" class="underline text-black text-sm hover:text-gray-700">
+    <form action="/resent-otp" method="POST" class="text-center hidden" id="resendForm">
+      <p class="text-sm inline">Did not receive otp? </p>
+      <button type="submit" id="resendBtn" class="underline text-black text-sm hover:text-gray-700">
         Resend OTP
       </button>
     </form>
@@ -187,14 +188,15 @@
   });
 
   
-    let timeLeft = 30;
+    let timeLeft = 25;
     const timerElement = document.getElementById("timer");
-
+    const resendForm = document.getElementById("resendForm");
     const timerInterval = setInterval(() => {
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
         timerElement.textContent = "Expired";
         timerElement.classList.add("text-red-500");
+        resendForm.classList.remove("hidden");
         return;
       }
 

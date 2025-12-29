@@ -13,10 +13,6 @@ const productSchema = new schema({
         required:true
 
     },
-    status:{
-        type:Boolean,
-        required:true
-    },
     SKU:{
         type:String,
         required:true

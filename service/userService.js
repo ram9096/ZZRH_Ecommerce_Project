@@ -4,6 +4,8 @@ import variantModel from "../model/variantModel.js"
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { sentOtp } from "../utils/otpMailing.js";
+import { pipeline } from "stream";
+import categoryModel from "../model/categoryModel.js";
 
 export const findUserByEmail = (email) => userModel.findOne({ email });
 
@@ -139,11 +141,10 @@ export const forgotPasswordLogic = async(email,password)=>{
     return {success:true,data:user}
 }
 
-export const ProductsLoad = async (filter)=>{
+export const ProductsLoad = async (filter,limit = null)=>{
     let color = new Set([...(await variantModel.find()).map(v=>v.color)])
     let size = new Set([...(await variantModel.find()).map(v=>v.size)])
-    let products = await variantModel.aggregate([
-        {$match:filter},
+    const pipeline = [
         {
             $lookup:{
                 from:"products",
@@ -166,13 +167,19 @@ export const ProductsLoad = async (filter)=>{
             $match:{
                 "category.isActive":true
             }
-        }
-    ])
+        },
+        {$match:filter}
+    ]
+    if(limit){
+        pipeline.push({$limit:limit})
+    }
+    let products = await variantModel.aggregate(pipeline)
+    let category = await categoryModel.find()
     //let color = products.map(products=>products.color)
     if(!products){
         return {success:false,message:"ERROR WHILE LOADING DATA"}
     }
-    return {success:true,data:products,color:color,size:size}
+    return {success:true,data:products,color:color,size:size,category:category}
 }
 
 export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
@@ -184,7 +191,7 @@ export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
         let variant = null
         if(variants.length==0){
             return {success:false,message:"PRODUCT DOESN'T EXIST"}
-        }
+        } 
         if (Variantcolor && Variantsize) {
         variant = variants.find(
             v => v.color === Variantcolor && v.size === Variantsize
@@ -207,6 +214,18 @@ export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
         return {success:true,product,variant,color,size}
     }catch(e){
         console.log("Error: ",e)
-        return{success:false,message:"SERVICE ERROR"}
+        return{success:false,message:"SERVER ERROR"}
+    }
+}
+export const variantFilterLogic = async(filter)=>{
+    try{
+        const data = await variantModel.findOne(filter)
+        if(!data){
+            return {success:false,message:"No variant exist"}
+        }
+        return {success:true,data:data}
+    }catch(e){
+        console.log("Server error ",e)
+        return{success:false,message:"SERVER ERROR"}
     }
 }
