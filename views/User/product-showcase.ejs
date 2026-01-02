@@ -153,18 +153,23 @@
                     </div>
 
                     <!-- Category Filter -->
-                    <div class="mb-6 pb-6 border-b border-gray-200">
-                        <h4 class="font-medium mb-3 font-clash text-sm">Category</h4>
-                        <div class="space-y-2">
-                            <% category.forEach(c=>{ %>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="radio" name="category" value="<%= c.categoryName %>" class="mr-2">
-                                    <span class="text-sm"><%= c.categoryName %></span>
-                                </label>
-                            <% }) %>
-                            
-                        </div>
-                    </div>
+                   <div class="mb-6 pb-6 border-b border-gray-200">
+                    <h4 class="font-medium mb-3 font-clash text-sm">Category</h4>
+
+                    <select id="category" name="category"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black">
+
+                        <option value="">All Categories</option>
+
+                        <% category.forEach(c => { %>
+                            <option value="<%= c.categoryName %>">
+                                <%= c.categoryName %>
+                            </option>
+                        <% }) %>
+
+                    </select>
+                </div>
+
 
                     <!-- Price Range Filter -->
                     <div class="mb-6 pb-6 border-b border-gray-200">
@@ -186,7 +191,7 @@
                                 <option value="XS" class="size-btn border border-gray-300 rounded px-3 py-2 text-sm hover:bg-black hover:text-white transition">XS</option>
                                 <option value="Small" class="size-btn border border-gray-300 rounded px-3 py-2 text-sm hover:bg-black hover:text-white transition">S</option>
                                 <option value="Medium" class="size-btn border border-gray-300 rounded px-3 py-2 text-sm hover:bg-black hover:text-white transition">M</option>
-                                <option value="L" class="size-btn border border-gray-300 rounded px-3 py-2 text-sm hover:bg-black hover:text-white transition">L</option>
+                                <option value="Large" class="size-btn border border-gray-300 rounded px-3 py-2 text-sm hover:bg-black hover:text-white transition">L</option>
                                 <option value="XL" class="size-btn border border-gray-300 rounded px-3 py-2 text-sm hover:bg-black hover:text-white transition">XL</option>
                                 <option value="XXL" class="size-btn border border-gray-300 rounded px-3 py-2 text-sm hover:bg-black hover:text-white transition">XXL</option>
                             </select>
@@ -205,6 +210,19 @@
                             
                         </div>
                     </div>
+                    <div class="mb-6">
+                        <h4 class="font-medium mb-3 font-clash text-sm">Sort</h4>
+                        <div class="grid grid-cols-1 gap-2">
+                            <select name="sort" id="sort">
+                                <option class="color-btn w-8 h-8 rounded-full border-2 border-gray-300 " value="HIGH_TO_LOW" >High to low</option>
+                                <option class="color-btn w-8 h-8 rounded-full border-2 border-gray-300 " value="LOW_TO_HIGH" >low to hign</option>
+                                <option class="color-btn w-8 h-8 rounded-full border-2 border-gray-300 " value="A_Z" >aA-zZ</option>
+                                <option class="color-btn w-8 h-8 rounded-full border-2 border-gray-300 " value="Z_A" >zZ-aA</option>
+                                
+                            </select>
+                            
+                        </div>
+                    </div>
 
                     <!-- Apply Filters Button -->
                     <button id="filter" class="w-full bg-black text-white py-3 rounded-md font-clash text-sm hover:bg-gray-800 transition">
@@ -219,7 +237,7 @@
                 <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ml-5">
                     <% product.forEach(product=>{ %>
                         <!-- Product Card -->
-                        <a href="/home/product-details/<%= product.produc   tId._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                        <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
                             <div class="max-w-sm">
                                 <div class="bg-white rounded-lg overflow-hidden shadow-sm">
                                     <!-- Product Image -->
@@ -329,13 +347,13 @@
         }
 
         document.getElementById('filter').addEventListener('click',async ()=>{
-            const category = document.querySelector('input[name="category"]:checked')?.value
+            
+            const category = document.getElementById('category').value||'all'
             const minPrice = document.getElementById('minPrice').value
             const maxPrice = document.getElementById('maxPrice').value
             const size = document.getElementById('size').value||null
-
+            const sort  = document.getElementById('sort').value
             const color = document.getElementById('color').value||null
-            console.log("Reached here" ,category,minPrice,maxPrice,size,color)
             try{
                 const res = await fetch('/products/filter',{
                     method:"POST",
@@ -347,7 +365,8 @@
                         minPrice,
                         maxPrice,
                         size,
-                        color
+                        color,
+                        sort
                     })
                 })
                 const data  = await res.json()

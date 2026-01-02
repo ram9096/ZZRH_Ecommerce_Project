@@ -108,8 +108,11 @@ export const productViewLoad = async(req,res)=>{
 }
 export const VariantFilter = async(req,res)=>{
     try{
-        const {color,id}=req.body;
-        let variant = await variantFilterLogic({productId:id,color:color})
+        const {id,type,value}=req.body;
+        const filter = { productId:id }
+        filter[type] = value
+        filter["status"] = true
+        let variant = await variantFilterLogic(filter)
         if(!variant.success){
             return res.status(400).json({
                 success:false,
@@ -120,6 +123,7 @@ export const VariantFilter = async(req,res)=>{
             success:true,
             product:variant.data
         })
+
     }catch(e){
         console.log("Error ",e)
         return res.status(500).json({
@@ -323,6 +327,12 @@ export const productFilter = async(req,res)=>{
         let filter  = {}
         if(category){
             filter["category.categoryName"] = category
+        }
+        if(category == 'all'){
+            filter["category.categoryName"] = {}
+        }
+        if(category == 'all'){
+           filter["category.categoryName"] = ''
         }
         if(color){
             filter.color = color

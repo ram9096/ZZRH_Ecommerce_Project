@@ -160,32 +160,7 @@
     <section class="container mx-auto px-4 py-12">
         <h2 class="text-4xl serif-font font-light mb-8 font-bloverly">Popular Right Now</h2>
         
-        <!-- Filters -->
-        <form action="/home" method="get">
-            <div class="flex items-center justify-between mb-8 font-clash">
-                <div class="flex space-x-4 text-sm">
-                    <select name="color" onchange="this.form.submit()" class="border-none bg-transparent">
-                        <option value="">color</option>
-                        <% color.forEach(c=>{ %>
-                            <option value="<%= c %>" <%= color === c ? "selected" : "" %>
-                                ><%= c %>
-                            </option>
-                        <% }) %>
-                    </select>
-                    <select name="size" onchange="this.form.submit()" class="border-none bg-transparent">
-                        <option value="">size</option>
-                        <% size.forEach(c=>{ %>
-                            <option value="<%= c %>" <%= size === c ? "selected" : "" %> ><%= c %></option>
-                        <% }) %>
-                    </select>
-                    <select name="price" onchange="this.form.submit()" class="border-none bg-transparent">
-                        <option value="">Price Range</option>
-                        <option value="1" >Hight to low</option>
-                        <option value="-1">Low to high</option>
-                    </select>
-                </div>    
-            </div>
-        </form>
+       
 
         <!-- Product Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">

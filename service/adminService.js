@@ -50,7 +50,7 @@ export const adminCategoryAddLogic = async(category_name,description,status)=>{
         ){
             return {success:false,message:"LENGTH ERROR"}
         }
-        if(description.length==0||description.length<5||description.length>100||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(description)){
+        if(description.length==0||description.length<5||description.length>300||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(description)){
             return {success:false,message:"DESCRIPTION ERROR"}
         }
         if(status==''){
@@ -81,7 +81,7 @@ export const adminCategoryEditLogic = async(_id,category_name,description,status
         ){
             return {success:false,message:"DATA ERROR"}
         }
-        if(description.length==0||description.length<5||description.length>100||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(description)){
+        if(description.length==0||description.length<5||description.length>300||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(description)){
             return {success:false,message:"DATA ERROR"}
         }
         let tempCategoryProgress = await categoryModel.findOne({_id})
@@ -144,7 +144,8 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
                 stock:variant[i].stock,
                 price:variant[i].price,
                 SKU:sku,
-                image:variant[i].images
+                image:variant[i].images,
+                discount:variant[i].discount
             })
             await newVariant.save()
         }
@@ -212,7 +213,7 @@ export const categoryModelLoad = async(filter,sort,pageNo)=>{
 
 export const adminProductEditLogic = async(productData,variant,id)=>{
     try{
-        if(!productData.name||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(productData.name)){
+        if(!productData.productName||!/^[A-Za-z]+( [A-Za-z]+)*$/.test(productData.productName)){
             return {success:false,message:"Name error from server"}
         }
         if(productData.category === ""||productData.category.toUpperCase() == 'SELECT CATEGORY'){
@@ -224,32 +225,29 @@ export const adminProductEditLogic = async(productData,variant,id)=>{
         if(productData.SKU.length==0){
             return {success:false,message:"SKU  error from server"}
         }
-        if(variant.length==0){
-            return {success:false,message:"Variant error from server"}
-        }
         await productModel.findByIdAndUpdate({_id:id},productData)
-        for(let i = 0 ; i<variant.length;i++){
-            const existingVariant = await variantModel.findById( variant[i]._id)
+       
+        for(let key in variant){
+            const existingVariant = await variantModel.findOne({_id:variant[key]._id})
             if(!existingVariant) continue;
             let images = existingVariant.image
-            const uploadedImages = files?.filter(
-                file => file.fieldname === `variants[${i}].images`
-            )
-            if(uploadedImages.length>0){
-                images = uploadedImages.map(file=>file.path)
+            for(let img in variant[key].image){
+                images[Number(img)] = variant[key].image[img]
             }
-            await variantModel.findByIdAndUpdate(variant[i]._id,{
-                color:variant[i].color,
-                size:variant[i].size,
-                stock:variant[i].stock,
-                price:variant[i].price,
-                status:variant[i].status,
+            await variantModel.findByIdAndUpdate(variant[key]._id,{
+                color:variant[key].color,
+                size:variant[key].size,
+                stock:variant[key].stock,
+                price:variant[key].price,
+                status:variant[key].status,
                 image:images
             })
+            
         }
         return {success:true}
 
     }catch(e){
+        console.log(e)
         return {success:false,message:"SERVER ERROR"}
     }
 }

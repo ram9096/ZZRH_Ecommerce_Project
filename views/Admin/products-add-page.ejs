@@ -243,6 +243,18 @@
                 </div>
 
                 <div>
+                  <label class="block text-sm font-medium text-gray-900 mb-2">Discounted Price *</label>
+                  <input
+                    type="number"
+                    name="variants[0].discount"
+                    placeholder="e.g. 100"
+                    class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-sm validate"
+                    required
+                  />
+                  <span class="text-xs text-red-500 hidden">Price is required</span>
+                </div>
+
+                <div>
                   <label class="block text-sm font-medium text-gray-900 mb-2">Price *</label>
                   <input
                     type="number"

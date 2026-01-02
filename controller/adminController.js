@@ -195,7 +195,6 @@ export const adminCategoryEdit = async (req,res)=>{
     const {category_name,description,status} = req.body
     let _id = req.params.id
     let tempCategoryProgress = await adminCategoryEditLogic(_id,category_name,description,status)
-    console.log(tempCategoryProgress)
     if(!tempCategoryProgress.success){
         return res.render('/admin/categories-page',{error:tempCategoryProgress.message})
     }
@@ -228,7 +227,7 @@ export const adminProductsAdd = async (req,res)=>{
             }
         }
         let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,status,variants)
-        let data  = await dataLoad({})
+        //let data  = await dataLoad({})
         if(!tempProductProgress.success){
             return res.status(401).json({
                 success:false,
@@ -240,11 +239,11 @@ export const adminProductsAdd = async (req,res)=>{
             redirect:"/admin/products"
         })
     }catch(e){
-        console.log("Error while adding product: ",e)
-        const data = await dataLoad({});
-        return res.status(500).render("Admin/products-add-page", {
-        error: "Internal server error",
-        category: data?.data || []
+        console.error("Error while adding product:", e);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
         });
     }
 }
@@ -268,26 +267,40 @@ export const adminProductEdit = async (req,res)=>{
             status:req.body.status
         }
         const id = req.params.id
-        console.log(productData)
+
         const variants = {}
         for(let key in req.body){
             const match = key.match(/^variants\[(\d+)\]\.(.+)$/)
             if(match){
-                if(!variants[Number(match[1])]){
-                    variants[Number(match[1])] = {}
+                const variantIndex = Number(match[1])
+                if(!variants[variantIndex]){
+                    variants[variantIndex] = {}
                 }
-                variants[Number(match[1])][match[2]] = req.body[key]
+                variants[variantIndex][match[2]] = req.body[key]
             }
         }
-        for(let key in req.files){
-            const match = req.files[key].fieldname.match(/^variants\[(\d+)\]\.images$/)   
-            
-            if(match){
-                variants[Number(match[1])].images = req.files
-                    .filter(file => file.fieldname === `variants[${Number(match[1])}].images`)
-                    .map(file => file.path.replace(/\\/g, "/").replace(/^uploads\//, ""));
-            }
+        for(let key of req.files){
+            const match = key.fieldname.match(
+                /^variants\[(\d+)\]\.images\[(\d+)\]$/
+            );
+
+            if (!match) continue;
+            const variantIndex = Number(match[1]);
+            const imageIndex = Number(match[2]);
+            if (!variants[variantIndex].image) variants[variantIndex].image = {};
+
+            variants[variantIndex].image[String(imageIndex)] =
+            key.path.replace(/\\/g, "/").replace(/^uploads\//, "");
         }
+
+        for (const i in variants) {
+        ['color', 'size', 'stock', 'price', 'status'].forEach(field => {
+            if (Array.isArray(variants[i][field])) {
+                variants[i][field] = variants[i][field][i] ??   variants[i][field][0];
+                }
+            });
+        }
+
         let productUpdateProgress = await adminProductEditLogic(productData,variants,id)
         if(!productUpdateProgress.success){
             return res.status(401).json({
@@ -295,8 +308,7 @@ export const adminProductEdit = async (req,res)=>{
                 message:productUpdateProgress.message
             })
         }
-
-        return res.status(200).json({
+        return res.json({
             success:true,
             redirect:"/admin/products"
         })

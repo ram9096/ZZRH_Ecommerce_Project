@@ -142,9 +142,11 @@ export const forgotPasswordLogic = async(email,password)=>{
 }
 
 export const ProductsLoad = async (filter,limit = null)=>{
+    filter["status"] = true
     let color = new Set([...(await variantModel.find()).map(v=>v.color)])
     let size = new Set([...(await variantModel.find()).map(v=>v.size)])
     const pipeline = [
+        
         {
             $lookup:{
                 from:"products",
@@ -165,10 +167,11 @@ export const ProductsLoad = async (filter,limit = null)=>{
         {$unwind:"$category"},
         {
             $match:{
-                "category.isActive":true
+                "category.isActive":true,
             }
         },
-        {$match:filter}
+        {$match:filter},
+        
     ]
     if(limit){
         pipeline.push({$limit:limit})
@@ -185,29 +188,29 @@ export const ProductsLoad = async (filter,limit = null)=>{
 export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
     try{
         const product =  await productModel.findById(id)
-        const color = (await variantModel.find({productId:id})).map(v=>v.color)
-        const size  = (await variantModel.find({productId:id})).map(v => v.size)
-        const variants= await variantModel.find({productId:id})
+        const color = (await variantModel.find({productId:id,status:true})).map(v=>v.color)
+        const size  = (await variantModel.find({productId:id,color:Variantcolor,status:true})).map(v => v.size)
+        const variants= await variantModel.find({productId:id,status:true})
         let variant = null
         if(variants.length==0){
             return {success:false,message:"PRODUCT DOESN'T EXIST"}
         } 
         if (Variantcolor && Variantsize) {
-        variant = variants.find(
-            v => v.color === Variantcolor && v.size === Variantsize
-        )
+            variant = variants.find(
+                v => v.color === Variantcolor && v.size === Variantsize
+            )
         }
 
         if (!variant && Variantsize) {
-        variant = variants.find(v => v.size === Variantsize)
+            variant = variants.find(v => v.size === Variantsize)
         }
 
         if (!variant && Variantcolor) {
-        variant = variants.find(v => v.color === Variantcolor)
+            variant = variants.find(v => v.color === Variantcolor)
         }
 
         if (!variant) {
-        variant = variants[0]
+            variant = variants[0]
         }
 
         
@@ -218,14 +221,27 @@ export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
     }
 }
 export const variantFilterLogic = async(filter)=>{
-    try{
-        const data = await variantModel.findOne(filter)
-        if(!data){
-            return {success:false,message:"No variant exist"}
-        }
-        return {success:true,data:data}
-    }catch(e){
-        console.log("Server error ",e)
-        return{success:false,message:"SERVER ERROR"}
+    try {
+    const data = await variantModel.find(filter);
+
+    if (!data.length) {
+      return { success: false, message: "No variants exist" };
     }
+
+    return {
+      success: true,
+      data: {
+        image: data[0].image,
+        sizes: data.map(v => ({
+          size: v.size,
+          price: v.price,
+          stock: v.stock
+        }))
+      }
+    };
+
+  } catch (e) {
+    console.log("Server error", e);
+    return { success: false, message: "SERVER ERROR" };
+  }
 }

@@ -219,14 +219,14 @@
              
                 <div class="space-y-4">
                     <div class="bg-gray-200 rounded-lg aspect-square">
-                        <img id="img1" src="/<%= selectedVariant?.image[0] %>" alt="">
+                        <img id="img1"  src="/<%= selectedVariant?.image[0] %>" alt="">
                     </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div class="bg-gray-200 rounded-lg aspect-square">
-                            <img id="img2" src="/<%= selectedVariant?.image[1] %>" alt="">
+                            <img id="img2"class="cursor-pointer" src="/<%= selectedVariant?.image[1] %>" alt="">
                         </div>
                         <div class="bg-gray-200 rounded-lg aspect-square">
-                            <img id="img3" src="/<%= selectedVariant?.image[2] %>" alt="">
+                            <img id="img3" class="cursor-pointer" src="/<%= selectedVariant?.image[2] %>" alt="">
                         </div>
                         
                     </div>
@@ -411,32 +411,79 @@
       const img1 = document.getElementById('img1')
       const img2 = document.getElementById('img2')
       const img3 = document.getElementById('img3')
+      const sizeSelect = document.getElementById('size')
       document.getElementById('color').addEventListener('change',async()=>{
         const id = '<%= product._id %>'
         const color = document.getElementById('color').value
         try{
-            const res = await fetch('/home/product-details/${product._id}',{
+            const res = await fetch(`/home/product-details/${id}`,{
                 method:"POST",
                 headers:{
                     "Content-type":"application/json"
                 },
                 body:JSON.stringify({
-                    id,
-                    color
+                    id:id,
+                    type:"color",
+                    value:color
                 })
             })
             const data = await res.json()
             if(!data.success){
 
             }
-            price.innerHTML = data.product.price
+            //price.innerHTML = data.product.price
             img1.src = `/${data.product.image[0]}`;
             img2.src = `/${data.product.image[1]}`;
             img3.src = `/${data.product.image[2]}`;
+            sizeSelect.innerHTML = ''
+
+            data.product.sizes.forEach((s,i)=>{
+                const option = document.createElement('option')
+                option.value = s.size
+                option.innerHTML = s.size
+                sizeSelect.appendChild(option)
+                if (i === 0) {
+                    price.innerHTML = `₹${s.price}`;
+                }
+            })
         }catch(e){
 
         }
 
+      })
+
+      document.getElementById('size').addEventListener('change',async()=>{
+        const id = '<%= product._id %>'
+        const size = document.getElementById('size').value
+        try{
+            const res = await fetch(`/home/product-details/${id}`,{
+                method:"POST",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body:JSON.stringify({
+                    id:id,
+                    type:"size",
+                    value:size
+                })
+
+            })
+            const data = await res.json()
+            if(!data.success){
+                console.log(data.success)
+            }
+            price.innerHTML = data.product.price
+        }catch(e){
+            console.log(e)
+        }
+      })
+      const thumbnail = [img2,img3]
+      thumbnail.forEach(t=>{
+        t.addEventListener('click',()=>{
+            let temp = img1.src
+            img1.src = t.src
+            t.src = temp
+        })
       })
 
       menuButton.addEventListener('click', () => {

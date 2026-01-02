@@ -33,6 +33,10 @@ let variantSchema = new schema({
         type:Boolean,
         required:true
     },
+    discount:{
+        type:Number,
+        required:true
+    }
 },{timestamps:true})
 
 export default mongoose.model("Variant",variantSchema)
