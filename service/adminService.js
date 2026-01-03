@@ -125,7 +125,7 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
         let newProduct = new productModel({
             name:name,
             description:description,
-            SKU:sku,
+           
             categoryId:category,
         })
         
@@ -223,8 +223,13 @@ export const adminProductEditLogic = async(productData,variant,id)=>{
         if(productData.description.length==0||productData.description.length<5||productData.description.length>300){
             return {success:false,message:"description error from server"}
         }
-       
-        await productModel.findByIdAndUpdate({_id:id},productData)
+        console.log(productData,id)
+        const data = {
+            name:productData.productName,
+            categoryId:productData.categoryId,
+            description:productData.description
+        }
+        await productModel.findByIdAndUpdate({_id:id},data)
         for(let key in variant){
              if(variant[key]._id == ''){
                 let tempVariantProgress = await variantModel.findOne({productId:id,color:variant[key].color,size:variant[key].size})

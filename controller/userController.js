@@ -114,10 +114,13 @@ export const productViewLoad = async(req,res)=>{
 }
 export const VariantFilter = async(req,res)=>{
     try{
-        const {id,type,value}=req.body;
+        const {id,type,value,color}=req.body;
         const filter = { productId:id }
         filter[type] = value
         filter["status"] = true
+        if(color!==undefined){
+            filter["color"] = color
+        }
         let variant = await variantFilterLogic(filter)
         if(!variant.success){
             return res.status(400).json({

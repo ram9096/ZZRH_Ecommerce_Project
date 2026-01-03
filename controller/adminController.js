@@ -203,7 +203,7 @@ export const adminCategoryEdit = async (req,res)=>{
 
 export const adminProductsAdd = async (req,res)=>{
     try{
-        let {productName,category,sku,description} = req.body
+        let {productName,category,description} = req.body
         let status = true
         const variants = {}
         for(let key in req.body){
@@ -226,7 +226,7 @@ export const adminProductsAdd = async (req,res)=>{
                     .map(file => file.path.replace(/\\/g, "/").replace(/^uploads\//, ""));
             }
         }
-        let tempProductProgress = await adminProductsAddLogic(productName,category,sku,description,status,variants)
+        let tempProductProgress = await adminProductsAddLogic(productName,category,description,status,variants)
         //let data  = await dataLoad({})
         if(!tempProductProgress.success){
             return res.status(401).json({
@@ -262,9 +262,9 @@ export const adminProductEdit = async (req,res)=>{
         const productData = {
             productName:req.body.productName,
             category:req.body.category,
-            SKU:req.body.sku,
+            
             description:req.body.description,
-            status:req.body.status
+           
         }
         const id = req.params.id
 

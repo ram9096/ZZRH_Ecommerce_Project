@@ -559,6 +559,7 @@
       document.getElementById('size').addEventListener('change',async()=>{
         const id = '<%= product._id %>'
         const size = document.getElementById('size').value
+        const color = document.getElementById('color').value
         try{
             const res = await fetch(`/home/product-details/${id}`,{
                 method:"POST",
@@ -568,7 +569,8 @@
                 body:JSON.stringify({
                     id:id,
                     type:"size",
-                    value:size
+                    value:size,
+                    color:color
                 })
 
             })
@@ -576,8 +578,8 @@
             if(!data.success){
                 console.log(data.success)
             }
-            discount.innerHTML = `₹${data.product.discount}`
-            price.innerHTML = `₹${data.product.price}`
+            discount.innerHTML = `₹${data.product.sizes[0].discount}`
+            price.innerHTML = `₹${data.product.sizes[0].price}`
         }catch(e){
             console.log(e)
         }
