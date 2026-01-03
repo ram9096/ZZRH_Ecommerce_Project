@@ -3,6 +3,7 @@ import categoryModel from "../model/categoryModel.js"
 import productModel from "../model/productModel.js"
 import variantModel from "../model/variantModel.js"
 import dotenv from"dotenv"
+import mongoose from "mongoose";
 dotenv.config()
 
 
@@ -109,9 +110,9 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
         if(description.length==0||description.length<5||description.length>100){
             return {success:false,message:"description error from server"}
         }
-        if(sku.length==0){
-            return {success:false,message:"SKU  error from server"}
-        }
+        // if(sku.length==0){
+        //     return {success:false,message:"SKU  error from server"}
+        // }
         if(variant.length==0){
             return {success:false,message:"Variant error from server"}
         }
@@ -143,7 +144,7 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
                 size:variant[i].size,
                 stock:variant[i].stock,
                 price:variant[i].price,
-                SKU:sku,
+                SKU:variant[i].sku,
                 image:variant[i].images,
                 discount:variant[i].discount
             })
@@ -219,15 +220,35 @@ export const adminProductEditLogic = async(productData,variant,id)=>{
         if(productData.category === ""||productData.category.toUpperCase() == 'SELECT CATEGORY'){
             return {success:false,message:"Category error from server"}
         }
-        if(productData.description.length==0||productData.description.length<5||productData.description.length>100){
+        if(productData.description.length==0||productData.description.length<5||productData.description.length>300){
             return {success:false,message:"description error from server"}
         }
-        if(productData.SKU.length==0){
-            return {success:false,message:"SKU  error from server"}
-        }
-        await productModel.findByIdAndUpdate({_id:id},productData)
        
+        await productModel.findByIdAndUpdate({_id:id},productData)
         for(let key in variant){
+             if(variant[key]._id == ''){
+                let tempVariantProgress = await variantModel.findOne({productId:id,color:variant[key].color,size:variant[key].size})
+                if(tempVariantProgress){
+                    return {success:false,message:"VARIANT ALREADY EXIST"}
+                }
+                let images = []
+                for(let img in variant[key].image){
+                    images.push(variant[key].image[img])
+                }
+                let newVariant = new variantModel({
+                    productId: id,
+                    color:variant[key].color,
+                    status:true,
+                    size:variant[key].size,
+                    stock:variant[key].stock,
+                    price:variant[key].price,
+                    SKU:variant[key].sku,
+                    image:images,
+                    discount:variant[key].discount
+                })
+                await newVariant.save()
+                continue;
+            }
             const existingVariant = await variantModel.findOne({_id:variant[key]._id})
             if(!existingVariant) continue;
             let images = existingVariant.image
@@ -239,7 +260,7 @@ export const adminProductEditLogic = async(productData,variant,id)=>{
                 size:variant[key].size,
                 stock:variant[key].stock,
                 price:variant[key].price,
-                status:variant[key].status,
+                status:variant[key].status!=='true',
                 image:images
             })
             

@@ -121,7 +121,9 @@ export const VariantFilter = async(req,res)=>{
         }
         res.status(200).json({
             success:true,
-            product:variant.data
+            product:variant.data,
+            size: variant.data.size,
+            color: variant.data.color
         })
 
     }catch(e){

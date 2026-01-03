@@ -188,8 +188,8 @@ export const ProductsLoad = async (filter,limit = null)=>{
 export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
     try{
         const product =  await productModel.findById(id)
-        const color = (await variantModel.find({productId:id,status:true})).map(v=>v.color)
-        const size  = (await variantModel.find({productId:id,color:Variantcolor,status:true})).map(v => v.size)
+        const color = [...new Set((await variantModel.find({productId:id,status:true})).map(v=>v.color))]
+        const size  = [...new Set((await variantModel.find({productId:id,color:Variantcolor,status:true})).map(v => v.size))]
         const variants= await variantModel.find({productId:id,status:true})
         let variant = null
         if(variants.length==0){
@@ -235,7 +235,8 @@ export const variantFilterLogic = async(filter)=>{
         sizes: data.map(v => ({
           size: v.size,
           price: v.price,
-          stock: v.stock
+          stock: v.stock,
+          discount:v.discount
         }))
       }
     };

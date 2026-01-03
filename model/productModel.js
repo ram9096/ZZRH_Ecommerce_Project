@@ -13,10 +13,6 @@ const productSchema = new schema({
         required:true
 
     },
-    SKU:{
-        type:String,
-        required:true
-    },
     categoryId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Category"

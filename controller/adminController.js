@@ -300,7 +300,6 @@ export const adminProductEdit = async (req,res)=>{
                 }
             });
         }
-
         let productUpdateProgress = await adminProductEditLogic(productData,variants,id)
         if(!productUpdateProgress.success){
             return res.status(401).json({

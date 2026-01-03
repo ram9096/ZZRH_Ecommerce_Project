@@ -12,7 +12,17 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
         
-       
+       #zoomContainer:hover {
+        border: 1px solid #000;
+        }
+        #zoomContainer {
+        cursor: zoom-in;
+        }
+
+        #zoomContainer img {
+        transform-origin: center;
+        }
+
         @font-face {
           font-family: "bloverly";
           src: url('/BLOVERLY.woff2') format('woff2');
@@ -219,7 +229,17 @@
              
                 <div class="space-y-4">
                     <div class="bg-gray-200 rounded-lg aspect-square">
-                        <img id="img1"  src="/<%= selectedVariant?.image[0] %>" alt="">
+                        <div id="zoomContainer"
+                                class="bg-gray-200 rounded-lg aspect-square overflow-hidden relative">
+
+                            <img
+                                id="img1"
+                                src="/<%= selectedVariant?.image[0] %>"
+                                class="w-full h-full object-cover transition-transform duration-200"
+                                alt=""
+                            >
+                        </div>
+
                     </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div class="bg-gray-200 rounded-lg aspect-square">
@@ -235,10 +255,26 @@
             <!-- Product Details -->
             <div class="space-y-6 font-clash">
                 
-                    <div>
+                    <!-- <div>
                         <h1 class="text-4xl font-light mb-4"> <%= product.name %> </h1>
+                        
                         <p id="price" class="text-3xl font-semibold">₹<%= selectedVariant?.price %>  </p>
-                    </div>
+                    </div> -->
+                    <div>
+                        <h1 class="text-4xl font-light mb-4"><%= product.name %></h1>
+
+                        <div class="flex items-center gap-4">
+                            <!-- Original price -->
+                            <p id="discount" class="text-xl text-gray-500 line-through">
+                            ₹<%= selectedVariant?.discount %>
+                            <!-- Discounted price -->
+                            <p id="price" class="text-3xl font-semibold text-black">
+                            ₹<%= selectedVariant?.price %>
+                            </p>
+
+                            </p>
+                        </div>
+                        </div>
 
                     <!-- Description -->
                     <div class="border border-gray-300 rounded-lg p-6">
@@ -405,9 +441,12 @@
 
 
     <script>
+
+
       const menuButton = document.getElementById('mobileMenuButton');
       const mobileMenu = document.getElementById('mobileMenu');
       const price = document.getElementById('price')
+      const discount  =  document.getElementById('discount')
       const img1 = document.getElementById('img1')
       const img2 = document.getElementById('img2')
       const img3 = document.getElementById('img3')
@@ -443,9 +482,12 @@
                 option.innerHTML = s.size
                 sizeSelect.appendChild(option)
                 if (i === 0) {
-                    price.innerHTML = `₹${s.price}`;
                 }
+                
             })
+            const firstSize = data.product.sizes[0]
+            discount.innerHTML = `₹${firstSize.discount}`
+            price.innerHTML = `₹${firstSize.price}`;
         }catch(e){
 
         }
@@ -472,7 +514,8 @@
             if(!data.success){
                 console.log(data.success)
             }
-            price.innerHTML = data.product.price
+            discount.innerHTML = `₹${data.product.discount}`
+            price.innerHTML = `₹${data.product.price}`
         }catch(e){
             console.log(e)
         }
@@ -485,6 +528,19 @@
             t.src = temp
         })
       })
+      const zoomContainer = document.getElementById('zoomContainer')
+      const ZOOM_LEVEL = 2.5
+      zoomContainer.addEventListener('mousemove',(e)=>{
+        const rect = zoomContainer.getBoundingClientRect();
+        const x = ((e.clientX-rect.left)/rect.width)*100
+        const y = ((e.clientY-rect.top)/rect.width)*100
+        img1.style.transformOrigin = `${x}% ${y}%`;
+        img1.style.transform = `scale(${ZOOM_LEVEL})`;
+      })
+        zoomContainer.addEventListener('mouseleave', () => {
+            img1.style.transform = 'scale(1)';
+            img1.style.transformOrigin = 'center';
+        });
 
       menuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
