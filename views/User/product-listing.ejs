@@ -122,7 +122,7 @@
             <div class="flex items-center justify-between mb-8 font-clash">
                 <div class="flex space-x-4 text-sm">
                     <select name="color" onchange="this.form.submit()" class="border-none bg-transparent">
-                        <option value="">color</option>
+                        <option value="">All color</option>
                         <% color.forEach(c=>{ %>
                             <option value="<%= c %>" <%= colorValue === c ? "selected" : "" %>
                                 ><%= c %>
@@ -137,8 +137,8 @@
                     </select>
                     <select name="price" onchange="this.form.submit()" class="border-none bg-transparent">
                         <option value="">Price Range</option>
-                        <option value="1" >Hight to low</option>
-                        <option value="-1">Low to high</option>
+                        <option value="-1" >Hight to low</option>
+                        <option value="1">Low to high</option>
                     </select>
                 </div>    
             </div>

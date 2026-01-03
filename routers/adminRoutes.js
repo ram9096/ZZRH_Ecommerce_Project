@@ -1,5 +1,5 @@
 import express from "express"
-import {  adminCategoryAdd, adminCategoryAddLoad, adminCategoryEdit, adminCategoryEditLoad, adminCategoryLoad, adminHomeLoad, adminLogin, adminLoginLoad, adminProductEdit, adminProductEditLoad, adminProductsAdd, adminProductsAddLoad, adminProductsLoad, adminUserEdit, adminUsersLoad } from "../controller/adminController.js"
+import {  adminCategoryAdd, adminCategoryAddLoad, adminCategoryEdit, adminCategoryEditLoad, adminCategoryLoad, adminHomeLoad, adminLogin, adminLoginLoad, adminLogout, adminProductEdit, adminProductEditLoad, adminProductsAdd, adminProductsAddLoad, adminProductsLoad, adminUserEdit, adminUsersLoad } from "../controller/adminController.js"
 import { isAdminAuthenticated } from "../middleware/adminMiddleware.js"
 import {upload} from "../config/multerConfig.js"
 let router = express.Router()
@@ -13,6 +13,7 @@ router.get('/category-edit/:id',isAdminAuthenticated,adminCategoryEditLoad)
 router.get('/products',isAdminAuthenticated,adminProductsLoad)
 router.get('/product-add',isAdminAuthenticated,adminProductsAddLoad)
 router.get('/products/:id',adminProductEditLoad)
+router.get('/logout',adminLogout)
 
 router.post('/login',adminLogin)
 router.post('/category-add',adminCategoryAdd)

@@ -320,3 +320,20 @@ export const adminProductEdit = async (req,res)=>{
     }
 }
 
+export const adminLogout = (req,res)=>{
+    try{
+        req.session.destroy(err => {
+            if (err) {
+            
+            res.clearCookie('connect.sid');
+            return res.redirect('/admin/home');
+            }
+            res.clearCookie('connect.sid');
+            res.redirect('/admin/'); 
+        });
+    }catch(e){
+        console.log("Error ",e)
+        return res.redirect('/admin/home')
+    }
+}
+

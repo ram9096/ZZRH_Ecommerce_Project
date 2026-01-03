@@ -57,7 +57,8 @@ export const homePageLoad = async (req, res) => {
             product:products.data,
             color:products.color,
             size:products.size,
-            error:''
+            error:'',
+            isLogged:req.session.user||''
         });
     }catch(e){
         console.log("Home page load Error: ",e)
@@ -83,6 +84,7 @@ export const productViewLoad = async(req,res)=>{
         let color = req.query.color
         let size = req.query.size
         let products = await ProductvariantDetails(productId,color,size)
+        let Relatedproducts = await ProductsLoad({$or:[{color:color},{size:size}]})
         if(!products.success){
             return res.render('User/product-view',{
                 product:[],
@@ -90,7 +92,9 @@ export const productViewLoad = async(req,res)=>{
                 size:[],
                 error:products.error,
                 variant:[],
-                error:products.message
+                RelatedProducts:[],
+                error:products.message,
+                isLogged:false
             })
         }
         return res.render('User/product-view',{
@@ -98,7 +102,9 @@ export const productViewLoad = async(req,res)=>{
             color:products.color,
             size:products.size,
             variant:products.variant,
-            error:''
+            Relatedproducts:Relatedproducts.data,
+            error:'',
+            isLogged:req.session.user||''
         })
     }catch(e){
         console.log("Error: ",e)
@@ -303,8 +309,9 @@ export const productLisitingLoad = async(req,res)=>{
             filter.size = req.query.size
         }
         if(req.query.price){
-            sortOption.price = 1
+            filter.price = Number(req.query.price)
         }
+        filter["stock"] = {$gt:0}
         let products = await ProductsLoad(filter)
         if(!products.success){
             return res.render("User/product-listing",{error:products.message,product:[]})
@@ -325,9 +332,9 @@ export const productLisitingLoad = async(req,res)=>{
 
 export const productFilter = async(req,res)=>{
     try{
-        const {category,minPrice,maxPrice,color,price,size} = req.body
+        const {category,minPrice,maxPrice,color,price,size,sort} = req.body
         let filter  = {}
-        if(category){
+        if(category && category !='ALL'){
             filter["category.categoryName"] = category
         }
         if(category == 'all'){
@@ -353,6 +360,9 @@ export const productFilter = async(req,res)=>{
             if(maxPrice){
                 filter.price.$lte = Number(maxPrice)
             }
+        }
+        if(sort){
+            filter.sort = sort
         }
         let products = await ProductsLoad(filter)
         if(!products.success){

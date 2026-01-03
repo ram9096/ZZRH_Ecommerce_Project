@@ -143,6 +143,7 @@ export const forgotPasswordLogic = async(email,password)=>{
 
 export const ProductsLoad = async (filter,limit = null)=>{
     filter["status"] = true
+    filter["stock"] = {$gt:0}
     let color = new Set([...(await variantModel.find()).map(v=>v.color)])
     let size = new Set([...(await variantModel.find()).map(v=>v.size)])
     const pipeline = [
@@ -173,6 +174,30 @@ export const ProductsLoad = async (filter,limit = null)=>{
         {$match:filter},
         
     ]
+    if(filter["price"]==undefined){
+        delete filter["price"]
+    }
+    if(filter["price"]==1||filter["price"] == -1){
+        pipeline.push({$sort:{price:filter["price"]}})
+        delete filter["price"]
+    }
+    if(filter["sort"]=='HIGH_TO_LOW'){
+        pipeline.push({$sort:{price:-1}})
+        delete filter["sort"]
+    }
+    if(filter["sort"]=='LOW_TO_HIGH'){
+        pipeline.push({$sort:{price:1}})
+        delete filter["sort"]
+    }
+    if(filter["sort"]=='A_Z'){
+        pipeline.push({$sort:{"products.name":1}})
+        delete filter["sort"]
+    }
+    if(filter["sort"]=='Z_A'){
+        pipeline.push({$sort:{"products.name":-1}})
+        delete filter["sort"]
+    }
+    
     if(limit){
         pipeline.push({$limit:limit})
     }

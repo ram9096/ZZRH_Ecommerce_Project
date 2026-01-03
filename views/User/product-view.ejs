@@ -125,28 +125,50 @@
       <a href="#" class="hover:underline">Men's collection</a>
       <a href="#" class="hover:underline">About Us</a>
     </nav>
-    <div class="hidden md:flex items-center gap-4">
-        <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-        </button>
-        <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-        </button>
-        <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-            </svg>
-        </button>
-        <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-        </button>
-    </div>
+    <% if(isLogged) {%>
+        <div class="hidden md:flex items-center gap-4">
+            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+            </button>
+            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                </svg>
+            </button>
+            <div class="relative group">
+                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </button>
+
+                <!-- Tooltip -->
+                <span
+                    class="absolute top-14 left-1/2 -translate-x-1/2
+                        bg-black text-white text-xs px-2 py-1 rounded
+                        opacity-0 group-hover:opacity-100
+                        transition whitespace-nowrap">
+                    <%= isLogged.email %>
+                </span>
+            </div>
+
+        </div>
+    <% } %>
+    <% if(!isLogged){ %>
+        <a href="/login">
+            <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
+            Login/sign-up
+            </button>
+        </a>
+    <% } %>
 
     <!-- Mobile Menu Button -->
     <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
@@ -162,7 +184,8 @@
     <a href="#" class="block hover:underline">New Arrival</a>
     <a href="#" class="block hover:underline">Men's collection</a>
     <a href="#" class="block hover:underline">About Us</a>
-    <div class="flex items-center gap-4">
+    <% if(isLogged){ %>
+        <div class="flex items-center gap-4">
             <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -184,6 +207,14 @@
                 </svg>
             </button>
         </div>
+    <% } %>
+    <% if(!isLogged){ %>
+        <a href="/login">
+            <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
+            Login/sign-up
+            </button>
+        </a>
+    <% } %>
     
   </div>
 <%
@@ -437,6 +468,37 @@
                 </div>
             </div>
         </section>
+
+        <section class="container mx-auto px-4 py-12">
+        <h2 class="text-4xl serif-font font-light mb-8 font-bloverly">Related products</h2>
+        
+        <!-- Filters -->
+      
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
+            <!-- Product 1 -->
+            <% Relatedproducts.forEach(product=>{ %>
+                <a href="/home/product-details/<%= product.products._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                    <div class="product-card">
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3" style="height: 350px;">
+                            <img src="/<%= product.image[0] %>" 
+                                alt="Brown Jacket" 
+                                class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-sm mb-1"> <%= product.products.name %> </h3>
+                                <p class="text-lg font-semibold"> ₹<%= product.price %> </p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+
+        
+    </section>
     </main>
 
 
