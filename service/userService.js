@@ -39,7 +39,7 @@ export const registerService = async (name, email, password, mobileno) => {
         if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(name)||name.length<3){
             return {success:false,message:"USERNAME ERROR FROM SERVER"}
         }
-        if(!/^[a-zA-Z0-9](?!.*\.\.)[a-zA-Z0-9._]{4,28}[a-zA-Z0-9]@gmail\.com$/.test(email)){
+        if(!/^[a-zA-Z0-9](?!.*\.\.)[a-zA-Z0-9._]{4,28}[a-zA-Z0-9]/.test(email)){
             return {success:false,message:"EMAIL ERROR FROM SERVER"}
         }
         if(/(.)\1{2,}/.test(password)||password.length<6){

@@ -113,9 +113,7 @@ export const adminProductsAddLogic =  async(name,category,sku,description,status
         // if(sku.length==0){
         //     return {success:false,message:"SKU  error from server"}
         // }
-        if(variant.length==0){
-            return {success:false,message:"Variant error from server"}
-        }
+       
 
         let tempProductProgress = await productModel.findOne({name})
         
