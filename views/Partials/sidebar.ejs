@@ -1,0 +1,72 @@
+<aside class="w-72 bg-white min-h-screen shadow-lg">
+      <div class="p-6">
+        <nav class="space-y-2">
+          <a href="/admin/home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600
+          <%= activePage === 'Dashboard'
+            ? 'bg-red-50 text-red-600'
+            : 'hover:bg-red-50 text-gray-700 hover:text-red-600' %>
+          ">
+            <i class="fas fa-home text-lg"></i>
+            <span class="font-medium">Dashboard</span>
+          </a>
+          <a href="/admin/users" class="sidebar-link  flex items-center space-x-3 px-4 py-3 rounded-xl 
+          <%= activePage === 'users'
+       ? 'bg-red-50 text-red-600'
+       : 'hover:bg-red-50 text-gray-700 hover:text-red-600' %>">
+            <i class="fas fa-users text-lg"></i>
+            <span class="font-medium">Users</span>
+          </a>
+          <a href="/admin/products" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600
+          <%= activePage === 'products'
+       ? 'bg-red-50 text-red-600'
+       : 'hover:bg-red-50 text-gray-700 hover:text-red-600' %>">
+            <i class="fas fa-shopping-bag text-lg"></i>
+            <span class="font-medium">Products</span>
+          </a>
+          <a href="/admin/home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600<%= activePage === 'order'
+       ? 'bg-red-50 text-red-600'
+       : 'hover:bg-red-50 text-gray-700 hover:text-red-600' %>">
+            <i class="fas fa-cube text-lg"></i>
+            <span class="font-medium">Orders</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600">
+            <i class="fas fa-chart-line text-lg"></i>
+            <span class="font-medium">Analytics</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600">
+            <i class="fas fa-ticket-alt text-lg"></i>
+            <span class="font-medium">Coupons</span>
+          </a>
+          <a href="/admin/category" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600
+          <%= activePage === 'category'
+       ? 'bg-red-50 text-red-600'
+       : 'hover:bg-red-50 text-gray-700 hover:text-red-600' %>">
+            <i class="fas fa-list-ul text-lg"></i>
+            <span class="font-medium">Categories</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600">
+            <i class="fas fa-gift text-lg"></i>
+            <span class="font-medium">Offers</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600">
+            <i class="fas fa-image text-lg"></i>
+            <span class="font-medium">Banners</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600">
+            <i class="fas fa-user text-lg"></i>
+            <span class="font-medium">Profile</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600">
+            <i class="fas fa-cog text-lg"></i>
+            <span class="font-medium">Settings</span>
+          </a>
+        </nav>
+        
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <a href="/admin/logout" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 text-gray-700 hover:text-red-600">
+            <i class="fas fa-sign-out-alt text-lg"></i>
+            <span class="font-medium">Logout</span>
+          </a>
+        </div>
+      </div>
+    </aside>

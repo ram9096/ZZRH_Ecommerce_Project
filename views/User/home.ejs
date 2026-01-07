@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>#ZRI1 - Fashion Store</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+     <link rel="stylesheet" href="/css/output.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
 <!-- SweetAlert2 JS -->
@@ -169,7 +169,7 @@
     </section>
 
     <!-- Popular Right Now Section -->
-    <section class="container mx-auto px-4 py-12">
+   <section class="container mx-auto px-4 py-12">
         <h2 class="text-4xl serif-font font-light mb-8 font-bloverly">Popular Right Now</h2>
         
        
@@ -180,15 +180,26 @@
             <% product.forEach(product=>{ %>
                 <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
                     <div class="product-card">
-                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3" style="height: 350px;">
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
                             <img src="/<%= product.image[0] %>" 
                                 alt="Brown Jacket" 
-                                class="w-full h-full object-cover">
+                                loading="lazy"
+                                class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                            <% if (product.stock <= 0) { %>
+                                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+                                    <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                        Out of Stock
+                                    </span>
+                                </div>
+                            <% } %>
                         </div>
                         <div class="flex justify-between items-start">
                             <div>
-                                <h3 class="font-medium text-sm mb-1"> <%= product.products.name %> </h3>
+                                <h3 class="font-medium text-sm mb-1"> <%= product.products[0].name %> </h3>
                                 <p class="text-lg font-semibold"> ₹<%= product.price %> </p>
+                                <% if (product.stock <= 0) { %>
+                                    <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
+                                <% } %>
                             </div>
                             
                         </div>
@@ -265,7 +276,7 @@
             </div>
             
             <div>
-                <h4 class="font-medium mt-[40px] mb-3 font-clash">Navigation</h4>
+                <h4 class="font-medium mt-10 mb-3 font-clash">Navigation</h4>
                 <ul class="space-y-2 text-sm text-gray-600">
                     <li><a href="#" class="hover:text-gray-900">About Us</a></li>
                     <li><a href="#" class="hover:text-gray-900">Collection</a></li>
@@ -274,7 +285,7 @@
             </div>
             
             <div>
-                <h4 class="font-medium mb-3 mt-[40px] font-clash">Collection</h4>
+                <h4 class="font-medium mb-3 mt-10 font-clash">Collection</h4>
                 <ul class="space-y-2 text-sm text-gray-600">
                     <li><a href="#" class="hover:text-gray-900">New Arrival</a></li>
                     <li><a href="#" class="hover:text-gray-900">Men's</a></li>
@@ -284,7 +295,7 @@
             </div>
             
             <div>
-                <h4 class="font-medium mb-3 mt-[40px] font-clash">Contact Us</h4>
+                <h4 class="font-medium mb-3 mt-10 font-clash">Contact Us</h4>
                 <ul class="space-y-2 text-sm text-gray-600">
                     <li>###@gmail.com</li>
                     <li>##91-000000</li>

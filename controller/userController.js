@@ -43,7 +43,6 @@ export const homePageLoad = async (req, res) => {
     try{
        
         let products = await ProductsLoad({},5)
-        
         if(!req.session.user){
             return res.redirect('/login')
         }
