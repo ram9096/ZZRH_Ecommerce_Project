@@ -143,7 +143,7 @@ export const forgotPasswordLogic = async(email,password)=>{
 
 export const ProductsLoad = async (filter,limit = null)=>{
     filter["status"] = true
-    filter["stock"] = {$gt:0}
+    //filter["stock"] = {$gt:0}
     let color = new Set([...(await variantModel.find()).map(v=>v.color)])
     let size = new Set([...(await variantModel.find()).map(v=>v.size)])
     const pipeline = [
@@ -156,7 +156,7 @@ export const ProductsLoad = async (filter,limit = null)=>{
                 as:"products"
             }
         },
-        {$unwind:"$products"},
+        
         {
             $lookup:{
                 from:"categories",
@@ -165,13 +165,9 @@ export const ProductsLoad = async (filter,limit = null)=>{
                 as:"category"
             }
         },
-        {$unwind:"$category"},
-        {
-            $match:{
-                "category.isActive":true,
-            }
-        },
         {$match:filter},
+        
+        
         
     ]
     if(filter["price"]==undefined){
@@ -197,9 +193,10 @@ export const ProductsLoad = async (filter,limit = null)=>{
         pipeline.push({$sort:{"products.name":-1}})
         delete filter["sort"]
     }
-    
+    filter["category.isActive"] = true
     if(limit){
         pipeline.push({$limit:limit})
+        
     }
     let products = await variantModel.aggregate(pipeline)
     let category = await categoryModel.find()
