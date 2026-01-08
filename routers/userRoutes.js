@@ -15,6 +15,7 @@ router.get('/home/product-details/:id',productViewLoad)
 router.get('/product-listing',productLisitingLoad)
 router.get('/products',isAuthenticated,productShowcaseLoad)
 
+
 router.post('/login',userLogin)
 router.post('/register',userRegister)
 router.post('/verify-otp',verifyotp)
