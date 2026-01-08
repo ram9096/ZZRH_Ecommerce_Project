@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brown Jacket - ZZRH</title>
+    <link rel="stylesheet" href="/css/output.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        #zoomContainer:hover {
+            border: 1px solid #000;
+        }
+        #zoomContainer {
+            cursor: zoom-in;
+        }
+        #zoomContainer img {
+            transform-origin: center;
+        }
+
+        @font-face {
+            font-family: "bloverly";
+            src: url('/BLOVERLY.woff2') format('woff2');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: "Clash-display";
+            src: url('/ClashDisplay-Regular.woff') format('woff');
+            font-display: swap;
+        }
+        .font-bloverly {
+            font-family: "bloverly", system-ui, sans-serif;
+        }
+        .font-clash {
+            font-family: "Clash-display", system-ui, sans-serif;
+        }
+        
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .quantity-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            padding: 4px;
+        }
+        
+        .stock-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .stock-low {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .stock-out {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <% if (error) { %>
+        <script>
+            Swal.fire({
+                toast: true,
+                icon: 'error',
+                title: '<%=error%>',
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    <% } %>
+    
+    <!-- Header -->
+    <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
+        <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight" style="font-family: bloverly;font-weight: lighter;">
+            #ZZRH
+        </div>
+
+        <nav class="hidden md:flex space-x-8 text-xl font-clash">
+            <a href="#" class="hover:underline">New Arrival</a>
+            <a href="#" class="hover:underline">Men's collection</a>
+            <a href="#" class="hover:underline">About Us</a>
+        </nav>
+        
+        <% if(isLogged) {%>
+            <div class="hidden md:flex items-center gap-4">
+                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                    </svg>
+                </button>
+                <div class="relative group">
+                    <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </button>
+                    <span class="absolute top-14 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                        <%= isLogged.email %>
+                    </span>
+                </div>
+            </div>
+        <% } %>
+        
+        <% if(!isLogged){ %>
+            <a href="/login">
+                <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
+                    Login/sign-up
+                </button>
+            </a>
+        <% } %>
+
+        <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
+            Menu
+        </button>
+    </header>
+
+    <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 space-y-4 font-clash">
+        <a href="#" class="block hover:underline">New Arrival</a>
+        <a href="#" class="block hover:underline">Men's collection</a>
+        <a href="#" class="block hover:underline">About Us</a>
+    </div>
+
+    <% const selectedVariant = variant?.[0] || variant %>
+
+    <main class="container mx-auto px-8">
+        <nav class="text-sm text-gray-500 mb-6 font-clash" aria-label="Breadcrumb">
+            <ol class="flex flex-wrap items-center gap-1">
+                <li><a href="/" class="hover:text-black">Home</a></li>
+                <li>/</li>
+                <% if (product?.categoryId?.categoryName) { %>
+                    <li>
+                        <a href="/home?category=<%= product.categoryId._id %>" class="hover:text-black">
+                            <%= product.categoryId.categoryName %>
+                        </a>
+                    </li>
+                    <li>/</li>
+                <% } %>
+                <li class="text-black font-medium truncate max-w-50">
+                    <%= product.name %>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Image Gallery -->
+            <div class="space-y-4">
+                <div class="bg-gray-200 rounded-lg aspect-square">
+                    <div id="zoomContainer" class="bg-gray-200 rounded-lg aspect-square overflow-hidden relative">
+                        <img id="img1" src="/<%= selectedVariant?.image[0] %>" class="w-full h-full object-cover transition-transform duration-200" alt="">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-black transition-all duration-200" id="thumb1">
+                        <img id="img2" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[1] %>" alt="">
+                    </div>
+                    <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-transparent transition-all duration-200" id="thumb2">
+                        <img id="img3" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[2] %>" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="space-y-6 font-clash">
+                <div>
+                    <h1 class="text-4xl font-light mb-4"><%= product.name %></h1>
+                    <div class="flex items-center gap-4">
+                        <p id="discount" class="text-xl text-gray-500 line-through">
+                            ₹<%= selectedVariant?.discount %>
+                        </p>
+                        <p id="price" class="text-3xl font-semibold text-black">
+                            ₹<%= selectedVariant?.price %>
+                        </p>
+                    </div>
+                    
+                    <!-- Stock Badge -->
+                    <div class="mt-3" id="stockBadgeContainer">
+                        <% if (selectedVariant?.stock <= 0) { %>
+                            <span class="stock-badge stock-out">Out of Stock</span>
+                        <% } else if (selectedVariant?.stock < 5) { %>
+                            <span class="stock-badge stock-low">Only <%= selectedVariant?.stock %> left in stock!</span>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="border border-gray-300 rounded-lg p-6">
+                    <h3 class="font-semibold mb-2">Description</h3>
+                    <p class="text-sm text-gray-600"><%= product.description %></p>
+                </div>
+
+                <!-- Color Selection -->
+                <div>
+                    <h3 class="font-semibold mb-3">Color</h3>
+                    <select class="border rounded px-3 py-2" id="color">
+                        <% color.forEach(c => { %>
+                            <option value="<%= c %>"><%= c %></option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <!-- Size Selection -->
+                <div>
+                    <h3 class="font-semibold mb-3">Size</h3>
+                    <select class="border rounded px-3 py-2" id="size">
+                        <% size.forEach(s => { %>
+                            <option value="<%= s %>"><%= s %></option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <!-- Quantity -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-semibold mb-3">Quantity</h3>
+                        <div class="flex items-center gap-2">
+                            <button class="quantity-btn" id="decreaseBtn">-</button>
+                            <input type="text" value="1" class="quantity-input" id="quantityInput" readonly>
+                            <button class="quantity-btn" id="increaseBtn">+</button>
+                        </div>
+                    </div>
+                    <button class="text-red-500 hover:text-red-600">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Buttons -->
+                <div class="space-y-3">
+                    <button id="buyNowBtn" class="w-full bg-black text-white py-3 rounded hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        Buy now
+                    </button>
+                    <button id="addToCartBtn" class="w-full border border-black text-black py-3 rounded hover:bg-gray-50 transition disabled:border-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed">
+                        Add to cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Reviews Section -->
+        <section class="mt-16">
+            <h2 class="text-3xl font-semibold mb-8">Customer Reviews</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="flex items-baseline gap-2 mb-4">
+                        <span class="text-5xl font-bold">4.2</span>
+                        <div class="flex text-yellow-400">
+                            <span class="star-filled">★★★★</span>
+                            <span class="star-empty">★</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-6">Based on 121 reviews</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Products -->
+        <section class="container mx-auto px-4 py-12">
+            <h2 class="text-4xl serif-font font-light mb-8 font-bloverly">Related products</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
+                <% Relatedproducts.forEach(product => { %>
+                    <a href="/home/product-details/<%= product.products._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                        <div class="product-card">
+                            <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3" style="height: 350px;">
+                                <img src="/<%= product.image[0] %>" alt="Product" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-medium text-sm mb-1"><%= product.products[0].name %></h3>
+                                    <p class="text-lg font-semibold">₹<%= product.price %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let currentStock = Number('<%= selectedVariant?.stock || 0 %>');
+        
+        const menuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const price = document.getElementById('price');
+        const discount = document.getElementById('discount');
+        const img1 = document.getElementById('img1');
+        const img2 = document.getElementById('img2');
+        const img3 = document.getElementById('img3');
+        const sizeSelect = document.getElementById('size');
+        const quantityInput = document.getElementById('quantityInput');
+        const increaseBtn = document.getElementById('increaseBtn');
+        const decreaseBtn = document.getElementById('decreaseBtn');
+        const buyNowBtn = document.getElementById('buyNowBtn');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+        const stockBadgeContainer = document.getElementById('stockBadgeContainer');
+
+        function updateStockDisplay(stock) {
+            currentStock = stock;
+            let badgeHTML = '';
+            
+            if (stock <= 0) {
+                badgeHTML = '<span class="stock-badge stock-out">Out of Stock</span>';
+                buyNowBtn.disabled = true;
+                addToCartBtn.disabled = true;
+                increaseBtn.disabled = true;
+                decreaseBtn.disabled = true;
+            } else if (stock < 5) {
+                badgeHTML = `<span class="stock-badge stock-low">Only ${stock} left in stock!</span>`;
+                buyNowBtn.disabled = false;
+                addToCartBtn.disabled = false;
+                updateQuantityButtons();
+            } else {
+                badgeHTML = '';
+                buyNowBtn.disabled = false;
+                addToCartBtn.disabled = false;
+                updateQuantityButtons();
+            }
+            
+            stockBadgeContainer.innerHTML = badgeHTML;
+        }
+
+        function updateQuantityButtons() {
+            const quantity = parseInt(quantityInput.value);
+            decreaseBtn.disabled = quantity <= 1 || currentStock <= 0;
+            increaseBtn.disabled = quantity >= currentStock || currentStock <= 0;
+        }
+
+        increaseBtn.addEventListener('click', () => {
+            const currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity < currentStock) {
+                quantityInput.value = currentQuantity + 1;
+                updateQuantityButtons();
+            }
+        });
+
+        decreaseBtn.addEventListener('click', () => {
+            const currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+                updateQuantityButtons();
+            }
+        });
+
+        const mainImage = document.getElementById('img1');
+        const thumb1 = document.getElementById('thumb1');
+        const thumb2 = document.getElementById('thumb2');
+
+        function setActiveThumb(activeThumb) {
+            thumb1.classList.remove('border-black');
+            thumb1.classList.add('border-transparent');
+            thumb2.classList.remove('border-black');
+            thumb2.classList.add('border-transparent');
+            activeThumb.classList.remove('border-transparent');
+            activeThumb.classList.add('border-black');
+        }
+
+        img2.addEventListener('click', function() {
+            mainImage.src = this.src;
+            setActiveThumb(thumb1);
+        });
+
+        img3.addEventListener('click', function() {
+            mainImage.src = this.src;
+            setActiveThumb(thumb2);
+        });
+
+        setActiveThumb(thumb1);
+
+        document.getElementById('color').addEventListener('change', async () => {
+            const id = '<%= product._id %>';
+            const color = document.getElementById('color').value;
+            try {
+                const res = await fetch(`/home/product-details/${id}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        type: "color",
+                        value: color
+                    })
+                });
+                const data = await res.json();
+                if (!data.success) return;
+                
+                img1.src = `/${data.product.image[0]}`;
+                img2.src = `/${data.product.image[1]}`;
+                img3.src = `/${data.product.image[2]}`;
+                sizeSelect.innerHTML = '';
+
+                data.product.sizes.forEach((s, i) => {
+                    const option = document.createElement('option');
+                    option.value = s.size;
+                    option.innerHTML = s.size;
+                    sizeSelect.appendChild(option);
+                });
+                
+                const firstSize = data.product.sizes[0];
+                discount.innerHTML = `₹${firstSize.discount}`;
+                price.innerHTML = `₹${firstSize.price}`;
+                updateStockDisplay(firstSize.stock || 0);
+                quantityInput.value = 1;
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
+        document.getElementById('size').addEventListener('change', async () => {
+            const id = '<%= product._id %>';
+            const size = document.getElementById('size').value;
+            const color = document.getElementById('color').value;
+            try {
+                const res = await fetch(`/home/product-details/${id}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        type: "size",
+                        value: size,
+                        color: color
+                    })
+                });
+                const data = await res.json();
+                if (!data.success) return;
+                
+                discount.innerHTML = `₹${data.product.sizes[0].discount}`;
+                price.innerHTML = `₹${data.product.sizes[0].price}`;
+                updateStockDisplay(data.product.sizes[0].stock || 0);
+                quantityInput.value = 1;
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
+        const thumbnail = [img2, img3];
+        thumbnail.forEach(t => {
+            t.addEventListener('click', () => {
+                let temp = img1.src;
+                img1.src = t.src;
+                t.src = temp;
+            });
+        });
+
+        const zoomContainer = document.getElementById('zoomContainer');
+        const ZOOM_LEVEL = 2.5;
+        
+        zoomContainer.addEventListener('mousemove', (e) => {
+            const rect = zoomContainer.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.width) * 100;
+            img1.style.transformOrigin = `${x}% ${y}%`;
+            img1.style.transform = `scale(${ZOOM_LEVEL})`;
+        });
+
+        zoomContainer.addEventListener('mouseleave', () => {
+            img1.style.transform = 'scale(1)';
+            img1.style.transformOrigin = 'center';
+        });
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Initialize stock display and buttons
+        updateStockDisplay(currentStock);
+    </script>
+</body>
+</html>

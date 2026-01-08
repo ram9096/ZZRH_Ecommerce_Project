@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>#ZZRH - Create Account</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+   <link rel="stylesheet" href="/css/output.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
-    @font-face { font-family: bloverly; src: url('/BLOVERLY.woff2'); }
-    @font-face { font-family: Clash-display; src: url('/ClashDisplay-Regular.woff'); }
+    @font-face { font-family: bloverly; src: url('/BLOVERLY.woff2')format('woff2'); }
+    @font-face { font-family: Clash-display; src: url('/ClashDisplay-Regular.woff')format('woff'); }
     .custom-font { font-family: bloverly; }
     .clash { font-family: Clash-display; }
 
@@ -52,7 +52,7 @@
         <h1 class="text-[128px] custom-font tracking-tight">#ZZRH</h1>
       </div>
 
-      <form class="space-y-6 clash" action="/register" method="post" novalidate>
+      <form class="space-y-6 clash" action="/register" method="post" >
         <div class="input-field">
           <label for="name" class="block text-sm text-gray-500 mb-1 clash">Name</label>
           <input type="text" id="name" class="w-full outline-none" name="name" />
@@ -139,6 +139,7 @@
     mobile: document.getElementById("mobile-error")
   }
 
+
   // Password toggle functionality
   function setupPasswordToggle(toggleId, inputId, eyeIconId, eyeOffIconId) {
     const toggle = document.getElementById(toggleId)
@@ -161,23 +162,29 @@
 
   setupPasswordToggle("toggle-password", "password", "eye-icon", "eye-off-icon")
   setupPasswordToggle("toggle-confirm", "confirm-password", "eye-icon-confirm", "eye-off-icon-confirm")
-
-  // Validation functions
+  const USERNAME_PATTERN = /^[A-Za-z]+( [A-Za-z]+)*$/;           // Letters + single spaces only
+  const EMAIL_PATTERN = /^[a-zA-Z0-9](?!.*\.\.)[a-zA-Z0-9._]{4,28}[a-zA-Z0-9]/;           // Basic email
+  const PHONE_PATTERN = /^\d{10}$/;                             // Exactly 10 digits
+  const PASSWORD_PATTERN = /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/
   function validateField(field) {
     const value = fields[field].value.trim()
 
     switch (field) {
       case "name":
+
         if (value.length < 3) {
           errors.name.textContent = "Enter valid name"
+          return false
+        }
+        if (!USERNAME_PATTERN.test(value)){
+          errors.name.textContent = "Only characters accepted"
           return false
         }
         errors.name.textContent = ""
         return true
 
       case "email":
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(value)) {
+        if (!EMAIL_PATTERN.test(value)) {
           errors.email.textContent = "Enter valid email"
           return false
         }
@@ -185,6 +192,10 @@
         return true
 
       case "password":
+        if(/(.)\1{2,}/.test(value)){
+          errors.password.textContent = "Same characters cannot be repeted more than 2 times"
+          return false
+        }
         if (value.length < 6) {
           errors.password.textContent = "Minimum 6 characters"
           return false
@@ -201,8 +212,16 @@
         return true
 
       case "mobile":
+        if(value.length < 10){
+          errors.mobile.textContent = "Enter 10 digits"
+          return false
+        }
+        if(/^(\d)\1{9}$/.test(value)){
+          errors.mobile.textContent = "Same characters cannot be repeted more than 10 times"
+          return false
+        }
         if (!/^[0-9]{10}$/.test(value)) {
-          errors.mobile.textContent = "Enter 10 digit number"
+          errors.mobile.textContent = "Numbers only accepted && 10 digits"
           return false
         }
         errors.mobile.textContent = ""
@@ -210,12 +229,11 @@
     }
   }
 
-  // Validate when user leaves a field
   Object.keys(fields).forEach(field => {
+    fields[field].addEventListener("input", () => validateField(field))
     fields[field].addEventListener("blur", () => validateField(field))
   })
 
-  // On submit validate all
   form.addEventListener("submit", function (e) {
     let valid = true
     Object.keys(fields).forEach(field => {

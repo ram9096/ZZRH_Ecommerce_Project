@@ -4,199 +4,219 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
-    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">#ZZRH</h1>
-        <button class="p-2 hover:bg-gray-100 rounded-lg">
-            <i class="far fa-bell text-xl"></i>
-        </button>
-    </header>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="glass-effect border-b border-white/20 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold">
+                        Z
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#ZZRH</h1>
+                </div>
+                <button class="relative p-3 hover:bg-white/50 rounded-xl transition-all">
+                    <i class="far fa-bell text-xl text-gray-700"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white min-h-screen border-r border-gray-100 p-6">
-            <nav class="space-y-4">
-                <a href="/admin/home" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-900">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span>
-                </a>
-                <a href="/admin/products" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-100 text-gray-700">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span>Products</span>
-                </a>
-                <a href="/admin/orders" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cube"></i>
-                    <span>Orders</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Coupons</span>
-                </a>
-                <a href="/admin/category" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-list-ul"></i>
-                    <span>Categories</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-gift"></i>
-                    <span>Offers</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-image"></i>
-                    <span>Banners</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-            
-            <div class=" flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:text-gray-900">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </div>
-        </aside>
+        <%- include('../Partials/sidebar') %>
 
         <!-- Main Content -->
         <main class="flex-1 p-8">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">Products</h2>
-                <div class="flex items-center gap-4">
-                    <button class="p-2 hover:bg-gray-100 rounded-lg">
-                        <i class="far fa-bell text-gray-600"></i>
-                    </button>
+            <!-- Header Section -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h2 class="text-4xl font-bold text-gray-800 mb-1">Products</h2>
+                        <p class="text-gray-500">Manage your product inventory</p>
+                    </div>
                     <a href="/admin/product-add">
-                        <button class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-medium">
-                            Add Product
+                        <button class="px-6 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center space-x-2">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Product</span>
                         </button>
                     </a>
                 </div>
             </div>
 
-            <!-- Search Bar -->
-            <div class="mb-6">
-                <div class="relative">
-                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input 
-                        type="text" 
-                        placeholder="Search products..." 
-                        class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                    >
+            <!-- Filters Card -->
+            <div class="glass-effect rounded-2xl shadow-xl p-6 mb-6 border border-white/20">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <!-- Search -->
+                    <div class="flex-1 min-w-[300px]">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                placeholder="Search products..." 
+                                onkeyup="handleSearch(this.value)"
+                                value="<%= search %>"
+                                class="w-full pl-12 pr-4 py-3 bg-white/70 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Sort Filter -->
+                    <form action="/admin/products" method="GET" class="flex gap-3">
+                        <select name="sort" onchange="this.form.submit()" class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer"> 
+                            <option value="latest" <%= sort === "latest" ? "selected" : "" %>>🕐 Latest</option>
+                            <option value="oldest" <%= sort === "oldest" ? "selected" : "" %>>⏰ Oldest</option>
+                        </select>
+                    </form>
                 </div>
             </div>
 
-            <!-- Filter and Sort -->
-            <div class="flex gap-4 mb-6">
-                <button class="flex items-center justify-between w-48 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
-                    <span class="text-gray-700">Filter</span>
-                    <div class="flex flex-col">
-                        <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
-                    </div>
-                </button>
-                <button class="flex items-center justify-between w-48 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
-                    <span class="text-gray-700">Sort</span>
-                    <div class="flex flex-col">
-                        <i class="fas fa-chevron-up text-xs text-gray-400"></i>
-                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
-                    </div>
-                </button>
-            </div>
-
-            <% if (error) { %>
-                <div id="popup"
-                    class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
-                <%= error %>
-                </div>
-
+            <% if(error) {%>
                 <script>
-                setTimeout(() => {
-                    document.getElementById("popup").classList.add("opacity-0");
-                }, 2500);
+                Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: '<%=error%>',
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
                 </script>
-
-                <style>
-                .animate-fade-in { 
-                    animation: fadeIn 0.4s ease-out;
-                }
-                @keyframes fadeIn {
-                    0% { opacity: 0; transform: translateY(-10px); }
-                    100% { opacity: 1; transform: translateY(0); }
-                }
-                </style>
             <% } %>
 
-            <!-- Products Table -->
-            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">SKU</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Stock</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <% data.forEach((user,i)=>{ %>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23b8c5b0' width='100' height='100'/%3E%3C/svg%3E" alt="Product" class="w-full h-full rounded-lg object-cover">
-                                        </div>
+            <!-- Products Table Card -->
+            <div class="glass-effect rounded-2xl shadow-xl overflow-hidden border border-white/20">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-gray-800 to-black text-white">
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-box"></i>
+                                        <span>Product Name</span>
                                     </div>
-                                </td>
-                                    <td class="px-6 py-4 text-gray-900"> <%= user.SKU %> </td>
-                                    <td class="px-6 py-4 text-gray-900"> <%= user.stock %> </td>
-                                    <td class="px-6 py-4 text-gray-900">$ <%= user.productId.price %></td>
-                                    <td class="px-6 py-4 text-gray-600"> <%= user.productId.categoryId.categoryName %> </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <button class="text-gray-600 hover:text-gray-900">Edit</button>
-                                            <span class="text-gray-400">|</span>
-                                            <button class="text-gray-600 hover:text-red-600">Delete</button>
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-tag"></i>
+                                        <span>Category</span>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-cog"></i>
+                                        <span>Actions</span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <% data.forEach((user,i)=>{ %>
+                                <tr class="hover:bg-gray-100 transition-all">
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-black flex items-center justify-center text-white font-bold">
+                                                <%= user.name.charAt(0).toUpperCase() %>
+                                            </div>
+                                            <span class="font-semibold text-gray-800"><%= user.name %></span>
                                         </div>
                                     </td>
-
+                                    <td class="px-6 py-5">
+                                        <span class="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-100 text-gray-700 border-2 border-gray-200 inline-flex items-center space-x-1">
+                                            <i class="fas fa-folder text-xs"></i>
+                                            <span><%= user.categoryId.categoryName %></span>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <a href="/admin/products/<%= user._id %>">
+                                            <button class="px-4 py-2 bg-gradient-to-r from-gray-700 to-black text-white rounded-lg hover-lift font-medium text-sm flex items-center space-x-2">
+                                                <i class="fas fa-edit"></i>
+                                                <span>Edit</span>
+                                            </button>
+                                        </a>
+                                    </td>
                                 </tr>
                             <% }) %>
-                        
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Pagination -->
-            <div class="flex items-center justify-center gap-2 mt-6">
-                <button class="p-2 hover:bg-gray-100 rounded-lg">
-                    <i class="fas fa-chevron-left text-gray-600"></i>
-                </button>
-                <button class="w-10 h-10 bg-red-600 text-white rounded-lg font-medium">1</button>
-                <button class="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-gray-700">2</button>
-                <button class="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-gray-700">3</button>
-                <button class="p-2 hover:bg-gray-100 rounded-lg">
-                    <i class="fas fa-chevron-right text-gray-600"></i>
-                </button>
+                <!-- Pagination -->
+                <div class="bg-white/50 px-6 py-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-600 font-medium">
+                            Showing 
+                            <span class="text-gray-800 font-bold"><%= (currentPage - 1) * 5 + 1 %></span> 
+                            to 
+                            <span class="text-gray-800 font-bold"><%= Math.min(currentPage * 5, totalUser) %></span> 
+                            of 
+                            <span class="text-gray-800 font-bold"><%= totalUser %></span> products
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg bg-white hover:bg-gray-200 border-2 border-gray-300 transition-all">
+                                <i class="fas fa-chevron-left text-gray-700"></i>
+                            </a>
+                            <% } %>
+                            <% for (let i = 1; i <= totalPage; i++) { %>
+                            <a href="?page=<%= i %>"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg font-semibold transition-all
+                                <%= i === currentPage ? 'gradient-bg text-white shadow-lg' : 'bg-white hover:bg-gray-200 border-2 border-gray-300 text-gray-700' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+                            <% if (currentPage < totalPage) { %>
+                            <a href="?page=<%= currentPage + 1 %>"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg bg-white hover:bg-gray-200 border-2 border-gray-300 transition-all">
+                                <i class="fas fa-chevron-right text-gray-700"></i>
+                            </a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
+
+    <script>
+        let timer;
+        function handleSearch(value) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("search", value);
+                params.set("page", 1);
+                window.location.search = params.toString();
+            }, 500);
+        }
+    </script>
 </body>
 </html>

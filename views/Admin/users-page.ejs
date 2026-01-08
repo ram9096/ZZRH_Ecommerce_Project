@@ -4,245 +4,304 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans">
-    <!-- Header -->
-    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">#ZZRH</h1>
-        <button class="p-2 hover:bg-gray-100 rounded-lg">
-            <i class="far fa-bell text-xl"></i>
-        </button>
-    </header>
-
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white min-h-screen border-r border-gray-100 p-6">
-            <nav class="space-y-4">
-                <a href="/admin/home" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-900">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-100 text-gray-700">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span>
-                </a>
-                <a href="/admin/products" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span>Products</span>
-                </a>
-                <a href="/admin/home" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cube"></i>
-                    <span>Orders</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Coupons</span>
-                </a>
-                <a href="/admin/category" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-list-ul"></i>
-                    <span>Categories</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-gift"></i>
-                    <span>Offers</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-image"></i>
-                    <span>Banners</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-            
-            <div class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:text-gray-900">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="glass-effect border-b border-white/20 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold">
+                        Z
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#ZZRH</h1>
+                </div>
+                <button class="relative p-3 hover:bg-white/50 rounded-xl transition-all">
+                    <i class="far fa-bell text-xl text-gray-700"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
             </div>
-        </aside>
+        </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <%- include('../Partials/sidebar') %>
+        
+        <% if(error) {%>
+            <script>
+            Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: '<%=error%>',
+                    position: 'top-right',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            </script>
+        <% } %>
 
         <!-- Main Content -->
         <main class="flex-1 p-8">
-            <h2 class="text-4xl font-bold mb-8">Customers</h2>
-
-            <!-- Search Bar -->
-            <div class="bg-red-50 rounded-lg p-4 mb-6">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-search text-red-400"></i>
-                    <input type="text" id="searchBox" placeholder="Search customers..." class="bg-transparent flex-1 outline-none text-gray-700 placeholder-gray-500">
-                </div>
+            <!-- Header Section -->
+            <div class="mb-8">
+                <h2 class="text-4xl font-bold text-gray-800 mb-1">Customers</h2>
+                <p class="text-gray-500">Manage your customer base</p>
             </div>
 
-            <!-- Filters -->
-            <div class="flex gap-3 mb-6">
-                <form action="/admin/users" method="GET">
-                        <select name="status" onchange="this.form.submit()" class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition">
-                            <option value="" <% if(status == ""){ %> selected <% } %>>All</option>
-                            <option value="true" <% if(status == "true"){ %> selected <% } %>>Active</option>
-                            <option value="false" <% if(status == "false"){ %> selected <% } %>>Inactive</option>
+            <!-- Filters Card -->
+            <div class="glass-effect rounded-2xl shadow-xl p-6 mb-6 border border-white/20">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <!-- Search -->
+                    <div class="flex-1 min-w-[300px]">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                onkeyup="handleSearch(this.value)" 
+                                value="<%= search %>" 
+                                type="text" 
+                                id="searchBox" 
+                                placeholder="Search customers..." 
+                                class="w-full pl-12 pr-4 py-3 bg-white/70 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <form action="/admin/users" method="GET" class="flex gap-3">
+                        <select name="status" onchange="this.form.submit()" class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
+                            <option value="" <% if(status == ""){ %> selected <% } %>>📊 All Status</option>
+                            <option value="true" <% if(status == "true"){ %> selected <% } %>>✅ Active</option>
+                            <option value="false" <% if(status == "false"){ %> selected <% } %>>❌ Inactive</option>
                         </select>
                         
-                        <select name="sort" onchange="this.form.submit()" class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition"  >
-                            
-                            <option value="latest">Latest</option>
-                            <option value="oldest">Oldest</option>
+                        <select name="sort" onchange="this.form.submit()" class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
+                            <option value="latest" <%= sort === "latest" ? "selected" : "" %>>🕐 Latest</option>
+                            <option value="oldest" <%= sort === "oldest" ? "selected" : "" %>>⏰ Oldest</option>
                         </select>
                     </form>
-                
-                <!-- <button class="px-6 py-2 bg-red-100 rounded-lg font-medium hover:bg-red-200 transition">
-                    Sort by
-                </button> -->
+                </div>
             </div>
 
-            <!-- Customer Table -->
-            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="text-left px-6 py-4 font-semibold text-gray-700">Customer</th>
-                            <th class="text-left px-6 py-4 font-semibold text-gray-700">Contact</th>
-                            <!-- <th class="text-left px-6 py-4 font-semibold text-gray-700">Orders</th> -->
-                            <th class="text-left px-6 py-4 font-semibold text-gray-700">Status</th>
-                            <th class="text-left px-6 py-4 font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="tableBody">
-                        <% data.forEach(user => { %>
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                
-                                <!-- USER NAME -->
-                                <td class="px-6 py-4"><%= user.username %></td>
-
-                                <!-- EMAIL -->
-                                <td class="px-6 py-4 text-gray-500"><%= user.email %></td>
-                                <!-- ACTIVE STATUS -->
-                                <td class="px-6 py-4">
-                                    <% 
-                                        const badgeClass = user.isActive 
-                                            ? "bg-green-100 text-green-700" 
-                                            : "bg-red-100 text-red-700"; 
-                                        const badgeText = user.isActive ? "Active" : "Inactive";
-                                    %>
-
-                                    <span class="px-3 py-1 rounded-full text-sm font-medium <%= badgeClass %>">
-                                        <%= badgeText %>
-                                    </span>
-                                </td>
-                                <!-- ACTION BUTTON -->
-                                <td class="px-6 py-4">
-                                    <button class="text-purple-600 hover:text-purple-800 font-medium viewUserBtn" data-id="<%= user._id %>" data-isActive="<%= user.isActive %>" data-name="<%= user.username %>">View</button>
-                
-                                </td>
-
+            <!-- Customer Table Card -->
+            <div class="glass-effect rounded-2xl shadow-xl overflow-hidden border border-white/20">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-gray-800 to-black text-white">
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-user"></i>
+                                        <span>Customer</span>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-envelope"></i>
+                                        <span>Contact</span>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-toggle-on"></i>
+                                        <span>Status</span>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-cog"></i>
+                                        <span>Actions</span>
+                                    </div>
+                                </th>
                             </tr>
-                        <% }) %>
-                    </tbody>
+                        </thead>
 
+                        <tbody id="tableBody" class="divide-y divide-gray-100">
+                            <% data.forEach(user => { %>
+                                <tr class="hover:bg-gray-100 transition-all">
+                                    <!-- USER NAME -->
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-black flex items-center justify-center text-white font-bold">
+                                                <%= user.username.charAt(0).toUpperCase() %>
+                                            </div>
+                                            <span class="font-semibold text-gray-800"><%= user.username %></span>
+                                        </div>
+                                    </td>
 
+                                    <!-- EMAIL -->
+                                    <td class="px-6 py-5 text-gray-600"><%= user.email %></td>
 
-                    <form action="/admin/users/edit" method="post">
-                        <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-                            <div class="bg-white p-6 rounded-xl w-80 shadow-lg">
-                                <h2 class="text-xl font-bold mb-3">User Status</h2>
+                                    <!-- ACTIVE STATUS -->
+                                    <td class="px-6 py-5">
+                                        <% 
+                                            const badgeClass = user.isActive 
+                                                ? "bg-green-100 text-green-700 border-green-200" 
+                                                : "bg-red-100 text-red-700 border-red-200"; 
+                                            const badgeText = user.isActive ? "Active" : "Inactive";
+                                            const badgeIcon = user.isActive ? "fa-check-circle" : "fa-times-circle";
+                                        %>
+                                        <span class="px-4 py-2 rounded-lg text-sm font-semibold border-2 <%= badgeClass %> inline-flex items-center space-x-1">
+                                            <i class="fas <%= badgeIcon %>"></i>
+                                            <span><%= badgeText %></span>
+                                        </span>
+                                    </td>
 
-                                <p><strong>Name:</strong> <span id="popupName"></span></p>
-                                <p><strong>Status:</strong> <span id="popupStatus"></span></p>
+                                    <!-- ACTION BUTTON -->
+                                    <td class="px-6 py-5">
+                                        <button class="viewUserBtn px-4 py-2 bg-gradient-to-r from-gray-700 to-black text-white rounded-lg hover-lift font-medium text-sm flex items-center space-x-2" data-id="<%= user._id %>" data-isActive="<%= user.isActive %>" data-name="<%= user.username %>">
+                                            <i class="fas fa-eye"></i>
+                                            <span>View</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
 
-                                <div class="flex justify-between mt-5">
-                                    <button id="activateBtn" onclick="setData(true)" class="bg-green-600 text-white px-4 py-2 rounded">Activate</button>
-            
-                                    <button id="deactivateBtn" onclick="setData(false)" class="bg-red-600 text-white px-4 py-2 rounded">Deactivate</button>
-                                    
+                <!-- Pagination -->
+                <div class="bg-white/50 px-6 py-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-600 font-medium">
+                            Showing 
+                            <span class="text-gray-800 font-bold"><%= (currentPage - 1) * 5 + 1 %></span> 
+                            to 
+                            <span class="text-gray-800 font-bold"><%= Math.min(currentPage * 5, totalUser) %></span> 
+                            of 
+                            <span class="text-gray-800 font-bold"><%= totalUser %></span> customers
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>&status=<%= status %>"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg bg-white hover:bg-gray-200 border-2 border-gray-300 transition-all">
+                                <i class="fas fa-chevron-left text-gray-700"></i>
+                            </a>
+                            <% } %>
+                            <% for (let i = 1; i <= totalPage; i++) { %>
+                            <a href="?page=<%= i %>&status=<%= status %>"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg font-semibold transition-all
+                                <%= i === currentPage ? 'gradient-bg text-white shadow-lg' : 'bg-white hover:bg-gray-200 border-2 border-gray-300 text-gray-700' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+                            <% if (currentPage < totalPage) { %>
+                            <a href="?page=<%= currentPage + 1 %>&status=<%= status %>"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg bg-white hover:bg-gray-200 border-2 border-gray-300 transition-all">
+                                <i class="fas fa-chevron-right text-gray-700"></i>
+                            </a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Status Modal -->
+            <form action="/admin/users/edit" method="post">
+                <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                    <div class="glass-effect rounded-2xl w-96 shadow-2xl border border-white/20 p-8">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">User Status</h2>
+                            <div class="w-12 h-1 bg-gradient-to-r from-gray-700 to-black rounded-full"></div>
+                        </div>
+
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-black flex items-center justify-center text-white">
+                                    <i class="fas fa-user"></i>
                                 </div>
-                                <input type="hidden" id="isActive" name="isActive">
-                                <input type="hidden" id="userId" name="id">
-                                <button id="closePopup" class="mt-4 text-gray-600 underline">Close</button>
+                                <div>
+                                    <p class="text-xs text-gray-500 font-medium">Customer Name</p>
+                                    <p class="font-semibold text-gray-800" id="popupName"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-black flex items-center justify-center text-white">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 font-medium">Current Status</p>
+                                    <p class="font-semibold text-gray-800" id="popupStatus"></p>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </table>
-            </div>
 
+                        <div class="flex gap-3 mb-6">
+                            <button type="submit" id="activateBtn" onclick="setData(true)" class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-all flex items-center justify-center space-x-2">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Activate</span>
+                            </button>
+                            <button type="submit" id="deactivateBtn" onclick="setData(false)" class="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition-all flex items-center justify-center space-x-2">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Deactivate</span>
+                            </button>
+                        </div>
+
+                        <input type="hidden" id="isActive" name="isActive">
+                        <input type="hidden" id="userId" name="id">
+
+                        <button type="button" id="closePopup" class="w-full py-3 text-gray-600 hover:text-gray-800 font-medium transition-all">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </form>
 
             <!-- Filter Modal -->
-            <div id="filterModal" 
-                class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center hidden z-50">
-
+            <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center hidden z-50">
                 <div class="bg-white w-72 p-6 rounded-xl shadow-lg">
                     <h3 class="text-xl font-semibold mb-4">Filter by Status</h3>
-
-                    
-                </div>
-
-            </div>
-
-
-            
-
-
-            <!-- Footer -->
-            <div class="flex items-center justify-between mt-6">
-                <div class="text-sm text-gray-600">
-                    Showing 1 to 5 of 124 customers
-                </div>
-                
-                <!-- Pagination -->
-                <div class="flex items-center gap-2">
-                    <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition">
-                        <i class="fas fa-chevron-left text-gray-600"></i>
-                    </button>
-                    <button class="w-10 h-10 flex items-center justify-center bg-red-100 text-gray-900 rounded-lg font-medium">1</button>
-                    <button class="w-10 h-10 flex items-center justify-center hover:bg-gray-100 text-gray-700 rounded-lg transition">2</button>
-                    <button class="w-10 h-10 flex items-center justify-center hover:bg-gray-100 text-gray-700 rounded-lg transition">3</button>
-                    <button class="w-10 h-10 flex items-center justify-center hover:bg-gray-100 text-gray-700 rounded-lg transition">4</button>
-                    <button class="w-10 h-10 flex items-center justify-center hover:bg-gray-100 text-gray-700 rounded-lg transition">5</button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition">
-                        <i class="fas fa-chevron-right text-gray-600"></i>
-                    </button>
                 </div>
             </div>
         </main>
     </div>
 
-
     <script>
         let searchTxt = document.getElementById('searchBox')
         let tbody = document.getElementById('tableBody')
         let rows = tbody.getElementsByTagName('tr')
+        
         function setData(msg){
             const status = document.getElementById('isActive')
             status.value = msg
         }
 
-        searchTxt.addEventListener('keyup',(e)=>{
-            let tempText = searchTxt.value
-            for(i of rows){
-                let cell = i.getElementsByTagName('td')
-                let match  = false
-                for(j in cell[0]){
-                    if(cell[0].innerText.toLowerCase().includes(tempText.toLowerCase())){
-                        match = true;
-                        break;
-                    }
-                }
-                
-                i.style.display = match ? '' : 'none';
-            }
-        })
+        let timer;
+        function handleSearch(value) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("search", value);
+                params.set("page", 1);
+                window.location.search = params.toString();
+            }, 400);
+        }
+
         function openFilterModal() {
             document.getElementById("filterModal").classList.remove("hidden");
         }
@@ -250,12 +309,6 @@
         function closeFilterModal() {
             document.getElementById("filterModal").classList.add("hidden");
         }
-
-
-
-
-
-
 
         const popup = document.getElementById('popup');
         const popupName = document.getElementById('popupName');
@@ -268,10 +321,10 @@
 
         document.querySelectorAll('.viewUserBtn').forEach(btn => {
             btn.addEventListener('click', () => {
-                
                 let id = btn.dataset.id;
                 let name = btn.dataset.name;
                 let status = btn.dataset.isactive == "true"
+                
                 if(status==true){
                     activateBtn.classList.add('hidden')
                     deactivateBtn.classList.remove('hidden')
@@ -279,6 +332,7 @@
                     deactivateBtn.classList.add('hidden')
                     activateBtn.classList.remove('hidden')
                 }
+                
                 popupName.innerText = name;
                 popupStatus.innerText = status ? "Active" : "Inactive";
                 userId.value = id
@@ -292,7 +346,6 @@
         closePopup.addEventListener('click', () => {
             popup.classList.add('hidden');
         });
-
     </script>
 
 </body>

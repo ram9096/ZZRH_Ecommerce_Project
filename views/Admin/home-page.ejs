@@ -21,62 +21,7 @@
 
     <div class="flex">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white min-h-screen border-r border-gray-100 p-6">
-            <nav class="space-y-4">
-                <a href="/admin/home" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-100 text-gray-900">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span>
-                </a>
-                <a href="/admin/products" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span>Products</span>
-                </a>
-                <a href="/admin/orders" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cube"></i>
-                    <span>Orders</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Coupons</span>
-                </a>
-                <a href="/admin/category" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-list-ul"></i>
-                    <span>Categories</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-gift"></i>
-                    <span>Offers</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-image"></i>
-                    <span>Banners</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-            
-            <div class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:text-gray-900">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </div>
-        </aside>
-
+        <%- include('../Partials/sidebar') %>
         <!-- Main Content -->
         <main class="flex-1 p-8">
             <h1 class="text-3xl font-bold mb-8">Dashboard</h1>

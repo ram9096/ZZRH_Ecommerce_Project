@@ -4,10 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>#ZZRH Login</title>
-  <!-- Tailwind CSS (fixed URL) -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/css/output.css">
 
   <!-- Google Fonts -->
+   <!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
@@ -25,6 +31,7 @@
 </head>
 <body class="bg-white flex flex-col md:flex-row min-h-screen">
   <!-- Left Side - Login Form -->
+   
   <div class="w-full md:w-1/2 flex flex-col justify-center px-6 md:px-16 py-12 md:py-0 space-y-6">
     <!-- Logo -->
     <div class="text-[128px] md:text-[128px] tracking-tight font-bloverly">
@@ -34,69 +41,80 @@
     <!-- Login Title -->
     <h1 class="text-2xl md:text-3xl font-light font-bloverly mt-8 md:mt-0">Log in</h1>
 
-    <!-- Email Input -->
-    <form action="/login" method="post">
+    <!-- Validation Error Message Container -->
+     
+    <div id="client-error" class="hidden bg-red-500 text-white px-4 py-2 rounded text-sm"></div>
 
+    <!-- Login Form -->
+    <form id="login-form" action="/login" method="post">
+      <!-- Email Input -->
       <div class="space-y-2 font-clash">
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Email"
+          class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+          required
         />
       </div>
 
       <!-- Password Input -->
-      <div class="space-y-2 font-clash mt-5">
+      <div class="space-y-2 font-clash mt-5 relative">
         <input
           type="password"
-          placeholder="Password"
           name="password"
-          class="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-black"
+          id="password"
+          placeholder="Password"
+          class="w-full border-b border-gray-400 py-2 pr-10 focus:outline-none focus:border-black"
+          required
         />
+        <button
+          type="button"
+          id="toggle-password"
+          class="absolute right-0 top-2 text-gray-500 hover:text-black focus:outline-none"
+          aria-label="Toggle password visibility"
+        >
+          <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <svg id="eye-off-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Forgot Password Link -->
-      <a href="/email-verification" class="text-xs uppercase tracking-wider hover:underline font-clash mt-5">
+     
+      <a href="/email-verification" class="text-xs uppercase tracking-wider hover:underline font-clash mt-5 inline-block">
         Have you forgotten your password?
       </a>
 
-
+      
       <% if (error) { %>
-        <div id="popup"
-            class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
-          <%= error %>
-        </div>
-
         <script>
-          setTimeout(() => {
-            document.getElementById("popup").classList.add("opacity-0");
-          }, 2500);
+          Swal.fire({
+                toast: true,
+                icon: 'error',
+                title: '<%=error%>',
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000
+            });
         </script>
-
-        <style>
-          .animate-fade-in { 
-            animation: fadeIn 0.4s ease-out;
-          }
-          @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-10px); }
-            100% { opacity: 1; transform: translateY(0); }
-          }
-        </style>
       <% } %>
 
-
       <!-- Login Button -->
-      <button class="w-full py-3 bg-black text-white font-bloverly font-medium tracking-wider hover:bg-gray-800 transition-colors text-lg md:text-2xl mt-[25px]">
+      <button type="submit" class="w-full py-3 bg-black text-white font-bloverly font-medium tracking-wider hover:bg-gray-800 transition-colors text-lg md:text-2xl mt-6.25">
         LOG IN
       </button>
     </form>
 
     <!-- Register Button -->
-    <a href="/register">
+    <a href="/register" class="block mt-4">
       <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
-      Register
-    </button>
+        Register
+      </button>
     </a>
 
     <!-- Social Login Section -->
@@ -104,17 +122,15 @@
       <h2 class="text-sm uppercase tracking-wider">ACCESS WITH</h2>
       <p class="text-xs text-gray-600">
         By logging in with my social login, I agree to link my account in accordance with the
-        <a href="#" class="underline">Privacy Policy</a>
+        <a href="https://www.termsfeed.com/live/f0b72f23-646b-4895-a9cb-f3067d45871f" class="underline">Privacy Policy</a>
       </p>
 
-      <!-- Google Login -->
-      <a href="/auth/google">
+      <a href="/auth/google" class="block mt-2">
         <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
           Continue with google
         </button>
       </a>
 
-      <!-- Apple Login -->
       <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
         Continue with apple
       </button>
@@ -123,16 +139,108 @@
 
   <!-- Right Side - Image -->
   <div class="w-full md:w-1/2 bg-cover bg-center hidden md:block">
-    <img src="/background.jpg" alt="Login background" class="w-full h-full object-cover" />
+    <img src="/background.jpg" loading="lazy" alt="Login background" class="w-full h-full object-cover" />
   </div>
-</body>
 
-<style>
-  .font-bloverly {
-    font-family: bloverly, serif;
-  }
-  .font-clash {
-    font-family: Clash-display, sans-serif;
-  }
-</style>
+  <style>
+    .font-bloverly {
+      font-family: bloverly, serif;
+    }
+    .font-clash {
+      font-family: Clash-display, sans-serif;
+    }
+  </style>
+
+  <!-- Client-side Validation Script -->
+  <script>
+    // Toggle password visibility
+    document.getElementById('toggle-password').addEventListener('click', function () {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eye-icon');
+      const eyeOffIcon = document.getElementById('eye-off-icon');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.add('hidden');
+        eyeOffIcon.classList.remove('hidden');
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.remove('hidden');
+        eyeOffIcon.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault()
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+
+       if (!email || !password) {
+        Swal.fire({
+          toast: true,
+          icon: "error",
+          title: "Email and password are required",
+          position: "top-right",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        return
+       }
+       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        Swal.fire({
+          toast: true,
+          icon: "error",
+          title: "Enter a valid email",
+          position: "top-right",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        return
+       }
+
+
+      try{
+        const res = await fetch("/login",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+          },
+          body:JSON.stringify({email,password})
+        })
+        const data = await res.json()
+        if(!data.success){
+            Swal.fire({
+            toast: true,
+            icon: "error",
+            title: data.message || "ERROR",
+            position: "top-right",
+            showConfirmButton: false,
+            timer: 3000,
+          })
+          return 
+        }
+        Swal.fire({
+          icon: "success",
+          title: "Login successful",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        setTimeout(() => {
+          window.location.href = data.redirect;
+        }, 1500);
+      }catch(er){
+        Swal.fire({
+          toast: true,
+          icon: "error",
+          title: er.message,
+          position: "top-right",
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      }
+    });
+  </script>
+</body>
 </html>

@@ -1,50 +1,77 @@
 import userModel from "../model/userModel.js";
+import productModel from "../model/productModel.js"
+import variantModel from "../model/variantModel.js"
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { sentOtp } from "../utils/otpMailing.js";
+import { pipeline } from "stream";
+import categoryModel from "../model/categoryModel.js";
 
 export const findUserByEmail = (email) => userModel.findOne({ email });
 
 export const userLoginLogic = async (email, password) => {
-    let user = await findUserByEmail(email);
-    if (!user) {
-        return { success: false, message: "USER NOT FOUND" };
-    }
-    let passwordCompare = await bcrypt.compare(password, user.password);
-    if (!passwordCompare) {
-        return { success: false, message: "CREDENTIALS NOT MATCH" };
-    }
-    if(user.status == false){
-        return {success:false,message:"OTP NOT VERIFIED",data:user}
-    
-    }
-    if(user.isActive == false){
-        return {success:false,message:"USER IS CURRENTLY BLOCKED"}
-    }
+    try{
+        let user = await findUserByEmail(email);
+        if (!user) {
+            return { success: false, message: "USER NOT FOUND" };
+        }
+        let passwordCompare = await bcrypt.compare(password, user.password);
+        if (!passwordCompare) {
+            return { success: false, message: "CREDENTIALS NOT MATCH" };
+        }
+        if(user.status == false){
+            return {success:false,message:"OTP NOT VERIFIED",data:user}
+        
+        }
+        if(user.isActive == false){
+            return {success:false,message:"USER IS CURRENTLY BLOCKED"}
+        }
 
-    return { success: true, data: user };
+        return { success: true, data: user };
+    }catch(e){
+        console.log("Server error",e)
+        return {success:false,message:"SERVER ERROR"}
+    }
 };
 
 export const registerService = async (name, email, password, mobileno) => {
-    let existingUser = await findUserByEmail(email);
+    try{
+        if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(name)||name.length<3){
+            return {success:false,message:"USERNAME ERROR FROM SERVER"}
+        }
+        if(!/^[a-zA-Z0-9](?!.*\.\.)[a-zA-Z0-9._]{4,28}[a-zA-Z0-9]/.test(email)){
+            return {success:false,message:"EMAIL ERROR FROM SERVER"}
+        }
+        if(/(.)\1{2,}/.test(password)||password.length<6){
+            return {success:false,message:"PASSWORD ERROR FROM SERVER"}
+        }
+        if(mobileno.length<10||/^(\d)\1{9}$/.test(mobileno)||!/^[0-9]{10}$/.test(mobileno)){
+            return {success:false,message:"MOBILE NUM ERROR FROM SERVER"}
 
-    if (existingUser) {
-        return { success: false, message: "USER ALREADY EXISTS" };
+        }
+        let existingUser = await findUserByEmail(email);
+
+        if (existingUser) {
+            return { success: false, message: "USER ALREADY EXISTS" };
+        }
+
+        let hashedPassword = await bcrypt.hash(password, 10);
+
+        let newUser = new userModel({
+            username: name,
+            password: hashedPassword,
+            email,
+            mobileNo: mobileno,
+            status: false,
+            isActive:true
+        });
+
+        await newUser.save();
+        return { success: true, data: newUser };
+    }catch(e){
+        console.log("Server error ",e)
+        return {success:false,message:"SERVER ERROR"}
     }
-
-    let hashedPassword = await bcrypt.hash(password, 10);
-
-    let newUser = new userModel({
-        username: name,
-        password: hashedPassword,
-        email,
-        mobileNo: mobileno,
-        status: false,
-        isActive:true
-    });
-
-    await newUser.save();
-    return { success: true, data: newUser };
 };
 
 export const generateOtp = async (email) => {
@@ -56,7 +83,7 @@ export const generateOtp = async (email) => {
         console.log("OTP:", otp);
 
         user.otp = bcrypt.hashSync(otp, 10);
-        user.otpExpires = Date.now() + 3 * 60 * 1000;
+        user.otpExpires = Date.now() + 30 * 1000;
         await user.save();
         await sentOtp(email, otp);
         return { success: true, data: user };
@@ -112,4 +139,132 @@ export const forgotPasswordLogic = async(email,password)=>{
     user.password = hashedPassword
     await user.save()
     return {success:true,data:user}
+}
+
+export const ProductsLoad = async (filter,limit = null)=>{
+    filter["status"] = true
+    //filter["stock"] = {$gt:0}
+    let color = new Set([...(await variantModel.find()).map(v=>v.color)])
+    let size = new Set([...(await variantModel.find()).map(v=>v.size)])
+    const pipeline = [
+        
+        {
+            $lookup:{
+                from:"products",
+                localField:"productId",
+                foreignField:"_id",
+                as:"products"
+            }
+        },
+        
+        {
+            $lookup:{
+                from:"categories",
+                localField:"products.categoryId",
+                foreignField:"_id",
+                as:"category"
+            }
+        },
+        {$match:filter},
+        
+        
+        
+    ]
+    if(filter["price"]==undefined){
+        delete filter["price"]
+    }
+    if(filter["price"]==1||filter["price"] == -1){
+        pipeline.push({$sort:{price:filter["price"]}})
+        delete filter["price"]
+    }
+    if(filter["sort"]=='HIGH_TO_LOW'){
+        pipeline.push({$sort:{price:-1}})
+        delete filter["sort"]
+    }
+    if(filter["sort"]=='LOW_TO_HIGH'){
+        pipeline.push({$sort:{price:1}})
+        delete filter["sort"]
+    }
+    if(filter["sort"]=='A_Z'){
+        pipeline.push({$sort:{"products.name":1}})
+        delete filter["sort"]
+    }
+    if(filter["sort"]=='Z_A'){
+        pipeline.push({$sort:{"products.name":-1}})
+        delete filter["sort"]
+    }
+    filter["category.isActive"] = true
+    if(limit){
+        pipeline.push({$limit:limit})
+        
+    }
+    let products = await variantModel.aggregate(pipeline)
+    let category = await categoryModel.find()
+    //let color = products.map(products=>products.color)
+    if(!products){
+        return {success:false,message:"ERROR WHILE LOADING DATA"}
+    }
+    return {success:true,data:products,color:color,size:size,category:category}
+}
+
+export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
+    try{
+        const product =  await productModel.findById(id)
+        const color = [...new Set((await variantModel.find({productId:id,status:true})).map(v=>v.color))]
+        const size  = [...new Set((await variantModel.find({productId:id,color:Variantcolor,status:true})).map(v => v.size))]
+        const variants= await variantModel.find({productId:id,status:true})
+        let variant = null
+        if(variants.length==0){
+            return {success:false,message:"PRODUCT DOESN'T EXIST"}
+        } 
+        if (Variantcolor && Variantsize) {
+            variant = variants.find(
+                v => v.color === Variantcolor && v.size === Variantsize
+            )
+        }
+
+        if (!variant && Variantsize) {
+            variant = variants.find(v => v.size === Variantsize)
+        }
+
+        if (!variant && Variantcolor) {
+            variant = variants.find(v => v.color === Variantcolor)
+        }
+
+        if (!variant) {
+            variant = variants[0]
+        }
+
+        
+        return {success:true,product,variant,color,size}
+    }catch(e){
+        console.log("Error: ",e)
+        return{success:false,message:"SERVER ERROR"}
+    }
+}
+export const variantFilterLogic = async(filter)=>{
+    try {
+    const data = await variantModel.find(filter);
+
+    if (!data.length) {
+      return { success: false, message: "No variants exist" };
+    }
+
+    return {
+      success: true,
+      data: {
+        image: data[0].image,
+        sizes: data.map(v => ({
+          size: v.size,
+          price: v.price,
+          stock: v.stock,
+          discount:v.discount
+        }))
+      }
+    };
+
+  } catch (e) {
+    console.log("Server error", e);
+    return { success: false, message: "SERVER ERROR" };
+  }
 }

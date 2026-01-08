@@ -3,10 +3,6 @@ import mongoose from "mongoose";
 let schema = mongoose.Schema
 
 const productSchema = new schema({
-    offerId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Offer"
-    },
     name:{
         type:String,
         required:true,
@@ -16,18 +12,6 @@ const productSchema = new schema({
         type:String,
         required:true
 
-    },
-    price:{
-        type:Number,
-        required:true
-    },
-    status:{
-        type:Boolean,
-        required:true
-    },
-    SKU:{
-        type:String,
-        required:true
     },
     categoryId:{
         type:mongoose.Schema.Types.ObjectId,

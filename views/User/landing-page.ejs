@@ -1,37 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>#ZZRH</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @font-face {
-      font-family: "bloverly";
-      src: url('/BLOVERLY.woff2') format('woff2');
-      font-display: swap;
-    }
-    @font-face {
-      font-family: "Clash-display";
-      src: url('/ClashDisplay-Regular.woff') format('woff');
-      font-display: swap;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#ZRI1 - Fashion Store</title>
+    <link rel="stylesheet" href="/css/output.css">
 
-    /* Apply fallback fonts */
-    .font-bloverly {
-      font-family: "bloverly", system-ui, sans-serif;
-    }
-    .font-clash {
-      font-family: "Clash-display", system-ui, sans-serif;
-    }
-  </style>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+      
+        
+        .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .product-card {
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        @font-face {
+          font-family: "bloverly";
+          src: url('/BLOVERLY.woff2') format('woff2');
+          font-display: swap;
+        }
+        @font-face {
+          font-family: "Clash-display";
+          src: url('/ClashDisplay-Regular.woff') format('woff');
+          font-display: swap;
+        }
+        .font-bloverly {
+          font-family: "bloverly", system-ui, sans-serif;
+        }
+        .font-clash {
+          font-family: "Clash-display", system-ui, sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-white border-t-2 border-black">
-  <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
+<body class="bg-white">
+    <!-- Header/Navigation -->
+     <% if (error) { %>
+        <script>
+          Swal.fire({
+                toast: true,
+                icon: 'error',
+                title: '<%=error%>',
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+      <% } %>
+     
+    <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
     <!-- Logo -->
-    <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight">
+    <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight" style="font-family: bloverly;font-weight: lighter;">
       #ZZRH
     </div>
+    <!-- <a href="/logout">logout</a> -->
 
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex space-x-8 text-xl font-clash">
@@ -39,6 +72,7 @@
       <a href="#" class="hover:underline">Men's collection</a>
       <a href="#" class="hover:underline">About Us</a>
     </nav>
+    
 
     <!-- Mobile Menu Button -->
     <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
@@ -46,11 +80,13 @@
     </button>
 
     <!-- Login/Sign-up Button (Hidden on mobile until we toggle menu) -->
-    <a href="/login">
+
+       <a href="/login">
       <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
       Login/sign-up
     </button>
     </a>
+    
   </header>
 
   <!-- Mobile Menu (initially hidden) -->
@@ -58,20 +94,217 @@
     <a href="#" class="block hover:underline">New Arrival</a>
     <a href="#" class="block hover:underline">Men's collection</a>
     <a href="#" class="block hover:underline">About Us</a>
-    <a href="/login">
-      <button class="w-full mt-2 border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
-      Login/sign-up
-    </button>
-    </a>
+    
   </div>
 
-  <script>
-    const menuButton = document.getElementById('mobileMenuButton');
-    const mobileMenu = document.getElementById('mobileMenu');
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 ">
+        <div class="bg-gray-100 rounded-3xl overflow-hidden relative" style="height: 500px;">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&h=500&fit=crop" 
+                 alt="Hero" 
+                 class="w-full h-full object-cover">
+            <div class="absolute bottom-8 left-0 right-0 flex justify-center space-x-2">
+                <button class="w-2 h-2 rounded-full bg-gray-400"></button>
+                <button class="w-2 h-2 rounded-full bg-gray-800"></button>
+                <button class="w-2 h-2 rounded-full bg-gray-400"></button>
+                <button class="w-2 h-2 rounded-full bg-gray-400"></button>
+                <button class="w-2 h-2 rounded-full bg-gray-400"></button>
+            </div>
+        </div>
+    </section>
 
-    menuButton.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-  </script>
+    <!-- Popular Right Now Section -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-4xl serif-font font-light mb-8 font-bloverly">Popular Right Now</h2>
+        
+        <!-- Filters -->
+      
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
+            <!-- Product 1 -->
+            <% product.forEach(product=>{ %>
+                <a href="/products">
+                    <div class="product-card">
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                            <img src="/<%= product.image[0] %>" 
+                                alt="Brown Jacket" 
+                                class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                            <% if (product.stock <= 0) { %>
+                                <div class="absolute inset-0 flex items-center justify-center  bg-opacity-40">
+                                    <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                        Out of Stock
+                                    </span>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-sm mb-1"> <%= product.products[0].name %> </h3>
+                                <p class="text-lg font-semibold"> ₹<%= product.price %> </p>
+                                <% if (product.stock <= 0) { %>
+                                    <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
+                                <% } %>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+
+        <div class="flex justify-end">
+            <a  class="mr-10" href="/products">Shop more →</a>
+        </div>
+
+    <!-- Winter Styles Section -->
+    <!-- <section class="container mx-auto px-4 py-12 ">
+        <h2 class="text-4xl  font-light mb-8 font-bloverly">Winter Styles 2025</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-clash">
+            <div class="product-card">
+                <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3" style="height: 350px;">
+                    <img src="https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=350&fit=crop" 
+                         alt="Brown Jacket" 
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-medium text-sm mb-1">BROWN JACKET</h3>
+                        <p class="text-lg font-semibold">₹1899</p>
+                    </div>
+                    <button class="text-xs border border-gray-900 px-4 py-1 rounded-full hover:bg-gray-900 hover:text-white transition">
+                        Add to cart
+                    </button>
+                </div>
+            </div>
+
+            
+        </div>
+    </section> -->
+
+    <!-- CTA Section -->
+    <section class="container mx-auto px-4 py-12 font-bloverly">
+        <div class=" rounded-3xl overflow-hidden relative" style="height: 800px;">
+            <img src="/Background-image.jpg" 
+                 alt="Fashion" 
+                 class="w-full h-full object-cover ">
+            <div class="absolute inset-0 items-left justify-center text-white p-8">
+                <h2 class="text-[90px] font-light  text-left">
+                    Feel more retromantic - feel<br>free to step into timeless<br>fashion with a twist.
+                </h2>
+                <p class="text-[20px] mb-8 text-left max-w-xl opacity-90 font-clash">
+                    Sign up today to receive exclusive deals and unlock fashion<br>
+                    collections that define your unique style every season
+                </p>
+                <button class="text-[40px] border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash">
+                    Thank you for clicking
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="bg-black text-white py-4 overflow-hidden marquee font-clash text-bold">
+        <div class="whitespace-nowrap marquee-track text-6xl font-bold">
+            WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE * WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE *
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <h3 class="text-[60px] md:text-[125px] font-light mb-4 font-bloverly">#ZZRH</h3>
+            </div>
+            
+            <div>
+                <h4 class="font-medium mt-10 mb-3 font-clash">Navigation</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li><a href="#" class="hover:text-gray-900">About Us</a></li>
+                    <li><a href="#" class="hover:text-gray-900">Collection</a></li>
+                    <li><a href="#" class="hover:text-gray-900">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-medium mb-3 mt-10 font-clash">Collection</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li><a href="#" class="hover:text-gray-900">New Arrival</a></li>
+                    <li><a href="#" class="hover:text-gray-900">Men's</a></li>
+                    <li><a href="#" class="hover:text-gray-900">Women's</a></li>
+                    <li><a href="#" class="hover:text-gray-900">Collection</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-medium mb-3 mt-10 font-clash">Contact Us</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>###@gmail.com</li>
+                    <li>##91-000000</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-200 pt-8 flex justify-between text-xs text-gray-600">
+            <p>Copyright@2025</p>
+            <div class="space-x-6">
+                <a href="#" class="hover:text-gray-900">Terms and conditions</a>
+                <a href="#" class="hover:text-gray-900">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+      const menuButton = document.getElementById('mobileMenuButton');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    </script>
+
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .animate-marquee {
+            animation: marquee 100s linear infinite;
+            display: inline-block;
+        }
+        .marquee {
+            width: 100%;
+            overflow: hidden;
+            background: #000000;
+            white-space: nowrap;
+        }
+
+        .marquee-track {
+            display: inline-block;
+            animation: marquee-left 50s linear infinite;
+        }
+
+        .marquee-track span {
+            display: inline-block;
+            padding: 0 2rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        @keyframes marquee-left {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(100%);
+        }
+        }
+        .marquee:hover .marquee-track,
+        .marquee:active .marquee-track {
+        animation-play-state: paused;
+        }
+
+
+    </style>
 </body>
 </html>

@@ -1,286 +1,696 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Product</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-gray-50 font-sans">
-    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">#ZZRH</h1>
-        <button class="p-2 hover:bg-gray-100 rounded-lg">
-            <i class="far fa-bell text-xl"></i>
-        </button>
-    </header>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add New Product</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #ef4444;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white min-h-screen border-r border-gray-100 p-6">
-            <nav class="space-y-4">
-                <a href="/admin/home" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-900">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span>
-                </a>
-                <a href="/admin/products" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-100 text-gray-700">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span>Products</span>
-                </a>
-                <a href="/admin/orders" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cube"></i>
-                    <span>Orders</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Coupons</span>
-                </a>
-                <a href="/admin/category" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-list-ul"></i>
-                    <span>Categories</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-gift"></i>
-                    <span>Offers</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-image"></i>
-                    <span>Banners</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-            
-            <div class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:text-gray-900">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </div>
-        </aside>
-        <% if (error) { %>
-            <div id="popup"
-                class="fixed top-5 right-5 bg-red-500 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
-            <%= error %>
-            </div>
-
-            <script>
-            setTimeout(() => {
-                document.getElementById("popup").classList.add("opacity-0");
-            }, 2500);
-            </script>
-
-            <style>
-            .animate-fade-in { 
-                animation: fadeIn 0.4s ease-out;
-            }
-            @keyframes fadeIn {
-                0% { opacity: 0; transform: translateY(-10px); }
-                100% { opacity: 1; transform: translateY(0); }
-            }
-            </style>
-        <% } %>
-        <!-- Main Content -->
-        <main class="flex-1 p-8 bg-gray-50">
-            <div class="max-w-2xl">
-                <!-- Header -->
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-1">Add New Product</h2>
-                    <p class="text-sm text-red-500">Enter the details for the new product.</p>
-                </div>
-                
-
-                <!-- Form -->
-                <form class="space-y-6" action="/admin/product-add" method="post" enctype="multipart/form-data">
-                    <!-- Product Name and Category -->
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-2">Product Name</label>
-                            <input type="text" placeholder="Enter the product name..." name="productName" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-2">Category</label>
-                            <select name="category" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none bg-white text-sm text-gray-500">
-                                <option>Select Category</option>
-                                <% category.forEach(category =>{ %>
-                                    <option value="<%= category._id %>"><%= category.categoryName %></option>
-                                <% }) %>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Description -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-2">Description</label>
-                        <textarea rows="4" name="description" placeholder="Add product Description" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-sm resize-none"></textarea>
-                    </div>
-
-                    <!-- Price and Discount -->
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-2">Price</label>
-                            <input name="price" type="text" placeholder="Enter price" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-2">Offer</label>
-                            <input type="text" name="offer" placeholder="Enter Offer" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-sm">
-                        </div>
-                        
-                    </div>
-
-                    <!-- SKU and Stock Quantity -->
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-2">SKU</label>
-                            <input type="text" name="sku" placeholder="Enter SKU" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-sm">
-                        </div>
-                        
-                        
-                    </div>
-                     <div class="mb-12">
-                        <label class="block text-gray-900 font-bold text-lg mb-4">Status</label>
-                        <div class="flex gap-4">
-                            <button 
-                                onclick="set_status(false)"
-                                type="button" 
-                                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-                            >
-                                Inactive
-                            </button>
-                            <button 
-                                onclick="set_status(true)"
-                                type="button" 
-                                class="button px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-                            >
-                                Active
-                            </button>
-                        </div>
-                    </div>
-                     <input type="hidden" name="status" id="status_Input">
-                    <!-- <button type="submit" class="px-6 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium transition-colors">
-                        Create product
-                    </button>
-                    <p class="text-sm text-red-500 mt-2">*Before adding the variant create the product </p>
-                     -->
-                    <div class="bg-white border border-gray-200 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Variant</h3>
-                        
-                        <div class="grid grid-cols-2 gap-6 mb-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-900 mb-2">Color</label>
-                                <input name="color" type="text" placeholder="Enter color" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-900 mb-2">Size</label>
-                                <select name="size" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none bg-white text-sm text-gray-500">
-                                    <option>Select Size</option>
-                                    <option>Small</option>
-                                    <option>Medium</option>
-                                    <option>Large</option>
-                                    <option>XL</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-900 mb-2">Stock Quantity</label>
-                                <input type="text" name="stock" placeholder="Enter Stock Quantity" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-sm">
-                            </div>
-                        </div>
-
-                        <!-- Image Upload -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-2">Product Images</label>
-                            <div class="border-2 border-dashed border-teal-400 rounded-lg p-8 text-center bg-teal-50 hover:bg-teal-100 transition-colors cursor-pointer">
-                                <div class="flex flex-col items-center">
-                                    <div class="w-16 h-16 bg-teal-500 rounded-lg flex items-center justify-center mb-3">
-                                        <i class="fas fa-upload text-white text-2xl"></i>
-                                    </div>
-                                    <p class="text-sm font-medium text-gray-900 mb-1">Drag & drop images here, or upload from your device.</p>
-                                    <input type="file" name="image-upload" multiple accept="image/*" class="hidden" id="imageUpload">
-                                    <p id="fileCount" class="text-sm text-gray-600 mt-2"></p>
-                                </div>
-                            </div>
-                        </div>
-                        
-
-                            <!-- <div class="mt-4 flex justify-end">
-                                <button type="button" class="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
-                                    Add Variant
-                                </button>
-                            </div> -->
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex justify-end gap-3 pt-4">
-                            <a href="/admin/products">
-                                <button type="button" class="px-6 py-2.5 text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors">
-                                    Cancel
-                                </button>
-                            </a>
-                            <button type="submit" class="px-6 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium transition-colors">
-                                Complete process
-                            </button>
-                        </div>
-                </form>
-                 
-                    
-                
-            </div>
-        </main>
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .input-focus {
+      transition: all 0.2s ease;
+    }
+    
+    .input-focus:focus {
+      transform: scale(1.01);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+    
+    .image-preview {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .image-preview img {
+      transition: transform 0.3s ease;
+    }
+    
+    .image-preview:hover img {
+      transform: scale(1.05);
+    }
+    
+    .sidebar-link {
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .sidebar-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 0;
+      background: #ef4444;
+      transition: height 0.2s ease;
+    }
+    
+    .sidebar-link:hover::before,
+    .sidebar-link.active::before {
+      height: 100%;
+    }
+    
+    .variant-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    .variant-card:hover {
+      border-color: #ef4444;
+      box-shadow: 0 8px 20px -5px rgba(239, 68, 68, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="text-center">
+      <div class="spinner mx-auto mb-4"></div>
+      <p class="text-white text-xl font-semibold">Uploading product...</p>
+      <p class="text-gray-300 text-sm mt-2">Please wait while we process your request</p>
     </div>
+  </div>
 
-    <script>
-        const status_Input = document.getElementById("status_Input")
-        function set_status(msg){
-            status_Input.value = msg
+  <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+        <span class="text-white font-bold text-lg">#</span>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-800">ZZRH</h1>
+    </div>
+    <button class="p-2.5 hover:bg-gray-100 rounded-xl transition-colors relative">
+      <i class="far fa-bell text-xl text-gray-600"></i>
+      <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+    </button>
+  </header>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <%- include('../Partials/sidebar') %>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+          <div class="flex items-center space-x-3 mb-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-plus text-white text-xl"></i>
+            </div>
+            <div>
+              <h2 class="text-3xl font-bold text-gray-900">Add New Product</h2>
+              <p class="text-sm text-red-600 font-medium mt-1">Enter the details for the new product</p>
+            </div>
+          </div>
+        </div>
+
+        <form class="space-y-6" id="productForm">
+          <!-- Product Info Card -->
+          <div class="bg-white rounded-2xl shadow-lg p-8 card-hover border border-gray-100">
+            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+              <i class="fas fa-info-circle text-red-500 mr-3"></i>
+              Basic Information
+            </h3>
+            
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Product Name *</label>
+                <input
+                  id="p-name"
+                  type="text"
+                  name="productName"
+                  placeholder="Enter product name..."
+                  class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
+                  required
+                />
+                <span id="name-error" class="text-xs text-red-600 font-medium mt-1 block"></span>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Category *</label>
+                <select
+                  id="category"
+                  name="category"
+                  class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 appearance-none bg-white text-sm text-gray-700 validate"
+                  required
+                >
+                  <option value="select category">Select Category</option>
+                  <% category.forEach(cat => { %>
+                    <option value="<%= cat._id %>"><%= cat.categoryName %></option>
+                  <% }) %>
+                </select>
+                <span id="category-error" class="text-xs text-red-600 font-medium mt-1 block"></span>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+              <textarea
+                id="description"
+                rows="4"
+                name="description"
+                placeholder="Add product description"
+                class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm resize-none"
+              ></textarea>
+              <span id="description-error" class="text-xs text-red-600 font-medium mt-1 block"></span>
+            </div>
+          </div>
+
+          <!-- Variants Container -->
+          <div id="variantsContainer" class="space-y-6">
+            <div class="variant-group variant-card rounded-2xl p-8 shadow-lg">
+              <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800 variant-title flex items-center">
+                  <span class="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center mr-3 text-sm">1</span>
+                  Variant 1
+                </h3>
+                <button
+                  type="button"
+                  class="delete-variant-btn px-4 py-2 bg-red-100 text-red-600 text-sm font-semibold rounded-xl hover:bg-red-200 transition-all hidden shadow-sm"
+                  onclick="deleteVariant(this)"
+                >
+                  <i class="fas fa-trash-alt mr-2"></i> Delete
+                </button>
+              </div>
+              
+              <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">SKU</label>
+                <input
+                  id="sku"
+                  type="text"
+                  name="variants[0].sku"
+                  placeholder="Enter SKU"
+                  class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm"
+                />
+                <span id="sku-error" class="text-xs text-red-600 font-medium mt-1 block"></span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Color *</label>
+                  <input
+                    name="variants[0].color"
+                    type="text"
+                    placeholder="e.g. Red"
+                    class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
+                    required
+                  />
+                  <span class="text-xs text-red-600 font-medium mt-1 block hidden">Color is required</span>
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Size *</label>
+                  <select
+                    name="variants[0].size"
+                    class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 appearance-none bg-white text-sm text-gray-700 validate"
+                    required
+                  >
+                    <option value="">Select Size</option>
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                    <option>XL</option>
+                  </select>
+                  <span class="hidden text-xs text-red-600 font-medium mt-1 block">Size is required</span>
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Stock Quantity *</label>
+                  <input
+                    type="number"
+                    name="variants[0].stock"
+                    placeholder="e.g. 10"
+                    class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
+                    required
+                  />
+                  <span class="text-xs text-red-600 font-medium mt-1 block hidden">Stock is required</span>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Discounted Price *</label>
+                  <input
+                    type="number"
+                    name="variants[0].discount"
+                    placeholder="e.g. 100"
+                    class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
+                    required
+                  />
+                  <span class="text-xs text-red-600 font-medium mt-1 block hidden">Price is required</span>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Price *</label>
+                  <input
+                    type="number"
+                    name="variants[0].price"
+                    placeholder="e.g. 100"
+                    class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
+                    required
+                  />
+                  <span class="text-xs text-red-600 font-medium mt-1 block hidden">Price is required</span>
+                </div>
+              </div>
+
+              <div class="mt-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Product Images *</label>
+                <div class="grid grid-cols-3 gap-4">
+                  <div>
+                    <div class="border-3 border-dashed border-red-300 rounded-xl p-4 h-32
+                                text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
+                      <div class="flex flex-col items-center justify-center h-full">
+                        <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
+                        <p class="text-xs text-gray-700 font-semibold">Upload Image 1</p>
+                        <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
+                        <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="border-3 border-dashed border-red-300 rounded-xl p-4 h-32
+                                text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
+                      <div class="flex flex-col items-center justify-center h-full">
+                        <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
+                        <p class="text-xs text-gray-700 font-semibold">Upload Image 2</p>
+                        <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
+                        <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="border-3 border-dashed border-red-300 rounded-xl p-4 h-32
+                                text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
+                      <div class="flex flex-col items-center justify-center h-full">
+                        <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
+                        <p class="text-xs text-gray-700 font-semibold">Upload Image 3</p>
+                        <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
+                        <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <span class="text-xs text-red-600 font-medium mt-2 block hidden variant-images-error">All 3 images are required</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Variant Button -->
+          <button
+            type="button"
+            id="addVariantBtn"
+            class="w-full py-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 text-sm font-bold rounded-xl hover:from-gray-200 hover:to-gray-300 transition-all shadow-md hover:shadow-lg"
+          >
+            <i class="fas fa-plus-circle mr-2"></i> Add Another Variant
+          </button>
+
+          <!-- Action Buttons -->
+          <div class="flex justify-end gap-4 pt-6">
+            <a href="/admin/products">
+              <button
+                type="button"
+                class="px-8 py-3.5 text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 text-sm font-bold transition-all shadow-sm"
+              >
+                <i class="fas fa-times mr-2"></i> Cancel
+              </button>
+            </a>
+            <button
+              type="submit"
+              class="px-8 py-3.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 text-sm font-bold transition-all shadow-lg hover:shadow-xl"
+            >
+              <i class="fas fa-check-circle mr-2"></i> Complete Process
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ===== Variant Management =====
+    let variantIndex = 1;
+
+    document.getElementById('addVariantBtn').addEventListener('click', function () {
+      const container = document.getElementById('variantsContainer');
+      const firstVariant = container.querySelector('.variant-group');
+      const clone = firstVariant.cloneNode(true);
+   
+      clone.querySelectorAll('[name]').forEach(input => {
+        input.name = input.name.replace(/\[\d+\]/, `[${variantIndex}]`);
+        if (!input.classList.contains('image-input')) {
+          input.value = '';
         }
-        document.querySelector('.border-dashed').addEventListener('click', function() {
-            document.getElementById('imageUpload').click();
-        });
+      });
 
-        // document.getElementById('imageUpload').addEventListener('change', function(e) {
-        //     const files = e.target.files;
-        //     if (files.length > 0) {
-        //         alert(`${files.length} file(s) selected`);
-        //     }
-        // });
-        document.getElementById('imageUpload').addEventListener('change', function (e) {
-            const files = e.target.files;
-            const fileCount = document.getElementById('fileCount');
+      clone.querySelectorAll('.file-names').forEach(el => el.textContent = '');
+      clone.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+      clone.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+      clone.querySelector('.variant-title').innerHTML = `<span class="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center mr-3 text-sm">${variantIndex + 1}</span>Variant ${variantIndex + 1}`;
+      
+      clone.querySelector('.delete-variant-btn').classList.remove('hidden');
+      
+      const uploadAreas = clone.querySelectorAll('.image-upload-area');
+      const fileInputs = clone.querySelectorAll('.image-input');
+      
+      uploadAreas.forEach((area, idx) => {
+        const input = fileInputs[idx];
+        area.addEventListener('click', () => input.click());
+        input.addEventListener('change', handleFileSelect);
+      });
 
-            if (files.length > 0) {
-                const names = Array.from(files).map(file => file.name).join(', ');
-                fileCount.textContent = `Selected: ${names}`;
-            }
-        });
+      container.appendChild(clone);
+      variantIndex++;
+      updateDeleteButtons();
+    });
 
+    function deleteVariant(btn) {
+      const container = document.getElementById('variantsContainer');
+      const variants = container.querySelectorAll('.variant-group');
+      
+      if (variants.length > 1) {
+        btn.closest('.variant-group').remove();
+        updateVariantNumbers();
+        updateDeleteButtons();
+      }
+    }
 
-        const statusButtons = document.querySelectorAll('.button');
-        const statusGroup = Array.from(statusButtons).slice(-2);
+    function updateVariantNumbers() {
+      const variants = document.querySelectorAll('.variant-group');
+      variants.forEach((variant, index) => {
+        variant.querySelector('.variant-title').innerHTML = `<span class="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center mr-3 text-sm">${index + 1}</span>Variant ${index + 1}`;
         
-        statusGroup.forEach(button => {
-            button.addEventListener('click', function() {
-                statusGroup.forEach(btn => {
-                    btn.classList.remove('bg-red-600', 'text-white', 'border-red-600');
-                    btn.classList.add('border-gray-300', 'text-gray-700');
-                });
-                this.classList.remove('border-gray-300', 'text-gray-700');
-                this.classList.add('bg-red-600', 'text-black', 'border-red-600');
-            });
+        variant.querySelectorAll('[name]').forEach(input => {
+          if (input.name.includes('variants[')) {
+            input.name = input.name.replace(/variants\[\d+\]/, `variants[${index}]`);
+          }
         });
-    </script>
+      });
+      variantIndex = variants.length;
+    }
+
+    function updateDeleteButtons() {
+      const variants = document.querySelectorAll('.variant-group');
+      const deleteButtons = document.querySelectorAll('.delete-variant-btn');
+      
+      deleteButtons.forEach(btn => {
+        if (variants.length > 1) {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
+      });
+    }
+
+    function handleFileSelect(e) {
+      const files = e.target.files;
+      const display = e.target.parentElement.querySelector('.file-names');
+      if (files.length > 0) {
+        const names = Array.from(files).map(f => f.name).join(', ');
+        display.textContent = names.length > 20 ? names.substring(0, 20) + '...' : names;
+      } else {
+        display.textContent = '';
+      }
+    }
+    document.querySelectorAll('.image-upload-area').forEach(area => {
+      area.addEventListener('click', () => {
+        area.querySelector('.image-input').click();
+      });
+    });
+    document.querySelectorAll('.image-input').forEach(input => {
+      input.addEventListener('change', handleFileSelect);
+    });
+
+    // ===== Form Validation =====
+    (function (){
+
+      //
+      const form = document.querySelector('form');
+      const fields = {
+        name: document.getElementById('p-name'),
+        category: document.getElementById('category'),
+        description: document.getElementById('description'),
+      }
+      const errors = {
+        name: document.getElementById('name-error'),
+        category: document.getElementById('category-error'),
+        description: document.getElementById('description-error'),
+      }
+
+      function validate(field){
+        const value = fields[field].value.trim()
+        switch (field){
+          case "name":
+            if (value.length < 3) {
+              errors.name.textContent = "Enter valid name"
+              return false
+            }
+            if (!/^[A-Za-z]+([ '-][A-Za-z]+)*$/.test(value)){
+              errors.name.textContent = "Only characters accepted"
+              return false
+            }
+            errors.name.textContent = ""
+            return true
+          case "category":
+            if(value === ""||value.toUpperCase() == 'SELECT CATEGORY'){
+              errors.category.textContent = "Please select...."
+              return false
+            }
+            errors.category.textContent = ""
+            return true
+          case "description":
+            if(value.length == 0){
+              errors.description.textContent = "Enter a valid description"
+              return false
+            }
+            if(value.length<5){
+              errors.description.textContent = "Please enter atleast 5 characters"
+              return false
+            }
+            if(value.length>300){
+              errors.description.textContent = "Sorry it cannot be too long...."
+              return false
+            }
+            errors.description.textContent = ""
+            return true
+          
+          default:
+            return true;
+        }
+      }  
+
+      Object.keys(fields).forEach(field => {
+        fields[field].addEventListener("input", () => validate(field))
+        fields[field].addEventListener("blur", () => validate(field))
+      })
+
+      function validateVariants() {
+        let variantsValid = true;
+        const variants = document.querySelectorAll('.variant-group');
+        
+        variants.forEach((variant, i) => {
+          const colorInput = variant.querySelector('input[name*="color"]');
+          const colorError = colorInput.nextElementSibling;
+          if (!colorInput.value.trim()) {
+            colorError.textContent = 'Color is required';
+            colorError.classList.remove('hidden');
+            variantsValid = false;
+          } else {
+            colorError.classList.add('hidden');
+          }
+
+          const sizeSelect = variant.querySelector('select[name*="size"]');
+          const sizeError = sizeSelect.nextElementSibling;
+
+          if (!sizeSelect.value) {
+            sizeError.textContent = 'Size is required';
+            sizeError.classList.remove('hidden');
+            variantsValid = false;
+          } else {
+            sizeError.classList.add('hidden');
+          }
+
+          const stockInput = variant.querySelector('input[name*="stock"]');
+          const stockError = stockInput.nextElementSibling;
+          if (!stockInput.value || parseFloat(stockInput.value) < 0) {
+            stockError.textContent = 'Stock is required and must be positive';
+            stockError.classList.remove('hidden');
+            variantsValid = false;
+          } else {
+            stockError.classList.add('hidden');
+          }
+
+          const priceInput = variant.querySelector('input[name*="price"]');
+          const priceError = priceInput.nextElementSibling;
+          if (!priceInput.value || parseFloat(priceInput.value) <= 0) {
+            priceError.textContent = 'Price is required and must be positive';
+            priceError.classList.remove('hidden');
+            variantsValid = false;
+          } else {
+            priceError.classList.add('hidden');
+          }
+
+          const imageInputs = variant.querySelectorAll('.image-input');
+          const imageError = variant.querySelector('.variant-images-error');
+          let uploadedCount = 0;
+          
+          imageInputs.forEach(input => {
+            if (input.files && input.files.length > 0) {
+              uploadedCount++;
+            }
+          });
+          
+          if (uploadedCount < 3) {
+            imageError.textContent = `All 3 images are required (${uploadedCount}/3 uploaded)`;
+            imageError.classList.remove('hidden');
+            variantsValid = false;
+          } else {
+            imageError.classList.add('hidden');
+          }
+        });
+
+        return variantsValid;
+      }
+
+      //Ajax
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        
+        let valid = true;
+        Object.keys(fields).forEach(field => {
+          if (!validate(field)) valid = false;
+        });
+        
+        if (!validateVariants()) {
+          valid = false;
+        }
+        
+        if (!valid) {
+          Swal.fire({
+            toast: true,
+            icon: 'error',
+            title: 'Please fix all validation errors',
+            position: 'top-right',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          return;
+        }
+
+        document.getElementById('loadingOverlay').classList.add('active');
+
+        try {
+          const formData = new FormData(form);
+
+          const response = await fetch('/admin/product-add', {
+            method: 'POST',
+            body: formData
+          });
+
+          document.getElementById('loadingOverlay').classList.remove('active');
+
+          const result = await response.json();
+
+          if (result.success) {
+            await Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: result.message || 'Product added successfully',
+              confirmButtonColor: '#ef4444',
+              confirmButtonText: 'View Products'
+            });
+
+            window.location.href = result.redirect;
+          } else {
+            Swal.fire({
+              toast: true,
+              icon: 'error',
+              title: result.message,
+              position: 'top-right',
+              showConfirmButton: false,
+              timer: 3000
+            });
+          }
+        } catch (error) {
+          document.getElementById('loadingOverlay').classList.remove('active');
+          Swal.fire({
+            toast: true,
+            icon: 'error',
+            title: 'Network error. Please try again.',
+            position: 'top-right',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          console.error('Error:', error);
+        }
+      });
+    })();
+
+    const buttons = document.querySelectorAll('.button');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', function () {
+        buttons.forEach(b => b.classList.remove('bg-red-600', 'text-white', 'border-red-600'));
+        this.classList.add('bg-red-600', 'text-white', 'border-red-600');
+      });
+    });
+  </script>
 </body>
 </html>
