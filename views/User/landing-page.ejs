@@ -123,14 +123,14 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
             <!-- Product 1 -->
             <% product.forEach(product=>{ %>
-                <a href="/product-listing">
+                <a href="/products">
                     <div class="product-card">
                         <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
                             <img src="/<%= product.image[0] %>" 
                                 alt="Brown Jacket" 
                                 class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
                             <% if (product.stock <= 0) { %>
-                                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+                                <div class="absolute inset-0 flex items-center justify-center  bg-opacity-40">
                                     <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
                                         Out of Stock
                                     </span>
@@ -150,6 +150,10 @@
                     </div>
                 </a>
             <% }) %>
+        </div>
+
+        <div class="flex justify-end">
+            <a  class="mr-10" href="/products">Shop more →</a>
         </div>
 
     <!-- Winter Styles Section -->

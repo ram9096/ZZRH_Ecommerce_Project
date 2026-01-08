@@ -145,7 +145,14 @@ export const VariantFilter = async(req,res)=>{
 export const productShowcaseLoad = async (req,res)=>{
     try{
         let products = await ProductsLoad({})
-        return res.render('User/product-showcase',{product:products.data,color:[...products.color],size:products.size,category:products.category,error:''})
+        return res.render('User/product-showcase',{
+            product:products.data,
+            color:[...products.color],
+            size:products.size,
+            category:products.category,
+            isLogged:req.session.user||'',
+            error:''
+        })
     }catch(e){
 
     }

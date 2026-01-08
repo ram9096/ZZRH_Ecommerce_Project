@@ -13,7 +13,7 @@ router.get('/forgot-password',forgotPasswordLoad)
 router.get('/logout',userLogout)
 router.get('/home/product-details/:id',productViewLoad)
 router.get('/product-listing',productLisitingLoad)
-router.get('/products',isAuthenticated,productShowcaseLoad)
+router.get('/products',productShowcaseLoad)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)

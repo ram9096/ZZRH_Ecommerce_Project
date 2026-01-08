@@ -285,17 +285,8 @@
   .top-14 {
     top: calc(var(--spacing) * 14);
   }
-  .top-25 {
-    top: calc(var(--spacing) * 25);
-  }
   .top-125 {
     top: calc(var(--spacing) * 125);
-  }
-  .top-\[100px\] {
-    top: 100px;
-  }
-  .top-\[500px\] {
-    top: 500px;
   }
   .right-0 {
     right: calc(var(--spacing) * 0);
@@ -318,9 +309,6 @@
   .left-0 {
     left: calc(var(--spacing) * 0);
   }
-  .left-1 {
-    left: calc(var(--spacing) * 1);
-  }
   .left-1\/2 {
     left: calc(1/2 * 100%);
   }
@@ -330,11 +318,11 @@
   .left-5 {
     left: calc(var(--spacing) * 5);
   }
-  .left-\[20px\] {
-    left: 20px;
-  }
   .z-50 {
     z-index: 50;
+  }
+  .col-span-full {
+    grid-column: 1 / -1;
   }
   .container {
     width: 100%;
@@ -366,6 +354,9 @@
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
   }
+  .mt-3 {
+    margin-top: calc(var(--spacing) * 3);
+  }
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
   }
@@ -386,12 +377,6 @@
   }
   .mt-16 {
     margin-top: calc(var(--spacing) * 16);
-  }
-  .mt-\[25px\] {
-    margin-top: 25px;
-  }
-  .mt-\[40px\] {
-    margin-top: 40px;
   }
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
@@ -456,9 +441,6 @@
   .inline-flex {
     display: inline-flex;
   }
-  .table {
-    display: table;
-  }
   .aspect-3\/4 {
     aspect-ratio: 3/4;
   }
@@ -489,26 +471,14 @@
   .h-12 {
     height: calc(var(--spacing) * 12);
   }
-  .h-17 {
-    height: calc(var(--spacing) * 17);
-  }
   .h-32 {
     height: calc(var(--spacing) * 32);
-  }
-  .h-175 {
-    height: calc(var(--spacing) * 175);
-  }
-  .h-\[700px\] {
-    height: 700px;
   }
   .h-full {
     height: 100%;
   }
   .min-h-5 {
     min-height: calc(var(--spacing) * 5);
-  }
-  .min-h-\[1\.25rem\] {
-    min-height: 1.25rem;
   }
   .min-h-screen {
     min-height: 100vh;
@@ -546,9 +516,6 @@
   .max-w-4xl {
     max-width: var(--container-4xl);
   }
-  .max-w-5 {
-    max-width: calc(var(--spacing) * 5);
-  }
   .max-w-6xl {
     max-width: var(--container-6xl);
   }
@@ -557,9 +524,6 @@
   }
   .max-w-50 {
     max-width: calc(var(--spacing) * 50);
-  }
-  .max-w-\[200px\] {
-    max-width: 200px;
   }
   .max-w-full {
     max-width: 100%;
@@ -582,34 +546,14 @@
   .flex-1 {
     flex: 1;
   }
-  .flex-shrink {
-    flex-shrink: 1;
-  }
-  .flex-shrink-0 {
-    flex-shrink: 0;
-  }
   .shrink-0 {
     flex-shrink: 0;
-  }
-  .flex-grow {
-    flex-grow: 1;
   }
   .grow {
     flex-grow: 1;
   }
-  .border-collapse {
-    border-collapse: collapse;
-  }
-  .-translate-x-1 {
-    --tw-translate-x: calc(var(--spacing) * -1);
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
   .-translate-x-1\/2 {
     --tw-translate-x: calc(calc(1/2 * 100%) * -1);
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
-  .-translate-y-1 {
-    --tw-translate-y: calc(var(--spacing) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-y-1\/2 {
@@ -621,9 +565,6 @@
   }
   .cursor-pointer {
     cursor: pointer;
-  }
-  .resize {
-    resize: both;
   }
   .resize-none {
     resize: none;
@@ -882,6 +823,9 @@
   .border-red-600 {
     border-color: var(--color-red-600);
   }
+  .border-transparent {
+    border-color: transparent;
+  }
   .border-white {
     border-color: var(--color-white);
   }
@@ -1115,6 +1059,9 @@
   .py-5 {
     padding-block: calc(var(--spacing) * 5);
   }
+  .py-8 {
+    padding-block: calc(var(--spacing) * 8);
+  }
   .py-12 {
     padding-block: calc(var(--spacing) * 12);
   }
@@ -1345,21 +1292,11 @@
     --tw-shadow: 0 20px 25px -5px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 8px 10px -6px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  .shadow-purple-500 {
-    --tw-shadow-color: oklch(62.7% 0.265 303.9);
-    @supports (color: color-mix(in lab, red, red)) {
-      --tw-shadow-color: color-mix(in oklab, var(--color-purple-500) var(--tw-shadow-alpha), transparent);
-    }
-  }
   .shadow-purple-500\/30 {
     --tw-shadow-color: color-mix(in srgb, oklch(62.7% 0.265 303.9) 30%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-purple-500) 30%, transparent) var(--tw-shadow-alpha), transparent);
     }
-  }
-  .outline {
-    outline-style: var(--tw-outline-style);
-    outline-width: 1px;
   }
   .blur {
     --tw-blur: blur(8px);
@@ -1766,6 +1703,26 @@
       outline-style: none;
     }
   }
+  .disabled\:cursor-not-allowed {
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+  .disabled\:border-gray-400 {
+    &:disabled {
+      border-color: var(--color-gray-400);
+    }
+  }
+  .disabled\:bg-gray-400 {
+    &:disabled {
+      background-color: var(--color-gray-400);
+    }
+  }
+  .disabled\:text-gray-400 {
+    &:disabled {
+      color: var(--color-gray-400);
+    }
+  }
   .sm\:grid-cols-2 {
     @media (width >= 40rem) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1791,29 +1748,14 @@
       display: none;
     }
   }
-  .md\:w-1 {
-    @media (width >= 48rem) {
-      width: calc(var(--spacing) * 1);
-    }
-  }
   .md\:w-1\/2 {
     @media (width >= 48rem) {
       width: calc(1/2 * 100%);
     }
   }
-  .md\:w-15 {
-    @media (width >= 48rem) {
-      width: calc(var(--spacing) * 15);
-    }
-  }
   .md\:w-150 {
     @media (width >= 48rem) {
       width: calc(var(--spacing) * 150);
-    }
-  }
-  .md\:w-\[600px\] {
-    @media (width >= 48rem) {
-      width: 600px;
     }
   }
   .md\:grid-cols-2 {
@@ -2086,11 +2028,6 @@
   inherits: false;
   initial-value: 0 0 #0000;
 }
-@property --tw-outline-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
-}
 @property --tw-blur {
   syntax: "*";
   inherits: false;
@@ -2239,7 +2176,6 @@
       --tw-ring-offset-width: 0px;
       --tw-ring-offset-color: #fff;
       --tw-ring-offset-shadow: 0 0 #0000;
-      --tw-outline-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;
       --tw-contrast: initial;
