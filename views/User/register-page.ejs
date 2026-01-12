@@ -176,6 +176,10 @@
           errors.name.textContent = "Enter valid name"
           return false
         }
+        if(value.length>25){
+          errors.name.textContent = "Username size exceeds"
+          return false
+        }
         if (!USERNAME_PATTERN.test(value)){
           errors.name.textContent = "Only characters accepted"
           return false

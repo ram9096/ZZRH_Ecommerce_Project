@@ -1,4 +1,5 @@
 import Joi from "joi";
+import mongoose from "mongoose";
 
 export const variantSchemaValidate = Joi.object({
     color:Joi.string().trim().min(1).required(),
@@ -38,4 +39,43 @@ export const categorySchemaValidate = Joi.object({
         .max(300)
         .required(),
     isActive:Joi.boolean().required()
+})
+
+export const addressSchemaValidate = Joi.object({
+    userId: Joi.string()
+        .custom((value, helpers) => {
+        if (!mongoose.Types.ObjectId.isValid(value)) {
+            return helpers.error("any.invalid");
+        }
+        return value;
+        })
+        .required(),
+    username:Joi.string()
+        .min(1)
+        .max(200)
+        .required(),
+    phone_number:Joi.number()
+        .integer()
+        .required(),
+    street_address: Joi.string()
+        .min(5)
+        .required(),
+
+    landmark:Joi.string()
+        .allow("")
+        .optional(),
+
+    city:Joi.string()
+        .required(),
+
+    state:Joi.string()
+        .required(),
+
+    postal_code:Joi.number()
+        .integer()
+        .required(),
+
+    country:Joi.string()
+        .required(),
+    isDefault:Joi.boolean().required()
 })

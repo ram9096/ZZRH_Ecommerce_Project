@@ -1,6 +1,7 @@
 import express from "express"
 import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad, productShowcaseLoad, productFilter, VariantFilter } from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/userMiddleware.js"
+import { userAddressAdd, userAddressLoad, userEmailEdit, userEmailEditLoad, userNameEdit, userNameEditLoad, userPasswordEdit, userPasswordEditLoad, userProfileLoad } from "../controller/userProfileController.js"
 let router = express.Router()
 
 router.get('/',userLandingLoad)
@@ -14,7 +15,11 @@ router.get('/logout',userLogout)
 router.get('/home/product-details/:id',productViewLoad)
 router.get('/product-listing',productLisitingLoad)
 router.get('/products',productShowcaseLoad)
-
+router.get('/profile',isAuthenticated,userProfileLoad)
+router.get('/profile/change-username',isAuthenticated,userNameEditLoad)
+router.get('/profile/change-email',isAuthenticated,userEmailEditLoad)
+router.get('/profile/change-password',isAuthenticated,userPasswordEditLoad)
+router.get('/profile/address-management',isAuthenticated,userAddressLoad)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)
@@ -24,4 +29,8 @@ router.post('/forgot-password',forgotPassword)
 router.post('/resent-otp',resentOtp)
 router.post('/products/filter',productFilter)
 router.post('/home/product-details/:id',VariantFilter)
+router.post('/profile/change-username',userNameEdit)
+router.post('/profile/change-email',userEmailEdit)
+router.post('/profile/change-password',userPasswordEdit)
+router.post('/profile/address-management',userAddressAdd)
 export default router;

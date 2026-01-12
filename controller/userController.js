@@ -30,7 +30,8 @@ export const userRegisterLoad = (req, res) => {
 };
 
 export const generateotpload = (req, res) => {
-    if(req.session.user||!req.session.tempEmail){
+    if(req.session.user && !req.session.otpContext||!req.session.tempEmail){
+        
         return res.redirect('/home')
     }
     return res.render("User/otp-verification", {
@@ -157,6 +158,8 @@ export const productShowcaseLoad = async (req,res)=>{
 
     }
 }
+
+
 // -----------------controllers-----------------
 
 export const userLogin = async (req, res) => {
@@ -254,15 +257,37 @@ export const verifyotp = async (req, res) => {
                 redirect: "/forgot-password",
             });
         }
+        if(req.session.otpContext == "PASSWORD_EDIT"){
+
+            req.session.otpContext = "PASSWORD_VERIFIED"
+
+            return res.status(200).json({
+                success:true,
+                redirect:"/profile/change-password"
+            })
+        }
+        if(req.session.otpContext == "EMAIL_EDIT"){
+
+            req.session.otpContext = "EMAIL_VERIFIED"
+            
+            return res.status(200).json({
+                success:true,
+                redirect:"/profile/change-email"
+            })
+        }
+
         req.session.tempEmail = null;
+        
         req.session.user = {
             id: verify.data._id,
             email: verify.data.email
         };
+        
         return res.status(200).json({
             success: true,
             redirect: "/home",
         });
+        
     }catch(e){
         console.log("Error ",e)
         return res.status(500).json({

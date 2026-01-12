@@ -4,121 +4,254 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZZRH - Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .profile-avatar {
+            background: linear-gradient(135deg, #6b7280 0%, #1f2937 100%);
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-linear-to-br from-gray-50 via-gray-100 to-gray-50 min-h-screen">
     <!-- Header -->
-    <header class="bg-white border-b border-gray-200 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <h1 class="text-3xl font-light tracking-wider">#ZZRH</h1>
-            <div class="flex items-center gap-3">
-                <button class="p-3 bg-gray-200 rounded-full hover:bg-gray-300 transition">
-                    <i class="fas fa-search text-gray-700"></i>
+    <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
+    <!-- Logo -->
+    <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight" style="font-family: bloverly;font-weight: lighter;">
+      #ZZRH
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex space-x-8 text-xl font-clash">
+      <a href="#" class="hover:underline">New Arrival</a>
+      <a href="#" class="hover:underline">Men's collection</a>
+      <a href="#" class="hover:underline">About Us</a>
+    </nav>
+    <div class="hidden md:flex items-center gap-4">
+        <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+        </button>
+        <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+        </button>
+        <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+            </svg>
+        </button>
+        <div class="relative group">
+                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
                 </button>
-                <button class="p-3 bg-gray-200 rounded-full hover:bg-gray-300 transition">
-                    <i class="fas fa-shopping-cart text-gray-700"></i>
-                </button>
-                <button class="p-3 bg-gray-200 rounded-full hover:bg-gray-300 transition">
-                    <i class="fas fa-heart text-gray-700"></i>
-                </button>
-                <button class="p-3 bg-gray-200 rounded-full hover:bg-gray-300 transition">
-                    <i class="fas fa-user text-gray-700"></i>
-                </button>
+
+                <!-- Tooltip -->
+                <span
+                    class="absolute top-14 left-1/2 -translate-x-1/2
+                        bg-black text-white text-xs px-2 py-1 rounded
+                        opacity-0 group-hover:opacity-100
+                        transition whitespace-nowrap">
+                        <%= isLogged.email %>
+                    
+                </span>
             </div>
+        <a href="/logout">
+            <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
+                Logout
+            </button>
+        </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
+      Menu
+    </button>
+  </header>
+
+  <!-- Mobile Menu (initially hidden) -->
+  <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 space-y-4 font-clash">
+    <a href="#" class="block hover:underline">New Arrival</a>
+    <a href="#" class="block hover:underline">Men's collection</a>
+    <a href="#" class="block hover:underline">About Us</a>
+    
+    <div class="flex items-center gap-4">
+            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+            </button>
+            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                </svg>
+            </button>
+            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+            </button>
+            
         </div>
-    </header>
+    
+  </div>
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-6 py-8">
         <div class="flex gap-8">
             <!-- Sidebar -->
-            <aside class="w-64 flex-shrink-0">
-                <h2 class="text-xl font-semibold mb-6">My Account</h2>
-                <nav class="space-y-2">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 text-red-600">
-                        <i class="fas fa-user"></i>
-                        <span>Account Overview</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition">
-                        <i class="fas fa-shopping-bag"></i>
-                        <span>My Orders</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition">
-                        <i class="fas fa-home"></i>
-                        <span>Manage Address</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition">
-                        <i class="fas fa-wallet"></i>
-                        <span>Wallet</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition">
-                        <i class="fas fa-lock"></i>
-                        <span>Manage Password</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition">
-                        <i class="fas fa-heart"></i>
-                        <span>Wishlist</span>
-                    </a>
-                </nav>
-            </aside>
+            <%- include('../Partials/user-sidebar') %>
 
             <!-- Profile Content -->
             <main class="flex-1">
-                <div class="bg-white rounded-lg shadow-sm">
+                <div class="glass-effect rounded-2xl shadow-xl border border-white/20 overflow-hidden">
                     <!-- Profile Header -->
-                    <div class="px-8 py-6 border-b border-gray-200 flex items-center justify-between">
-                        <h2 class="text-3xl font-semibold">Profile</h2>
-                        <div class="relative">
-                            <div class="w-16 h-16 bg-gradient-to-br from-orange-200 to-orange-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-2xl text-orange-400"></i>
+                    <div class="gradient-bg px-8 py-8 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-10">
+                            <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-32 translate-x-32"></div>
+                            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-24 -translate-x-24"></div>
+                        </div>
+                        <div class="relative flex items-center justify-between">
+                            <div>
+                                <h2 class="text-3xl font-bold text-white mb-2">Profile</h2>
+                                <p class="text-gray-300">Manage your account information</p>
                             </div>
-                            <button class="absolute bottom-0 right-0 w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                                <i class="fas fa-pen text-white text-xs"></i>
-                            </button>
+                            <div class="relative">
+                                <div class="w-24 h-24 profile-avatar rounded-2xl flex items-center justify-center shadow-2xl hover-lift">
+                                    <i class="fas fa-user text-4xl text-white"></i>
+                                </div>
+                                <button class="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-lg flex items-center justify-center hover-lift shadow-lg">
+                                    <i class="fas fa-pen text-gray-700 text-xs"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Profile Fields -->
-                    <div class="px-8 py-6 space-y-6">
+                    <div class="px-8 py-8 space-y-6">
                         <!-- User Name -->
                         <div class="border-b border-gray-200 pb-6">
                             <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-500 mb-1">User Name</p>
-                                    <p class="text-lg font-medium text-gray-900">Jane Doe</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">User Name</p>
+                                        <p class="text-lg font-semibold text-gray-900"><%= name %></p>
+                                    </div>
                                 </div>
-                                <button class="text-red-600 font-medium hover:text-red-700 transition">
-                                    Edit
-                                </button>
+                                <a href="/profile/change-username">
+                                    <button class="px-5 py-2 gradient-bg text-white rounded-lg hover-lift font-medium text-sm shadow-lg">
+                                        Edit
+                                    </button>
+                                </a>
                             </div>
                         </div>
 
                         <!-- Email -->
                         <div class="border-b border-gray-200 pb-6">
                             <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-500 mb-1">Email</p>
-                                    <p class="text-lg font-medium text-gray-900">jane.doe@example.com</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-envelope text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">Email</p>
+                                        <p class="text-lg font-semibold text-gray-900"><%= email %></p>
+                                    </div>
                                 </div>
-                                <button class="text-red-600 font-medium hover:text-red-700 transition">
+                                <a href="/profile/change-email">
+                                    <button class="px-5 py-2 gradient-bg text-white rounded-lg hover-lift font-medium text-sm shadow-lg">
+                                        Edit
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-phone text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">Mobile Number</p>
+                                        <p class="text-lg font-semibold text-gray-900">+91 <%= mobile %></p>
+                                    </div>
+                                </div>
+                                <button class="px-5 py-2 gradient-bg text-white rounded-lg hover-lift font-medium text-sm shadow-lg">
                                     Edit
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Mobile Number -->
+                        <!-- Password -->
                         <div class="pb-6">
                             <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-500 mb-1">Mobile Number</p>
-                                    <p class="text-lg font-medium text-gray-900">+1 234 567 8900</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-lock text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">Password</p>
+                                        <p class="text-lg font-semibold text-gray-900">••••••••</p>
+                                    </div>
                                 </div>
-                                <button class="text-red-600 font-medium hover:text-red-700 transition">
-                                    Edit
-                                </button>
+                                <a href="/profile/change-password">
+                                    <button class="px-5 py-2 gradient-bg text-white rounded-lg hover-lift font-medium text-sm shadow-lg">
+                                        Change
+                                    </button>
+                                </a>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="glass-effect rounded-2xl shadow-xl border border-white/20 p-6 mt-6">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Quick Actions</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <i class="fas fa-box text-2xl text-gray-700 mb-2"></i>
+                            <p class="text-sm font-medium text-gray-700">Track Order</p>
+                        </button>
+                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <i class="fas fa-undo text-2xl text-gray-700 mb-2"></i>
+                            <p class="text-sm font-medium text-gray-700">Returns</p>
+                        </button>
+                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <i class="fas fa-headset text-2xl text-gray-700 mb-2"></i>
+                            <p class="text-sm font-medium text-gray-700">Help Center</p>
+                        </button>
                     </div>
                 </div>
             </main>
@@ -126,16 +259,16 @@
     </div>
 
     <!-- Footer User Info -->
-    <div class="fixed bottom-6 left-6">
-        <div class="bg-white rounded-lg shadow-lg px-4 py-3 flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-orange-200 to-orange-100 rounded-full flex items-center justify-center">
-                <i class="fas fa-user text-orange-400"></i>
-            </div>
-            <div>
-                <p class="font-medium text-gray-900">Samantha Jones</p>
-                <p class="text-sm text-gray-500">samantha.j@example.com</p>
-            </div>
-        </div>
-    </div>
+    
+
+
+    <script>
+      const menuButton = document.getElementById('mobileMenuButton');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    </script>
 </body>
 </html>
