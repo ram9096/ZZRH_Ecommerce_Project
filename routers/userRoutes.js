@@ -1,7 +1,7 @@
 import express from "express"
 import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad, productShowcaseLoad, productFilter, VariantFilter } from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/userMiddleware.js"
-import { userAddressAdd, userAddressLoad, userEmailEdit, userEmailEditLoad, userNameEdit, userNameEditLoad, userPasswordEdit, userPasswordEditLoad, userProfileLoad } from "../controller/userProfileController.js"
+import { userAddressAdd, userAddressDelete, userAddressLoad, userEmailEdit, userEmailEditLoad, userNameEdit, userNameEditLoad, userPasswordEdit, userPasswordEditLoad, userProfileLoad } from "../controller/userProfileController.js"
 let router = express.Router()
 
 router.get('/',userLandingLoad)
@@ -33,4 +33,5 @@ router.post('/profile/change-username',userNameEdit)
 router.post('/profile/change-email',userEmailEdit)
 router.post('/profile/change-password',userPasswordEdit)
 router.post('/profile/address-management',userAddressAdd)
+router.post('/profile/delete-address/:id',userAddressDelete)
 export default router;

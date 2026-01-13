@@ -33,7 +33,13 @@ export const usernameEditLogic = async(username,id)=>{
 
 export const emailEditLogic = async(_id,email)=>{
     try{
-
+        const emailExistChecking = await userModel.findOne({email})
+        if(emailExistChecking){
+            return {
+                success:false,
+                message:"Email already exist"
+            }
+        }
         const userDetails = await userModel.findByIdAndUpdate(_id,{
             email
         })
@@ -174,6 +180,30 @@ export const AddressAddLogic = async (username,phone_number,postal_code,city,sta
             message:"Address added sucessfully"
         }
 
+    }catch(e){
+        console.log("Server error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
+    }
+}
+
+export const addressDelete = async ( id )=>{
+    try{
+
+        const exists = await addressModel.findById({_id:id})
+        if(!exists){
+            return {
+                success:false,
+                message:"Data error"
+            }
+        }
+        await addressModel.deleteOne({_id:id})
+        return {
+            success:true,
+            message:"Deleted successfully"
+        }
     }catch(e){
         console.log("Server error",e)
         return {

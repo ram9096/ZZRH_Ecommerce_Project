@@ -1,7 +1,7 @@
 
 //Page renderings
 
-import { AddressAddLogic, addressFetcher, emailEditLogic, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
+import { AddressAddLogic, addressDelete, addressFetcher, emailEditLogic, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
 import { findUserByEmail, generateOtp } from "../service/userService.js"
 
 export const userProfileLoad = async (req,res)=>{
@@ -185,19 +185,19 @@ export const userEmailEdit = async (req,res)=>{
         }
         const emailEditProgress = await emailEditLogic(id,email)
 
-        if(emailEditProgress.success){
-            req.session.otpContext = null
-            console.log("req.session.user: ",req.session.user)
-            return res.json({
-                success:true,
-                redirect:"/profile/change-email"
+        if(!emailEditProgress.success){
+            return res.status(401).json({
+                success:false,
+                message:emailEditProgress.message
             })
         }
-        res.status(401).json({
-            success:false,
-            message:"Error while editing email"
+        req.session.otpContext = null
+        req.session.user = null
+        return res.json({
+            success:true,
+            redirect:"/login"
         })
-
+        
     }catch(e){
 
         console.log(e)
@@ -242,6 +242,7 @@ export const userPasswordEdit = async (req,res)=>{
                 
                 })
             }
+            
     
             req.session.tempEmail = email
             req.session.otpContext = "PASSWORD_EDIT"
@@ -258,16 +259,17 @@ export const userPasswordEdit = async (req,res)=>{
         
         if(!userDetails.success){
 
-            return {
+            return res.status(401).json({
                 success:false,
                 message:userDetails.message
-            }
+            })
         }
         req.session.otpContext = null
-        return {
+        req.session.user = null
+        return res.json({
             success:true,
-            redirect:"/profile"
-        }
+            redirect:"/login"
+        })
 
     }catch(e){
         console.log("Data sharing error :",e)
@@ -299,6 +301,33 @@ export const userAddressAdd = async(req,res)=>{
             return res.json({
                 success:false,
                 message:addressAddingProgress.message
+            })
+        }
+        return res.json({
+            success:true,
+            redirect:"/profile/address-management"
+        })
+
+    }catch(e){
+        console.log("Data sharing error :",e)
+        res.status(500).json({
+            success:false,
+            message:"Data sharing error try again!!!"
+        })
+    }
+}
+
+
+export const userAddressDelete = async (req,res)=>{
+    try{
+        const id = req.params.id
+        
+        const addressDeleteProgress = await addressDelete(id)
+        if(!addressDeleteProgress.success){
+
+            return res.status(401).json({
+                success:false,
+                message:"Delete error!!"
             })
         }
         return res.json({

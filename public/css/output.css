@@ -1361,9 +1361,6 @@
     --tw-tracking: var(--tracking-widest);
     letter-spacing: var(--tracking-widest);
   }
-  .text-pretty {
-    text-wrap: pretty;
-  }
   .whitespace-nowrap {
     white-space: nowrap;
   }
