@@ -2,6 +2,9 @@ import express from "express"
 import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad, productShowcaseLoad, productFilter, VariantFilter } from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/userMiddleware.js"
 import { userAddressAdd, userAddressDelete, userAddressLoad, userEmailEdit, userEmailEditLoad, userNameEdit, userNameEditLoad, userPasswordEdit, userPasswordEditLoad, userProfileLoad } from "../controller/userProfileController.js"
+import { cartLoad } from "../controller/cartController.js"
+import CartRoutes from "./cartRoutes.js"
+import checkOutRoutes from "./checkoutRoutes.js"
 let router = express.Router()
 
 router.get('/',userLandingLoad)
@@ -20,6 +23,8 @@ router.get('/profile/change-username',isAuthenticated,userNameEditLoad)
 router.get('/profile/change-email',isAuthenticated,userEmailEditLoad)
 router.get('/profile/change-password',isAuthenticated,userPasswordEditLoad)
 router.get('/profile/address-management',isAuthenticated,userAddressLoad)
+router.use('/cart',CartRoutes)
+router.use('/checkout',checkOutRoutes)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)
