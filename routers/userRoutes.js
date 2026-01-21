@@ -5,6 +5,7 @@ import { userAddressAdd, userAddressDelete, userAddressLoad, userEmailEdit, user
 import { cartLoad } from "../controller/cartController.js"
 import CartRoutes from "./cartRoutes.js"
 import checkOutRoutes from "./checkoutRoutes.js"
+import OrderRoutes from "./orderRoutes.js"
 let router = express.Router()
 
 router.get('/',userLandingLoad)
@@ -25,6 +26,7 @@ router.get('/profile/change-password',isAuthenticated,userPasswordEditLoad)
 router.get('/profile/address-management',isAuthenticated,userAddressLoad)
 router.use('/cart',CartRoutes)
 router.use('/checkout',checkOutRoutes)
+router.use('/order',OrderRoutes)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)
@@ -39,4 +41,5 @@ router.post('/profile/change-email',userEmailEdit)
 router.post('/profile/change-password',userPasswordEdit)
 router.post('/profile/address-management',userAddressAdd)
 router.post('/profile/delete-address/:id',userAddressDelete)
+
 export default router;

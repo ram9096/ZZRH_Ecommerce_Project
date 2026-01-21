@@ -1,4 +1,4 @@
-import { addToCart, cartData, cartDelete } from "../service/cartService.js"
+import { addToCart, cartData, cartDelete, cartEdit } from "../service/cartService.js"
 
 export const cartLoad = async (req,res)=>{
     try{
@@ -83,5 +83,34 @@ export const userCartDelete = async (req,res)=>{
 
     }catch(e){
 
+    }
+
+}
+
+export const quantityUpdate = async (req,res)=>{
+    try{
+        const {cartId,variantId,quantity} = req.body
+        if(!cartId||!variantId||!quantity){
+            return res.status(401).json({
+                success:false,
+                message:"Fetching error"
+            })
+        }
+
+        let editProgress = await cartEdit(cartId,variantId,quantity)
+
+        if(!editProgress.success){
+            return res.status(401).json({
+                success:false,
+                message:editProgress.message
+            })
+        }
+        return res.json({
+                success:true,
+                message:editProgress.message
+            })
+
+    }catch(e){
+        console.log(e)
     }
 }

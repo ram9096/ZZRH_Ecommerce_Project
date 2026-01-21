@@ -7,15 +7,11 @@ export const cartData = async()=>{
             path: "variantId",
             match:{status:true},
             populate: {
-                path: "productId",
-                populate:{
-                    path:"categoryId",
-                    
-                }     
+                path: "productId"    
             }
         });
         
-        
+       
         
         if(!data){
             return {
@@ -118,4 +114,28 @@ export const cartDelete = async (id)=>{
             message: "Something went wrong while deleting cart item"
         };
     }
+}
+
+export const cartEdit = async(_id,variantId,quantity)=>{
+    try{
+
+        let editProgress = await cartModel.findOne({_id})
+
+        if(!editProgress){
+            return {
+                success:false,
+                message:"Error try again"
+            }
+        }
+
+        editProgress.quantity = quantity
+        await editProgress.save()
+        return {
+            success:true,
+            message:"Cart successfully updated"
+        }
+
+    }catch(e){
+        console.log(e)
+    }   
 }

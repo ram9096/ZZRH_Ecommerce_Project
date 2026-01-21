@@ -283,9 +283,22 @@ export const userPasswordEdit = async (req,res)=>{
 export const userAddressAdd = async(req,res)=>{
     try{
 
-        const { username,phone,pincode,city,state,landmark,country,street,isDefault } = req.body
+        const { 
+            id,
+            username,
+            phone,
+            pincode,
+            city,
+            state,
+            landmark,
+            country,
+            street,
+            isDefault,
+            purpose
+        } = req.body
 
         const addressAddingProgress = await AddressAddLogic(
+            id,
             username,
             phone,
             pincode,
@@ -301,6 +314,15 @@ export const userAddressAdd = async(req,res)=>{
             return res.json({
                 success:false,
                 message:addressAddingProgress.message
+            })
+        }
+        if(purpose == "NEW"){
+
+            req.session.user.addressId = addressAddingProgress.id
+            
+            return res.json({
+                success:true,
+                redirect:"/checkout/method"
             })
         }
         return res.json({

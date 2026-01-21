@@ -7,6 +7,8 @@ import bcrypt from "bcrypt"
 
 export const addressFetcher = (userId=>addressModel.find({userId}))
 
+export const addressIdFetcher = (_id=>addressModel.find({_id}))
+
 export const usernameEditLogic = async(username,id)=>{
     try{
         const userDetails = await userModel.findByIdAndUpdate({_id:id},{
@@ -119,12 +121,12 @@ export const PasswordEditLogic = async ( _id,password,usecase)=>{
     }
 }
 
-export const AddressAddLogic = async (username,phone_number,postal_code,city,state,landmark,country,street_address,isDefault)=>{
+export const AddressAddLogic = async (_id,username,phone_number,postal_code,city,state,landmark,country,street_address,isDefault)=>{
 
     try{
 
         let { error } = addressSchemaValidate.validate({
-            userId:'6962caba7840015fd35dfa5d',
+            userId:_id,
             username,
             phone_number,
             postal_code,
@@ -145,6 +147,7 @@ export const AddressAddLogic = async (username,phone_number,postal_code,city,sta
         }
 
         let addressExist = await addressModel.findOne({
+            username,
             street_address,
             country,
             postal_code,
@@ -162,7 +165,7 @@ export const AddressAddLogic = async (username,phone_number,postal_code,city,sta
 
         let newAddress = new addressModel({
             
-            userId:'6962caba7840015fd35dfa5d',
+            userId:_id,
             username,
             phone_number,
             postal_code,
@@ -175,9 +178,18 @@ export const AddressAddLogic = async (username,phone_number,postal_code,city,sta
         })
 
         await newAddress.save()
+        let address = await addressModel.findOne({
+            username,
+            street_address,
+            country,
+            postal_code,
+            city,
+            state
+        })
         return {
             success:true,
-            message:"Address added sucessfully"
+            message:"Address added sucessfully",
+            id:address._id
         }
 
     }catch(e){
