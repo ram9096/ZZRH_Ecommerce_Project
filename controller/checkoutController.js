@@ -24,6 +24,11 @@ export const checkoutLoad = async (req,res)=>{
         })
     }catch(e){
 
+        console.error('Error loading cart:', e)
+        return res.render('User/checkout-page',{
+            cart:[],
+            address:[]
+        })
     }
 }
 
@@ -43,6 +48,10 @@ export const paymentMethodLoad = async (req,res)=>{
             cart:activeCartItems
         })
     }catch(e){
+        console.log("Error ",e)
+        return res.render('User/payment-method',{
+            cart:[]
+        })
 
     }
 }
@@ -67,7 +76,10 @@ export const orderSuccessLoad = async (req,res)=>{
             order:order.data
         })
     }catch(e){
-
+        console.log("Error ",e)
+        return res.render('User/order-success',{
+            order:[]
+        })
     }
 }
 
@@ -100,7 +112,11 @@ export const checkoutFetcher = async (req,res)=>{
         })
 
     }catch(e){
-        console.log(e)
+        console.log("Error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
     }
 }
 
@@ -132,6 +148,10 @@ export const orderController = async (req,res)=>{
         })
 
     }catch(e){
-        console.log(e)
+        console.log("Error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
     }
 }

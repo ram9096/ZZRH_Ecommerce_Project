@@ -27,6 +27,11 @@ export const orderDetailsLoad = async (_id)=>{
         }
 
     }catch(e){
+        console.log("Error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
 
     }
 }
@@ -100,6 +105,10 @@ export const OrderLogic = async (userDetails,method)=>{
             id:Order_id._id
         }
     }catch(e){
-        console.log(e)
+        console.log("Error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
     }
 }

@@ -3,10 +3,12 @@ import { addToCart, cartData, cartDelete, cartEdit } from "../service/cartServic
 export const cartLoad = async (req,res)=>{
     try{
         const Cartdata  = await cartData()
+
         const price = Cartdata.data.reduce((val,arr)=>{
             val+=arr.variantId.price
             return val
         },0)
+
         if(!Cartdata.success){
             return res.render('User/cart-page',{ 
                 isLogged:req.session.user||'',
@@ -15,6 +17,7 @@ export const cartLoad = async (req,res)=>{
                 price:0
             })
         }
+
         return res.render('User/cart-page',{ 
             isLogged:req.session.user||'',
             email:'',
@@ -22,7 +25,13 @@ export const cartLoad = async (req,res)=>{
             price:price
         })
     }catch(e){
-
+        console.error('Error loading cart:', e)
+        return res.render('User/cart-page',{ 
+            isLogged:req.session.user||'',
+            email:'',
+            data:[],
+            price:0
+        })
     }
 }
 
@@ -53,6 +62,9 @@ export const cartAdd = async (req,res)=>{
 
     }catch(e){
         
+        console.error('Error loading cart:', e)
+        return res.redirect('/login')
+        
     }
     
 }
@@ -82,6 +94,9 @@ export const userCartDelete = async (req,res)=>{
         })
 
     }catch(e){
+        
+        console.error('Error loading cart:', e)
+        return res.redirect('/login')
 
     }
 
@@ -111,6 +126,8 @@ export const quantityUpdate = async (req,res)=>{
             })
 
     }catch(e){
-        console.log(e)
+        
+        console.error('Error loading cart:', e)
+        return res.redirect('/login')
     }
 }

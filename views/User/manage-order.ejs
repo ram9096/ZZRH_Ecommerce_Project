@@ -60,27 +60,31 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Classic Trench Coat -->
 
-                    <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                        <div class="aspect-[3/4] bg-gray-100">
-                            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=700&fit=crop" 
-                                 alt="Classic Trench Coat" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="p-4">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Classic Trench Coat</h3>
-                            <p class="text-xl font-medium text-gray-900 mb-4">$189.99</p>
-                            <div class="flex items-center gap-2">
-                                <button class="flex-1 bg-black text-white py-3 px-6 rounded hover:bg-gray-800 transition-colors font-medium">
-                                    Track
-                                </button>
-                                <button class="p-3 text-gray-400 hover:text-red-500 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
+                    <% order.forEach(or=> {%>
+                        <% or.orderItems.forEach(o=>{ %>
+                            <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                <div class="aspect-[3/4] bg-gray-100">
+                                    <img src="/<%= o.variantId.image[0] %>" 
+                                        alt="Classic Trench Coat" 
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1"><%= o.productName %></h3>
+                                    <p class="text-xl font-medium text-gray-900 mb-4">₹<%= o.totalPrice %></p>
+                                    <div class="flex items-center gap-2">
+                                        <button class="flex-1 bg-black text-white py-3 px-6 rounded hover:bg-gray-800 transition-colors font-medium">
+                                            Track
+                                        </button>
+                                        <button class="p-3 text-gray-400 hover:text-red-500 transition-colors">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        <% }) %>
+                    <% }) %>
         
                     
                 </div>

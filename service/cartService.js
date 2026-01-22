@@ -136,6 +136,10 @@ export const cartEdit = async(_id,variantId,quantity)=>{
         }
 
     }catch(e){
-        console.log(e)
+        console.log("Error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
     }   
 }
