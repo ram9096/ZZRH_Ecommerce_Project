@@ -1,7 +1,7 @@
 
 //Page renderings
 
-import { AddressAddLogic, addressDelete, addressFetcher, emailEditLogic, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
+import { AddressAddLogic, addressDelete, AddressEditLogic, addressFetcher, emailEditLogic, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
 import { findUserByEmail, generateOtp } from "../service/userService.js"
 
 export const userProfileLoad = async (req,res)=>{
@@ -339,7 +339,56 @@ export const userAddressAdd = async(req,res)=>{
     }
 }
 
+export const userAddressEdit = async (req,res)=>{
+    try{
 
+        const { 
+            id,
+            username,
+            phone,
+            pincode,
+            city,
+            state,
+            landmark,
+            country,
+            street,
+            isDefault,
+            userId
+        } = req.body
+        const addressEditProgress = await AddressEditLogic( 
+            userId,
+            username,
+            phone,
+            pincode,
+            city,
+            state,
+            landmark,
+            country,
+            street,
+            isDefault,
+            id
+        )
+        if(!addressEditProgress.success){
+            return res.json({
+                success:false,
+                message:addressEditProgress.message
+            })
+        }
+
+        return res.json({
+            success:true,
+            redirect:"/profile/address-management"
+        })
+
+    }catch(e){
+
+        console.log("Data sharing error :",e)
+        res.status(500).json({
+            success:false,
+            message:"Data sharing error try again!!!"
+        })
+    }
+}
 export const userAddressDelete = async (req,res)=>{
     try{
         const id = req.params.id

@@ -96,8 +96,37 @@ const orderSchema = new mongoose.Schema({
       return date;
     }
   },
+  cancelledProducts: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Variant"
+        }
+      ],
+      default: []
+  },
   cancelledAt: {
-    type: Date,
+    type: [
+      {
+        reason: {
+          type: String,
+          required: true
+        },
+        requestedAt: {
+          type: Date,
+          default: Date.now
+        },
+        cancelledBy: {
+          type: String,
+          enum: ["user", "admin", "system"],
+          required: true
+        },
+        remarks: {
+          type: String,
+          default: null
+        }
+      }
+    ],
     default: null
   }
 

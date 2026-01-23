@@ -1,7 +1,7 @@
 import express from "express"
 import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad, productShowcaseLoad, productFilter, VariantFilter } from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/userMiddleware.js"
-import { userAddressAdd, userAddressDelete, userAddressLoad, userEmailEdit, userEmailEditLoad, userNameEdit, userNameEditLoad, userPasswordEdit, userPasswordEditLoad, userProfileLoad } from "../controller/userProfileController.js"
+import { userAddressAdd, userAddressDelete, userAddressEdit, userAddressLoad, userEmailEdit, userEmailEditLoad, userNameEdit, userNameEditLoad, userPasswordEdit, userPasswordEditLoad, userProfileLoad } from "../controller/userProfileController.js"
 import { cartLoad } from "../controller/cartController.js"
 import CartRoutes from "./cartRoutes.js"
 import checkOutRoutes from "./checkoutRoutes.js"
@@ -40,6 +40,7 @@ router.post('/profile/change-username',userNameEdit)
 router.post('/profile/change-email',userEmailEdit)
 router.post('/profile/change-password',userPasswordEdit)
 router.post('/profile/address-management',userAddressAdd)
+router.post('/profile/address-edit',userAddressEdit)
 router.post('/profile/delete-address/:id',userAddressDelete)
 
 export default router;

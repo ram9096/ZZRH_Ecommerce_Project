@@ -201,6 +201,73 @@ export const AddressAddLogic = async (_id,username,phone_number,postal_code,city
     }
 }
 
+export const AddressEditLogic = async (userId,username,phone_number,postal_code,city,state,landmark,country,street_address,isDefault,_id)=>{
+    try{
+        
+        if(!_id){
+
+            return {
+                success:false,
+                message:"Id error try again!!"
+            }
+        }
+        let { error } = addressSchemaValidate.validate({
+            userId,
+            username,
+            phone_number,
+            postal_code,
+            city,
+            state,
+            street_address,
+            landmark,
+            country,
+            isDefault
+        })
+
+        if(error){
+
+            return {
+                success:false,
+                message:error.details.map(d => d.message)
+            }
+        }
+        let edit_address = await addressModel.findOne({_id,userId})
+        
+        if(!edit_address){
+
+            return {
+                success:false,
+                message:"Address doesnt exist error"
+            }
+        } 
+        edit_address.username = username
+        edit_address.phone_number = phone_number
+        edit_address.postal_code = postal_code
+        edit_address.city = city
+        edit_address.state = state
+        edit_address.street_address = street_address
+        edit_address.landmark = landmark
+        edit_address.country = country
+        edit_address.isDefault = isDefault
+
+        await edit_address.save()
+
+        return {
+            success:true,
+            message:"Successfully edited"
+        }
+
+    }catch(e){
+
+        console.log("Server error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
+
+    }
+}
+
 export const addressDelete = async ( id )=>{
     try{
 
