@@ -275,6 +275,14 @@
                 
             }catch(e){
                 console.log("Front-end-error :\n",e)
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: e || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
             }
 
         });

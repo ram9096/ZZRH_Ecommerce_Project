@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/css/output.css">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <style>
@@ -56,10 +58,28 @@
                     </div>
                 </div>
                 
-                
+                <% if (order.length === 0) { %>
+                    <div class="flex flex-col items-center justify-center py-16">
+                        <lottie-player 
+                            src="https://assets2.lottiefiles.com/packages/lf20_ydo1amjm.json"
+                            background="transparent"
+                            speed="1"
+                            style="width: 220px; height: 220px;"
+                            loop
+                            autoplay>
+                        </lottie-player>
+
+                        <p class="mt-4 text-lg font-semibold text-gray-700">
+                            No orders yet
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            Start shopping to see your orders here
+                        </p>
+                    </div>
+                <% } %>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Classic Trench Coat -->
-
                     <% order.forEach(or=> {%>
                         <% or.orderItems.forEach(o=>{ %>
                             <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">

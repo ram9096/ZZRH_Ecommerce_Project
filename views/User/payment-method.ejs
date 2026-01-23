@@ -276,6 +276,14 @@
                     window.location.href = result.redirect;
                 }, 1200);
             }catch(e){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: e || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
 
             }
         })
