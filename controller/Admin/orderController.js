@@ -49,9 +49,9 @@ export const adminOrdersDetailsLoad = async (req,res)=>{
 export const adminOrdersUpdate = async  (req,res)=>{
     try{
 
-        const {orderId, reasonId} = req.body
-
-        const progress = await adminOrdersUpdateLogic(orderId,reasonId)
+        const {orderId, reasonId, purpose} = req.body
+       
+        const progress = await adminOrdersUpdateLogic(orderId,reasonId,purpose)
 
         if(!progress.success){
             return res.status(401).json({

@@ -23,8 +23,8 @@ router.get('/logout',adminLogout)
 router.post('/login',adminLogin)
 router.post('/users/edit',adminUserEdit)
 
-router.get('/orders',adminOrdersLoad)
-router.get('/orders/details/:id',adminOrdersDetailsLoad)
+router.get('/orders',isAdminAuthenticated,adminOrdersLoad)
+router.get('/orders/details/:id',isAdminAuthenticated,adminOrdersDetailsLoad)
 
 router.post('/orders/update',adminOrdersUpdate)
 

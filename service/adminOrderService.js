@@ -1,19 +1,39 @@
 import orderModel from "../model/orderModel.js"
 
 
-export const adminOrdersUpdateLogic = async (orderId,reasonId)=>{
+export const adminOrdersUpdateLogic = async (orderId,reasonId,purpose = null)=>{
     try{
 
-        const data = await orderModel.find({_id:orderId})
+        const updateData = await orderModel.findOne({_id:orderId})
 
-        if(!data){
+        if(!updateData){
             return {
                 success:false,
                 message: "Error while loading"
             }
         }
 
-        let updateData = await orderModel.findOne({_id:orderId})
+        if(purpose == "DELIVERY_UPDATE"){
+
+            updateData.deliveryStatus = reasonId
+            await updateData.save()
+            return {
+                success:true,
+                message:"Delivery status updated"
+            }
+        }
+
+        if(purpose == "ORDER_UPDATE"){
+
+            updateData.orderStatus = reasonId
+            await updateData.save()
+            return {
+                success:true,
+                message:"Delivery status updated"
+            }
+        }
+
+       
         const index = updateData.cancelledAt.findIndex(
             o => o._id.toString() === reasonId.toString()
         );
