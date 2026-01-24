@@ -112,11 +112,11 @@
         </div>
 
         <!-- Product Items -->
-        <% order[0].orderItems.forEach(o => { %>
+        <% order[0].orderItems.forEach((o,i) => { %>
             <% 
                 const isCancelled = order[0].cancelledProducts &&
                 order[0].cancelledProducts.some(
-                    cp => cp.toString() === o.variantId._id.toString()
+                    cp => cp._id.toString() === o.variantId._id.toString()
                 );
             %>
 
@@ -134,7 +134,8 @@
 
                 <div class="col-span-2">
                 <% if (isCancelled) { %>
-                    <span class="text-orange-600 font-medium">Cancellation Requested</span>
+                    
+                    <span class="text-orange-600 font-medium"><%= order[0].cancelledAt[i].cancelRequestStatus %></span>
                 <% } else { %>
                     <% if(order[0].orderItems.length!=1) {%>
                         <button onclick="openCancelModal('<%= o.variantId._id %>','<%= order[0]._id %>')" 

@@ -4,8 +4,17 @@ import variantModel from "../model/variantModel.js"
 export const getOrders = async (filter)=>{
     try{
         let data  = await orderModel.find(filter)
+            .populate('userId')
             .populate('shippingAddressId')
             .populate('orderItems.variantId')
+            .populate("cancelledProducts")
+            .populate({
+                path: "cancelledProducts",
+                populate: {
+                    path: "productId"
+                }
+            })
+
         if(!data){
             return {
                 success:false,
