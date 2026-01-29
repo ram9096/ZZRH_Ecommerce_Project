@@ -8,7 +8,7 @@ export const adminLoginLoad = (req,res)=>{
     if(req.session.isAdmin){
         return res.redirect('/admin/home')
     }
-    return res.render('Admin/login-page',{error:''})
+    return res.status(200).render('Admin/login-page',{error:''})
 }
 export const adminHomeLoad = (req,res)=>{
     if(req.session.isAdmin){
@@ -56,7 +56,7 @@ export const adminUsersLoad = async (req,res)=>{
         
         let status = String(filter.isActive)
       
-        return res.render('Admin/users-page',{
+        return res.status(200).render('Admin/users-page',{
             data:result.data,
             status:status,
             currentPage:result.currentPage,
@@ -85,7 +85,7 @@ export const adminLogin = async (req,res)=>{
         const {name,password} = req.body
         let tempUserProgress = await adminLoginLogic(name,password);
         if(!tempUserProgress.success){
-            return res.status(401).json({
+            return res.status(500).json({
                 success:false,
                 message:tempUserProgress.message
             })

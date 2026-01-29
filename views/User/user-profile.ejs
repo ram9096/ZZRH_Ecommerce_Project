@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZZRH - Profile</title>
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .profile-avatar {
+            background: linear-gradient(135deg, #6b7280 0%, #1f2937 100%);
+        }
+    </style>
+</head>
+<body class="bg-linear-to-br from-gray-50 via-gray-100 to-gray-50 min-h-screen">
+    <%- include('../Partials/nav-bar') %>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="flex gap-8">
+            <!-- Sidebar -->
+            <%- include('../Partials/user-sidebar') %>
+
+            <!-- Profile Content -->
+            <main class="flex-1">
+                <div class="glass-effect rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+                    <!-- Profile Header -->
+                    <div class="gradient-bg px-8 py-8 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-10">
+                            <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-32 translate-x-32"></div>
+                            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-24 -translate-x-24"></div>
+                        </div>
+                        <div class="relative flex items-center justify-between">
+                            <div>
+                                <h2 class="text-3xl font-bold text-white mb-2">Profile</h2>
+                                <p class="text-gray-300">Manage your account information</p>
+                            </div>
+                            <div class="relative">
+                                <div class="w-24 h-24 profile-avatar rounded-2xl flex items-center justify-center shadow-2xl hover-lift">
+                                    <i class="fas fa-user text-4xl text-white"></i>
+                                </div>
+                                <button class="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-lg flex items-center justify-center hover-lift shadow-lg">
+                                    <i class="fas fa-pen text-gray-700 text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Fields -->
+                    <div class="px-8 py-8 space-y-6">
+                        <!-- User Name -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">User Name</p>
+                                        <p class="text-lg font-semibold text-gray-900"><%= name %></p>
+                                    </div>
+                                </div>
+                                <a href="/profile/change-username">
+                                    <button class="px-5 py-2 gradient-bg text-white rounded-lg hover-lift font-medium text-sm shadow-lg">
+                                        Edit
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-envelope text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">Email</p>
+                                        <p class="text-lg font-semibold text-gray-900"><%= email %></p>
+                                    </div>
+                                </div>
+                                <a href="/profile/change-email">
+                                    <button class="px-5 py-2 gradient-bg text-white rounded-lg hover-lift font-medium text-sm shadow-lg">
+                                        Edit
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+
+                        
+
+                        <!-- Password -->
+                        <div class="pb-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-lock text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">Password</p>
+                                        <p class="text-lg font-semibold text-gray-900">••••••••</p>
+                                    </div>
+                                </div>
+                                <a href="/profile/change-password">
+                                    <button class="px-5 py-2 gradient-bg text-white rounded-lg hover-lift font-medium text-sm shadow-lg">
+                                        Change
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+
+
+                        <!-- Mobile Number -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-phone text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wider">Mobile Number</p>
+                                        <p class="text-lg font-semibold text-gray-900">+91 <%= mobile %></p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="glass-effect rounded-2xl shadow-xl border border-white/20 p-6 mt-6">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Quick Actions</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <i class="fas fa-box text-2xl text-gray-700 mb-2"></i>
+                            <p class="text-sm font-medium text-gray-700">Track Order</p>
+                        </button>
+                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <i class="fas fa-undo text-2xl text-gray-700 mb-2"></i>
+                            <p class="text-sm font-medium text-gray-700">Returns</p>
+                        </button>
+                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <i class="fas fa-headset text-2xl text-gray-700 mb-2"></i>
+                            <p class="text-sm font-medium text-gray-700">Help Center</p>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer User Info -->
+    
+
+
+    <script>
+      const menuButton = document.getElementById('mobileMenuButton');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    </script>
+</body>
+</html>

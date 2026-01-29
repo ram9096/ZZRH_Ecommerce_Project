@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASETiFY Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="bg-gray-50 min-h-screen py-8 px-4">
+    <!-- Cancel/Progress Bar -->
+    <div class="max-w-6xl mx-auto mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-4">
+            <div class="flex items-center justify-between mb-3">
+                <a href="/cart">
+                    <button class="flex items-center gap-2 text-gray-600 hover:text-black transition">
+                        <i class="fas fa-times text-xl"></i>
+                        <span class="font-semibold">Cancel the progress</span>
+                    </button>
+                </a>
+                <span class="text-sm text-gray-600">Step 2 of 3</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="gradient-bg h-2 rounded-full transition-all duration-300" style="width: 66%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Forms -->
+            <div class="lg:col-span-2">
+                <!-- Payment Method -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h1 class="text-3xl font-bold mb-2">Payment Method</h1>
+                    <p class="text-gray-600 mb-6">Choose your payment method</p>
+
+                    <!-- Payment Options -->
+                    <div class="space-y-4">
+                        <!-- Cash on Delivery -->
+                        <label class="block border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300 transition">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" value="COD"  name="payment" class="w-5 h-5 text-black accent-black">
+                                <i class="fa-solid fa-burst gradient-text text-2xl"></i>
+                                <span class="font-medium text-gray-900">Cash on Delivery</span>
+                            </div>
+                        </label>
+
+                        <!-- Online Payment -->
+                        <div class="border-2 border-black rounded-lg p-4">
+                            <label class="flex items-center justify-between cursor-pointer mb-4">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" value="ONLINE" name="payment" checked class="w-5 h-5 text-black accent-black">
+                                    <i class="fa-solid fa-credit-card gradient-text text-2xl"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Online</div>
+                                        <div class="text-sm text-gray-500">Razorpay or PayPal</div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <div class="w-10 h-6  rounded">
+                                        <i class="fa-brands fa-cc-visa text-3xl gradient-text"></i>
+                                    </div>
+                                    <div class="w-10 h-6  rounded">
+                                        <i class="fa-brands fa-cc-mastercard text-3xl gradient-text"></i>
+                                    </div>
+                                    <div class="w-10 h-6  rounded">
+                                        <i class="fa-brands fa-google-pay text-3xl gradient-text"></i>
+                                    </div>
+                                    
+                                </div>
+                            </label>
+
+                            <!-- Card Details Form -->
+                            <div class="space-y-4 pt-4 border-t border-gray-200">
+                                <!-- Card Number -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                                    <input type="text" placeholder="1234 5678 9101 1121" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                                </div>
+
+                                <!-- Card Details Row -->
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                                        <input type="text" placeholder="John Doe" 
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Expiration Date</label>
+                                        <input type="text" placeholder="MM/YY" 
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                                        <input type="text" placeholder="123" 
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wallet -->
+                        <label class="block border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300 transition">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" value="WALLET" name="payment" class="w-5 h-5 text-black accent-black">
+                                    <i class="fa-solid fa-wallet gradient-text text-2xl"></i>
+                                    <span class="font-medium text-gray-900">Wallet</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    
+                                    <div class="w-10 h-6 bg-blue-200 rounded"></div>
+                                    <div class="w-10 h-6 bg-gray-400 rounded"></div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Pay Now Button -->
+                    <button id="pay"  class="w-full bg-black text-white py-4 rounded-lg font-medium text-lg mt-8 hover:bg-gray-800 transition">
+                        Pay Now
+                    </button>
+
+                    <!-- Security Notice -->
+                    <div class="flex items-center justify-center gap-2 mt-4 text-sm text-gray-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span>Your payment information is secure.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                    <!-- Product -->
+                    <% cart.forEach((p,index)=>{ %>
+                        <div class="flex gap-4 mb-6 pb-6 border-b border-gray-200">
+                            <div class="relative">
+                                <img src="/<%= p.variantId.image[0] %>" alt="Patchwork Quilt" class="w-20 h-20 rounded-lg object-cover">
+                                <span id="qty<%= index %>" data-price="<%= p.variantId.price %>" class="absolute -top-2 -right-2 bg-gray-800 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"><%= p.quantity %></span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold mb-1"><%= p.variantId.productId.name %></h3>
+                                <p class="text-xs text-gray-500">Size: <%= p.variantId.size %></p>
+                                <p class="text-xs text-gray-500">Color: <%= p.variantId.color %></p>
+                            </div>
+                            <div class="font-semibold">₹<%= p.variantId.price %></div>
+                        </div>
+                    <% }) %>
+
+                    <!-- Pricing -->
+                    <div class="space-y-3 mb-6 pb-6 border-b border-gray-200">
+                        <div class="flex justify-between text-sm">
+                            <span>Subtotal</span>
+                            <span id="subtotal"></span>
+                        </div>
+                        <div class="flex justify-between text-sm items-center">
+                            <div class="flex items-center gap-2">
+                                <span>Shipping Method</span>
+                                <span class="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded">Free shipping</span>
+                            </div>
+                            <span>₹0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="flex justify-between text-lg font-bold mb-6">
+                        <span>Total</span>
+                        <span id="total"></span>
+                    </div>
+
+                    <!-- Club Points -->
+                    <div class="gradient-bg rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold text-white">Raftaara Elite wallet</span>
+                        </div>
+                        <p class="text-xs text-white mb-3">
+                            <span class="font-semibold">Please Note:</span> Spending / privilege / tier reward would be assigned to your CASETiFY Club account after tax, shipping charges and excluding refund/return.
+                        </p>
+                        <button class="text-sm text-white font-semibold border border-white rounded-full px-4 py-1 hover:bg-white hover:text-black transition">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .gradient-bg {
+            background: radial-gradient(
+                circle at top center,
+                #34d399 0%,
+                #22c55e 40%,
+                #facc15 65%,
+                #f97316 100%
+            );
+        }
+        .gradient-text {
+            background: radial-gradient(
+                circle at top center,
+                #34d399 0%,
+                #22c55e 40%,
+                #facc15 65%,
+                #f97316 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+    <script>
+        function calculateSubtotal() {
+            let subtotal = 0;
+
+            document.querySelectorAll('[id^="qty"]').forEach(qtyEl => {
+                const qty = Number(qtyEl.textContent);
+                const price = Number(qtyEl.dataset.price);
+                subtotal += qty * price;
+            });
+
+            document.getElementById('subtotal').textContent = '₹' + subtotal;
+            document.getElementById('total').textContent = '₹' + subtotal;
+        }
+        function handleAddressSelection(value) {
+            if (value) {
+                console.log('Selected address:', value);
+            }
+        }
+
+        document.getElementById('pay').addEventListener('click',async(e)=>{
+            const method = document.querySelector(
+                'input[name="payment"]:checked'
+            ).value;
+            console.log("Reached method: ",method)
+            if (!method) {
+                Swal.fire("Error", "Please select a payment method", "error");
+                return;
+            }
+            try{
+                const request = await fetch('/checkout/method',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({method})
+                })
+                const result  = await request.json()
+                console.log(result)
+                if(!result.success){
+                    return Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Order confirming...",
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+                setTimeout(() => {
+                    window.location.href = result.redirect;
+                }, 1200);
+            }catch(e){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: e || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+
+            }
+        })
+        async function Order(){
+            
+            
+        }
+
+        calculateSubtotal()
+    </script>
+</body>
+</html>

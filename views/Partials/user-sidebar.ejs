@@ -1,0 +1,44 @@
+<aside class="w-72 shrink-0">
+                <div class="glass-effect rounded-2xl shadow-xl p-6 border border-white/20">
+                    <h2 class="text-xl font-bold mb-6 text-gray-800">My Account</h2>
+                    <nav class="space-y-2">
+                        <a href="/profile" class="flex items-center gap-3 px-4 py-3 rounded-xl gradient-bg text-white shadow-lg hover-lift">
+                            <i class="fas fa-user"></i>
+                            <span class="font-medium">Account Overview</span>
+                        </a>
+                        <a href="/order" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-white transition-all">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>My Orders</span>
+                        </a>
+                        <a href="/profile/address-management" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-white transition-all">
+                            <i class="fas fa-home"></i>
+                            <span>Manage Address</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-white transition-all">
+                            <i class="fas fa-wallet"></i>
+                            <span>Wallet</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-white transition-all">
+                            <i class="fas fa-lock"></i>
+                            <span>Manage Password</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-white transition-all">
+                            <i class="fas fa-heart"></i>
+                            <span>Wishlist</span>
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+
+            <div class="fixed bottom-6 left-6 z-40">
+        <div class="glass-effect rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 border border-white/20 hover-lift">
+            <div class="w-14 h-14 profile-avatar rounded-xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-user text-white text-xl"></i>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-900"><%= name %></p>
+                <p class="text-sm text-gray-600"><%= email %></p>
+            </div>
+        </div>
+    </div>

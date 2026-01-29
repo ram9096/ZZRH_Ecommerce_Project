@@ -30,7 +30,6 @@ export const sentOtp = async(email,otp)=>{
     try{
         await transporter.sendMail(mailOptions)
         console.log("Success")
-
     }catch(e){
         console.log("Error while sending otp ",e)
     }

@@ -9,7 +9,9 @@
 
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+ 
+   <link rel="preload" href="/BLOVERLY.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/ClashDisplay-Regular.woff" as="font" type="font/woff" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
@@ -185,6 +187,14 @@
       }
     } catch (err) {
       console.error(err);
+      Swal.fire({
+          toast: true,
+          icon: "error",
+          title: e || "Something went wrong",
+          position: "top-right",
+          showConfirmButton: false,
+          timer: 3000,
+      });
     }
   });
 

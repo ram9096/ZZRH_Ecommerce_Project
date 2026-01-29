@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order #<%= order[0].orderCode %></title>
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 0.5rem;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <%- include('../Partials/nav-bar') %>
+    
+    <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-sm p-8 mt-6">
+        
+        <!-- Back Button -->
+        <div class="mb-6">
+            <a href="/order" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Orders
+            </a>
+        </div>
+
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-8">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">Order #<%= order[0].orderCode %></h1>
+                <p class="text-gray-500">Order Placed: <%= new Date(order[0].orderDate).toDateString() %>  | Status:  <span class="font-bold text-gray-900 bg-amber-500 rounded-2xl p-1.5"> <%= order[0].orderStatus.toUpperCase() %></span></p>
+                <% if(order[0].expectedDeliveryDate!=null) {%>
+                    <p class="text-gray-500">Expected Date: <%= new Date(order[0].expectedDeliveryDate).toDateString() %>  </span></p>
+                <% } %>
+
+                <% if (order[0].cancelledAt && order[0].cancelledAt.length > 0) { %>
+                   <%   const cancel = order[0].cancelledAt[order[0].cancelledAt.length - 1]; %>
+                
+                <p class="text-gray-500 mt-3">
+                    Cancel request date:
+                    <%= new Date(cancel.requestedAt).toLocaleString("en-IN") %>
+                    |
+                    Status:
+                    <span class="font-bold text-gray-900 bg-amber-500 rounded-2xl p-1.5">
+                    <%= cancel.cancelRequestStatus %>
+                    </span>
+                </p>
+                <% } %>
+
+            </div>
+            <div class="flex gap-4">
+                <a href="/checkout/invoice/<%= order[0]._id %>">
+                    <button class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                        Print Receipt
+                    </button>
+                </a>
+                <% if(order[0].orderStatus.toUpperCase() == "COMPLETED"){ %>
+                    <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+                        Return to Orders
+                    </button>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Table Header -->
+        <div class="mb-4">
+            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 uppercase tracking-wide pb-4 border-b">
+                <div class="col-span-4">Product</div>
+                <div class="col-span-2">Quantity</div>
+                <div class="col-span-2">Price</div>
+                <div class="col-span-2">Total</div>
+                <div class="col-span-2">Action</div>
+            </div>
+        </div>
+
+        <!-- Product Items -->
+        <% order[0].orderItems.forEach((o,i) => { %>
+            <%
+                const isCancelled =
+                    order[0].cancelledAt &&
+                    order[0].cancelledAt.some(ca =>
+                        ca.cancelledProducts.some(
+                            cp => cp._id.toString() === o.variantId._id.toString()
+                        )
+                );
+
+                
+            %>
+
+
+            <div class="grid grid-cols-12 gap-4 items-center py-6 border-b">
+                <div class="col-span-4 flex items-center gap-4">
+                <div class="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
+                    <img src="/<%= o.variantId.image[0] %>" alt="">
+                </div>
+                <span class="font-medium"><%= o.productName %></span>
+                </div>
+
+                <div class="col-span-2"><%= o.quantity %></div>
+                <div class="col-span-2">₹<%= o.price %></div>
+                <div class="col-span-2 font-medium">₹<%= o.totalPrice %></div>
+
+                <div class="col-span-2">
+                <% if (isCancelled) { %>
+                   <%
+                    const cancelObj =
+                        Array.isArray(order[0].cancelledAt)
+                        ? order[0].cancelledAt[i] || order[0].cancelledAt[0]
+                        : null;
+
+                        const status = cancelObj?.cancelRequestStatus ?? 'Canceled';
+                    %>
+
+                    <span class="text-orange-600 font-medium"><%= status %></span>
+
+                <% } else { %>
+                    <% if(order[0].orderItems.length!=1) {%>
+                        <button onclick="openCancelModal('<%= o.variantId._id %>','<%= order[0]._id %>')" 
+                        class="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium">
+                        Cancel
+                        </button>
+                    <% } %>
+                <% } %>
+                </div>
+            </div>
+            <% }) %>
+            <% if(order[0].expectedDeliveryDate!=null ){%>
+                <div class="flex justify-end mt-5">
+                    <button onclick="openCancelALLModal('ALL','<%= order[0]._id %>')" id="cancelAll" class="flex items-center gap-2 px-6 py-2 border border-gray-300 bg-white rounded hover:bg-gray-50">
+                    <i class="fa-solid fa-trash-can"></i>
+                        Cancel all
+                    </button>
+                </div>
+            <% } %>
+
+            
+
+
+        <!-- Return Section -->
+        <% if(order[0].orderStatus.toUpperCase() == "COMPLETED"){ %>
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8 flex justify-between items-center">
+                <div>
+                    <h3 class="font-semibold text-lg mb-1">Need to return an item?</h3>
+                    <p class="text-gray-600">You can start a return for eligible items.</p>
+                </div>
+                <button class="flex items-center gap-2 px-6 py-2 border border-gray-300 bg-white rounded hover:bg-gray-50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Return Order
+                </button>
+            </div>
+        <% } %>
+
+        <!-- Bottom Section -->
+        <div class="grid grid-cols-3 gap-8 mt-5">
+            <!-- Shipping Address -->
+            <div>
+                <h3 class="font-semibold text-lg mb-4">Shipping Address</h3>
+                <div class="text-gray-700">
+                    <p><%= order[0].shippingAddressId.username %></p>
+                    <p><%= order[0].shippingAddressId.street_address %></p>
+                    <p><%= order[0].shippingAddressId.city %>, <%= order[0].shippingAddressId.state %>, <%= order[0].shippingAddressId.country %></p>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div>
+                <h3 class="font-semibold text-lg mb-4">Payment Method</h3>
+                <p class="text-gray-700"><%= order[0].orderMethod %></p>
+            </div>
+
+            <!-- Order Summary -->
+            <div>
+                <h3 class="font-semibold text-lg mb-4">Order Summary</h3>
+                <div class="space-y-2 text-gray-700">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span>₹<%= order[0].subTotal %></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Shipping</span>
+                        <span>free </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Taxes</span>
+                        <span>₹<%= order[0].taxAmount.toFixed(2) %></span>
+                    </div>
+                    <div class="flex justify-between font-semibold text-lg pt-2 border-t">
+                        <span>Grand Total</span>
+                        <span>₹<%= order[0].totalAmount.toFixed(2) %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Cancel Order Modal -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Cancel Order</h2>
+                    <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="mb-6">
+                    <p class="text-gray-600 mb-4">Are you sure you want to cancel this order? This action cannot be undone.</p>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                        <div class="flex gap-3">
+                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-medium text-yellow-800">Please note:</p>
+                                <p class="text-sm text-yellow-700 mt-1">If payment was made, refund will be processed within 5-7 business days.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <input type="hidden" id="variantId" >
+                        <input type="hidden" id="orderId" >
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Reason for cancellation</span>
+                            <select id="reason" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                <option value="">Select a reason</option>
+                                <option value="changed_mind">Changed my mind</option>
+                                <option value="wrong_item">Ordered wrong item</option>
+                                <option value="found_better_price">Found better price</option>
+                                <option value="delivery_time">Delivery time too long</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </label>
+
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Additional comments</span>
+                            <textarea id="remark" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Tell us more..."></textarea>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="flex gap-3 justify-end">
+                    <button onclick="closeCancelModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors">
+                        Keep Order
+                    </button>
+                    <button id="cancelbtn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors">
+                        Cancel Order
+                    </button>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="cancelAllModal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Cancel Order</h2>
+                    <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="mb-6">
+                    <p class="text-gray-600 mb-4">Are you sure you want to cancel this order? This action cannot be undone.</p>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                        <div class="flex gap-3">
+                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-medium text-yellow-800">Please note:</p>
+                                <p class="text-sm text-yellow-700 mt-1">If payment was made, refund will be processed within 5-7 business days.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <input type="hidden" id="variantIdAll" >
+                        <input type="hidden" id="orderIdAll" >
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Reason for cancellation</span>
+                            <select id="reasonAll" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                <option value="">Select a reason</option>
+                                <option value="changed_mind">Changed my mind</option>
+                                <option value="wrong_item">Ordered wrong item</option>
+                                <option value="found_better_price">Found better price</option>
+                                <option value="delivery_time">Delivery time too long</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </label>
+
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Additional comments</span>
+                            <textarea id="remarkAll" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Tell us more..."></textarea>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="flex gap-3 justify-end">
+                    <button onclick="closeCancelALLModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors">
+                        Keep Order
+                    </button>
+                    <button id="cancelALLbtn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors">
+                        Cancel Order
+                    </button>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script>
+        document.getElementById('cancelALLbtn').addEventListener('click',async(e)=>{
+            const reason = document.getElementById('reasonAll')
+            const remark = document.getElementById('remarkAll')
+            const id = document.getElementById('variantIdAll')
+            const orderId = document.getElementById('orderIdAll')
+            
+            if(reason.value == ''){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Select a reason",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            if(remark.value == ''){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Write a remark",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            
+            try{
+                const request = await fetch('/order/cancel-order',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        id:id.value,
+                        reason:reason.value,
+                        remark:remark.value,
+                        orderId:orderId.value
+                    })
+                })
+                const result = await request.json();
+                
+                if (!result.success) {
+                    Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: result.message || "Something went wrong",
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: result.message,
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 2000);
+            }catch(e){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: e || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                console.warn(e)
+            }
+        })
+        document.getElementById('cancelbtn').addEventListener('click', async(e)=>{
+            const reason = document.getElementById('reason')
+            const remark = document.getElementById('remark')
+            const id = document.getElementById('variantId')
+            const orderId = document.getElementById('orderId')
+            
+            if(reason.value == ''){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Select a reason",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            if(remark.value == ''){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Write a remark",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            
+            try{
+                const request = await fetch('/order/cancel-order',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        id:id.value,
+                        reason:reason.value,
+                        remark:remark.value,
+                        orderId:orderId.value
+                    })
+                })
+                const result = await request.json();
+                
+                if (!result.success) {
+                    Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: result.message || "Something went wrong",
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: result.message,
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 2000);
+            }catch(e){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: e || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                console.warn(e)
+            }
+
+
+        })
+        function openCancelALLModal(id,orderid) {
+            document.getElementById('variantIdAll').value = id
+            document.getElementById('orderIdAll').value = orderid
+            document.getElementById('cancelAllModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCancelALLModal() {
+            document.getElementById('cancelAllModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openCancelModal(id,orderid) {
+            document.getElementById('variantId').value = id
+            document.getElementById('orderId').value = orderid
+            document.getElementById('cancelModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('cancelModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCancelModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="/css/output.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+     <link rel="preload" href="/BLOVERLY.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/ClashDisplay-Regular.woff" as="font" type="font/woff" crossorigin>
+   
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
         
@@ -21,16 +23,7 @@
             transform-origin: center;
         }
 
-        @font-face {
-            font-family: "bloverly";
-            src: url('/BLOVERLY.woff2') format('woff2');
-            font-display: swap;
-        }
-        @font-face {
-            font-family: "Clash-display";
-            src: url('/ClashDisplay-Regular.woff') format('woff');
-            font-display: swap;
-        }
+       
         .font-bloverly {
             font-family: "bloverly", system-ui, sans-serif;
         }
@@ -99,7 +92,7 @@
     <!-- Header -->
     <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
         <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight" style="font-family: bloverly;font-weight: lighter;">
-            #ZZRH
+            #Raftaara
         </div>
 
         <nav class="hidden md:flex space-x-8 text-xl font-clash">
@@ -115,11 +108,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </button>
-                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                </button>
+                <a href="/cart">
+                    <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </button>
+                </a>
                 <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
@@ -188,10 +183,13 @@
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-black transition-all duration-200" id="thumb1">
-                        <img id="img2" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[1] %>" alt="">
+                        <img id="img2" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[0] %>" alt="">
                     </div>
                     <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-transparent transition-all duration-200" id="thumb2">
-                        <img id="img3" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[2] %>" alt="">
+                        <img id="img3" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[1] %>" alt="">
+                    </div>
+                    <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-transparent transition-all duration-200" id="thumb3">
+                        <img id="img4" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[2] %>" alt="">
                     </div>
                 </div>
             </div>
@@ -267,9 +265,11 @@
                     <button id="buyNowBtn" class="w-full bg-black text-white py-3 rounded hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                         Buy now
                     </button>
-                    <button id="addToCartBtn" class="w-full border border-black text-black py-3 rounded hover:bg-gray-50 transition disabled:border-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed">
-                        Add to cart
-                    </button>
+                    <form  id="cartForm">
+                        <button type="submit" id="addToCartBtn" class="w-full border border-black text-black py-3 rounded hover:bg-gray-50 transition disabled:border-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed">
+                            Add to cart
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -296,7 +296,7 @@
             <h2 class="text-4xl serif-font font-light mb-8 font-bloverly">Related products</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
                 <% Relatedproducts.forEach(product => { %>
-                    <a href="/home/product-details/<%= product.products._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                    <a href="/home/product-details/<%= product.products[0]._id %>?size=<%= product.size %>&color=<%= product.color %>">
                         <div class="product-card">
                             <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3" style="height: 350px;">
                                 <img src="/<%= product.image[0] %>" alt="Product" class="w-full h-full object-cover">
@@ -324,12 +324,14 @@
         const img1 = document.getElementById('img1');
         const img2 = document.getElementById('img2');
         const img3 = document.getElementById('img3');
+        const img4 = document.getElementById('img4');
         const sizeSelect = document.getElementById('size');
         const quantityInput = document.getElementById('quantityInput');
         const increaseBtn = document.getElementById('increaseBtn');
         const decreaseBtn = document.getElementById('decreaseBtn');
         const buyNowBtn = document.getElementById('buyNowBtn');
         const addToCartBtn = document.getElementById('addToCartBtn');
+        
         const stockBadgeContainer = document.getElementById('stockBadgeContainer');
 
         function updateStockDisplay(stock) {
@@ -342,7 +344,7 @@
                 addToCartBtn.disabled = true;
                 increaseBtn.disabled = true;
                 decreaseBtn.disabled = true;
-            } else if (stock < 5) {
+            } else if (stock < 11) {
                 badgeHTML = `<span class="stock-badge stock-low">Only ${stock} left in stock!</span>`;
                 buyNowBtn.disabled = false;
                 addToCartBtn.disabled = false;
@@ -357,37 +359,96 @@
             stockBadgeContainer.innerHTML = badgeHTML;
         }
 
-        function updateQuantityButtons() {
-            const quantity = parseInt(quantityInput.value);
-            decreaseBtn.disabled = quantity <= 1 || currentStock <= 0;
-            increaseBtn.disabled = quantity >= currentStock || currentStock <= 0;
+        const cartForm = document.getElementById('cartForm')
+
+        cartForm.addEventListener('submit',async(e)=>{
+            e.preventDefault()
+            try{
+                const request = await fetch('/cart/add-cart',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        id:"<%= selectedVariant._id %>",
+                        userId:"<%= isLogged.id %>",
+                        qty:quantityInput.value
+                    })
+                })
+                const result = await request.json()
+                if(!result.success){
+                    return Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+                return Swal.fire({
+                        toast: true,
+                        icon: 'success',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+            }catch(e){
+
+            }
+        })
+
+
+        function clampQuantity() {
+            let qty = parseInt(quantityInput.value);
+
+            if (qty < 1) qty = 1;
+            if (qty > currentStock) qty = currentStock;
+
+            quantityInput.value = qty;
         }
 
-        increaseBtn.addEventListener('click', () => {
-            const currentQuantity = parseInt(quantityInput.value);
-            if (currentQuantity < currentStock) {
-                quantityInput.value = currentQuantity + 1;
-                updateQuantityButtons();
+
+        function updateQuantityButtons() {
+            const qty = parseInt(quantityInput.value);
+
+            decreaseBtn.disabled = qty <= 1;
+            increaseBtn.disabled = qty >= currentStock;
+
+            if (currentStock <= 0) {
+                decreaseBtn.disabled = true;
+                increaseBtn.disabled = true;
+                quantityInput.value = 0;
             }
+        }
+
+
+        increaseBtn.addEventListener('click', () => {
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+            clampQuantity();
+            updateQuantityButtons();
         });
 
         decreaseBtn.addEventListener('click', () => {
-            const currentQuantity = parseInt(quantityInput.value);
-            if (currentQuantity > 1) {
-                quantityInput.value = currentQuantity - 1;
-                updateQuantityButtons();
-            }
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+            clampQuantity();
+            updateQuantityButtons();
         });
+
 
         const mainImage = document.getElementById('img1');
         const thumb1 = document.getElementById('thumb1');
         const thumb2 = document.getElementById('thumb2');
+        const thumb3 = document.getElementById('thumb3');
 
         function setActiveThumb(activeThumb) {
             thumb1.classList.remove('border-black');
             thumb1.classList.add('border-transparent');
             thumb2.classList.remove('border-black');
             thumb2.classList.add('border-transparent');
+            thumb3.classList.remove('border-black');
+            thumb3.classList.add('border-transparent');
             activeThumb.classList.remove('border-transparent');
             activeThumb.classList.add('border-black');
         }
@@ -400,6 +461,11 @@
         img3.addEventListener('click', function() {
             mainImage.src = this.src;
             setActiveThumb(thumb2);
+        });
+
+        img4.addEventListener('click', function() {
+            mainImage.src = this.src;
+            setActiveThumb(thumb3);
         });
 
         setActiveThumb(thumb1);
@@ -423,8 +489,9 @@
                 if (!data.success) return;
                 
                 img1.src = `/${data.product.image[0]}`;
-                img2.src = `/${data.product.image[1]}`;
-                img3.src = `/${data.product.image[2]}`;
+                img2.src = `/${data.product.image[0]}`;
+                img3.src = `/${data.product.image[1]}`;
+                img4.src = `/${data.product.image[2]}`;
                 sizeSelect.innerHTML = '';
 
                 data.product.sizes.forEach((s, i) => {
@@ -473,7 +540,7 @@
             }
         });
 
-        const thumbnail = [img2, img3];
+        const thumbnail = [img2, img3, img4];
         thumbnail.forEach(t => {
             t.addEventListener('click', () => {
                 let temp = img1.src;

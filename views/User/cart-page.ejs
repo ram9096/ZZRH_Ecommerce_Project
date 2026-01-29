@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+ <!-- <link rel="preload" href="/BLOVERLY.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/ClashDisplay-Regular.woff" as="font" type="font/woff" crossorigin> -->
+<!-- SweetAlert2 JS -->
+     <link rel="stylesheet" href="/css/output.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+        
+        .title-font {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.02em;
+        }
+        
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100  ">
+    <%- include('../Partials/nav-bar') %>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="title-font text-4xl md:text-6xl text-center mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                YOUR CART
+            </h1>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Cart Items -->
+             
+            <div class="lg:col-span-2 space-y-4">
+                <% data.forEach((item, index) => { %>
+                    <div class="cart-item bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 <%= item.variantId.stock === 0 ? 'opacity-60' : '' %>">
+                        <div class="flex gap-6 p-6">
+                            <div class="w-32 h-40 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
+                                <img src="<%= item.variantId.image[0] %>" alt="<%= item.variantId.productId.name %>" class="w-full h-full object-cover">
+                                <% if (item.variantId.stock === 0 || item.variantId.status === false) { %>
+                                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                        <span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">OUT OF STOCK OR UNAVAILABLE</span>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h2 class="title-font text-2xl mb-2 text-gray-900"><%= item.variantId.productId.name %></h2>
+                                    <p class="text-2xl font-bold text-gray-900 mb-4">₹<%= item.variantId.price %></p>
+                                    <div class="space-y-2 mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-semibold text-gray-500 uppercase">Size</span>
+                                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium"><%= item.variantId.size %></span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-semibold text-gray-500 uppercase">Color</span>
+                                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium"><%= item.variantId.color %></span>
+                                        </div>
+                                        <% if (item.variantId.stock > 0 && item.variantId.stock <= 5) { %>
+                                            <div class="text-orange-600 text-sm font-medium">
+                                                Only <%= item.variantId.stock %> left in stock
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <% if (item.variantId.stock > 0 ) { %>
+                                        <div class="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
+                                            <button class="w-9 h-9 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors font-semibold decreser" data-index="<%= index %>"  data-max="<%= item.variantId.stock %>">−</button>
+                                            <span id="qty<%= index %>" data-cart="<%= item._id %>" data-variant="<%= item.variantId._id %>" data-price="<%= item.variantId.price %>" class="w-8 text-center font-semibold"><%= item.quantity || 1 %></span>
+                                            <button class="w-9 h-9 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors font-semibold increser" data-index="<%= index %>"  data-max="<%= item.variantId.stock %>">+</button>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="text-red-600 font-semibold">Unavailable</span>
+                                    <% } %>
+                                
+                                    <button class="removeItem text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-1" data-id="<%= item._id %>" data-userId="<%= item.userId %>" >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-8 sticky top-8 border border-gray-200">
+                    <h2 class="title-font text-3xl mb-8 text-center text-gray-900">ORDER SUMMARY</h2>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between pb-4 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">Subtotal</span>
+                            <span id="subtotal" class="font-semibold text-gray-900" >₹<%= price %></span>
+                        </div>
+                        
+                        <div class="flex justify-between pb-4 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">Shipping</span>
+                            <span class="text-green-600 font-semibold">Free</span>
+                        </div>
+                        
+                        <div class="flex justify-between pb-4 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">Postage</span>
+                            <span class="text-green-600 font-semibold">Free</span>
+                        </div>
+                        
+                        <div class="flex justify-between pt-4 text-xl">
+                            <span class="font-bold text-gray-900">Total</span>
+                            <span id="total" class="font-bold text-gray-900">₹<%= price %></span>
+                        </div>
+                    </div>
+                    
+                    <a href="/checkout">
+                        <button class="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-4 rounded-lg title-font text-lg hover:from-gray-800 hover:to-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            CHECKOUT
+                        </button>
+                    </a>
+                    
+                    <div class="mt-6 flex items-center justify-center gap-2 text-sm text-gray-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        Secure checkout
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let price = Number(document.getElementById('subtotal').textContent.replace('₹',''))
+        function calculateSubtotal() {
+            let subtotal = 0;
+
+            document.querySelectorAll('[id^="qty"]').forEach(qtyEl => {
+                const qty = Number(qtyEl.textContent);
+                const price = Number(qtyEl.dataset.price);
+                subtotal += qty * price;
+            });
+
+            document.getElementById('subtotal').textContent = '₹' + subtotal;
+            document.getElementById('total').textContent = '₹' + subtotal;
+        }
+        async function quantityUpdateDb(index) {
+            let qty = document.getElementById(`qty${index}`) 
+            let cartId = qty.dataset.cart
+            let variantId = qty.dataset.variant
+            let quantity = qty.textContent
+            
+            try{
+                const request = await fetch('/cart/update-quantity',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({cartId,variantId,quantity})
+                })
+
+                const result = await request.json()
+                console.log(result)
+                if (!result.success) {
+
+                    Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: result.message || "Something went wrong",
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                    return;
+                }
+
+                return Swal.fire({
+                    toast: true,
+                    icon: "success",
+                    title: result.message || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                }); 
+
+            }catch(e){
+                console.warn(e)
+            }
+        }
+        function updateButtonState(index, maxStock) {
+            const qty = Number(document.getElementById(`qty${index}`).textContent);
+
+            const incBtn = document.querySelector(`.increser[data-index="${index}"]`);
+            const decBtn = document.querySelector(`.decreser[data-index="${index}"]`);
+            
+            incBtn.disabled = qty >= Number(maxStock)+1;
+            decBtn.disabled = qty < 1;
+        }
+
+        const increseBtn = document.getElementById('increser')
+        const decreseBtn = document.getElementById('decreser')
+        document.querySelectorAll('.increser').forEach((btn)=>{
+            
+            btn.addEventListener('click',()=>{  
+                let index = btn.dataset.index
+                let qty = document.getElementById(`qty${index}`)
+                const maxStock = btn.dataset.max
+                let currentQty = parseInt(qty.textContent)
+                if (currentQty >= Number(maxStock)||currentQty==10) {
+                    
+                    Swal.fire({
+                        toast: true,
+                        icon: "warning",
+                        title: "Stock limit reached",
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                    
+                    return; 
+                }
+                
+                
+                qty.textContent =  parseInt(qty.textContent) + 1;
+                
+                calculateSubtotal();
+                quantityUpdateDb(index)
+                updateButtonState(index, maxStock);
+
+                
+            })
+        })
+        document.querySelectorAll('.decreser').forEach((btn)=>{
+            btn.addEventListener('click',()=>{  
+                let index = btn.dataset.index
+                let qty = document.getElementById(`qty${index}`)
+                const maxStock = btn.dataset.max
+                const currentQty = Number(qty.textContent);
+                console.log(currentQty)
+                if(currentQty <= 1){
+                    return Swal.fire({
+                        toast:true,
+                        icon:"warning",
+                        title:"Minimum limit reached",
+                        position: "top-right",
+                        showConfirmButton:false,
+                        timer:2000
+                    })
+                }
+                qty.textContent = parseInt(qty.textContent) - 1;
+               calculateSubtotal();
+               quantityUpdateDb(index)
+                updateButtonState(index, maxStock);
+            })
+        })
+       
+        document.querySelectorAll('.removeItem').forEach((btn)=>{
+
+            btn.addEventListener("click",async(e)=>{
+                
+    
+                const id = btn.dataset.id;
+                const userId = btn.dataset.userId
+                try{
+                    const request = await fetch(`/cart/delete-item`,{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({id,userId})
+                    })
+                    const result = await request.json()
+                    if (!result.success) {
+                        Swal.fire({
+                            toast: true,
+                            icon: "error",
+                            title: result.message || "Something went wrong",
+                            position: "top-right",
+                            showConfirmButton: false,
+                            timer: 3000,
+                        });
+                        return;
+                    }
+                    Swal.fire({
+                        toast:true,
+                        icon: "success",
+                        title: "Item removed",
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+    
+                    setTimeout(() => {
+                        window.location.href = result.redirect||'/cart'
+                    }, 1200);
+    
+                }catch(e){
+                    Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: e.message,
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                }
+            })
+        })
+
+        calculateSubtotal()
+    </script>
+</body>
+</html>

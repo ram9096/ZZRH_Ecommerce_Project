@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASETiFY Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="bg-gray-50 min-h-screen py-8 px-4">
+    <!-- Cancel/Progress Bar -->
+    <div class="max-w-6xl mx-auto mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-4">
+            <div class="flex items-center justify-between mb-3">
+                <a href="/cart">
+                    <button class="flex items-center gap-2 text-gray-600 hover:text-black transition">
+                        <i class="fas fa-times text-xl"></i>
+                        <span class="font-semibold">Cancel the progress</span>
+                    </button>
+                </a>
+                <span class="text-sm text-gray-600">Step 1 of 3</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="gradient-bg h-2 rounded-full transition-all duration-300" style="width: 33%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Forms -->
+            <div class="lg:col-span-2">
+                <!-- Contact Information -->
+                <!-- <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Contact Information</h2>
+                    
+
+                    <div class="mb-4">
+                        <input type="email" placeholder="Email*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
+                    </div>
+
+                    <div class="flex gap-3 mb-4">
+                        <select class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
+                            <option>+93</option>
+                            <option>+1</option>
+                            <option>+44</option>
+                        </select>
+                        <input type="tel" placeholder="Phone Number*" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg text-xs text-gray-600">
+                        You can unsubscribe at any time by following the unsubscribe link in the marketing emails or text messages. By continuing, you agree to our <a href="#" class="underline">Terms & Conditions</a>, <span class="font-semibold">CASETiFY Club Terms & Conditions</span> and <a href="#" class="underline">Privacy Policy</a>. Questions? Reach out to Customer Success at hello@casetify.com (CASETiFY), customersuccess@coedition.com OR privacy@casetify.com.
+                    </div>
+                </div> -->
+
+                <!-- Shipping Address -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-2xl font-bold mb-6">Shipping Address</h2>
+                    
+                    <!-- Address Dropdown -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Select Saved Address</label>
+                        <select id="addressDropdown" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black appearance-none bg-white" onchange="handleAddressSelection(this.value)">
+                            
+                            <% address.forEach((ad)=>{ %>
+                                <option value="<%= ad._id %>"><%= ad.username %></option>
+                            <% }) %>
+                            <option value="NEW">+ Add New Address</option>
+                        </select>
+                            <span id="select-error" class="text-xs text-red-600 font-medium mt-1 block"></span>
+                    </div>
+
+                    <div class="border-t pt-6" >
+                        <div class="space-y-4">
+                            <input id="name" type="text" placeholder="Name" class="w-full px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black" >
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <input id="house" type="text" placeholder="House/Flat no" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black">
+                                <!-- <input id="street" type="text" placeholder="Street name" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black"> -->
+                                <input id="pincode" type="text" placeholder="Pincode" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black">
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <input id="state" type="text" placeholder="State" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black">
+                                <input id="city" type="text" placeholder="District" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <input id="country" type="text" placeholder="Country" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black">
+                                <input id="landmark" type="text" placeholder="Landmark" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                 <input id="mobile" type="text" placeholder="Mobile" class="px-4 py-3 border-b border-gray-300 focus:outline-none focus:border-black">
+                            </div>
+                            
+                        </div>
+                        <button id="ADDRESS_ADD_BTN"  class="hidden w-full bg-black text-white py-4 rounded-lg font-semibold mt-8 hover:bg-gray-800 transition">
+                            Verify address & continue
+                        </button>
+                        <button id="CONTINUE_BTN" class="w-full bg-black text-white py-4 rounded-lg font-semibold mt-8 hover:bg-gray-800 transition">
+                            Continue to Shipping
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="mt-8 text-center">
+                    <h3 class="text-xl font-bold mb-4">Accepted Payments</h3>
+                    <div class="flex justify-center items-center gap-4 mb-8">
+                        <div>
+                            <i class="fa-brands fa-cc-visa text-5xl gradient-text"></i>
+                        </div>
+                        <div>
+                            <i class="fa-brands fa-cc-mastercard text-5xl gradient-text"></i>
+                        </div>
+                        <div>
+                            <i class="fa-brands fa-cc-amex text-5xl gradient-text"></i>
+                        </div>
+                        <div>
+                            <i class="fa-brands fa-cc-paypal text-5xl gradient-text"></i>
+                        </div>
+                        <div>
+                            <i class="fa-brands fa-google-pay text-5xl gradient-text"></i>
+                        </div>
+                    </div>
+
+                    <!-- Guarantee -->
+                    <div class="flex items-center justify-center gap-3 mb-4">
+                        <div class="w-8 h-8 gradient-bg rounded-full flex items-center justify-center text-white font-bold">✓</div>
+                        <h3 class="text-xl font-bold">100% Satisfaction Guaranteed</h3>
+                    </div>
+
+                    <div class="text-sm text-gray-600 space-y-2">
+                         <p class="font-semibold">Raftaara Elite Wallet</p>
+                    <p>
+                        Raftaara Elite is an exclusive wallet designed for Raftaara customers.
+                        Members enjoy early access to orders up to <strong>2 days in advance</strong>,
+                        along with exciting <strong>cashback offers</strong> and special rewards.
+                    </p>
+                    
+                    </div>
+                </div>
+
+                <p class="text-center text-xs text-gray-500 mt-8">Copyright © 2025 Raftaara</p>
+            </div>
+
+            <!-- Right Column - Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                    <!-- Product -->
+                    <% cart.forEach((p,index)=>{ %>
+                        <div class="flex gap-4 mb-6 pb-6 border-b border-gray-200">
+                            <div class="relative">
+                                <img src="/<%= p.variantId.image[0] %>" alt="Patchwork Quilt" class="w-20 h-20 rounded-lg object-cover">
+                                <span id="qty<%= index %>" data-price="<%= p.variantId.price %>" class="absolute -top-2 -right-2 bg-gray-800 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"><%= p.quantity %></span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold mb-1"><%= p.variantId.productId.name %></h3>
+                                <p class="text-xs text-gray-500">Size: <%= p.variantId.size %></p>
+                                <p class="text-xs text-gray-500">Color: <%= p.variantId.color %></p>
+                            </div>
+                            <div class="font-semibold">₹<%= p.variantId.price %></div>
+                        </div>
+                    <% }) %>
+
+                    <!-- Pricing -->
+                    <div class="space-y-3 mb-6 pb-6 border-b">
+                        <div class="flex justify-between text-sm">
+                            <span >Subtotal</span>
+                            <span id="subtotal"></span>
+                        </div>
+                        <div class="flex justify-between text-sm items-center">
+                            <span >Shipping Method</span>
+                            <span class="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded">Free shipping</span>
+                            <span>₹0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="flex justify-between text-lg font-bold mb-6">
+                        <span >Total</span>
+                        <span id="total"></span>
+                    </div>
+
+                    <!-- Club Points -->
+                    <div class="gradient-bg rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold text-white">Raftaara Elite wallet</span>
+                            
+                        </div>
+                        <p class="text-xs text-white mb-3">
+                            <span class="font-semibold">Please Note:</span> Spending / privilege / tier reward would be assigned to your CASETiFY Club account after tax, shipping charges and excluding refund/return.
+                        </p>
+                        <button class="text-sm text-white font-semibold border border-white rounded-full px-4 py-1 hover:bg-white hover:text-black">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .gradient-bg {
+            background: radial-gradient(
+                circle at top center,
+                #34d399 0%,
+                #22c55e 40%,
+                #facc15 65%,
+                #f97316 100%
+            );
+        }
+        .gradient-text {
+            background: radial-gradient(
+                circle at top center,
+                #34d399 0%,
+                #22c55e 40%,
+                #facc15 65%,
+                #f97316 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+    </style>
+
+    <script>
+        function calculateSubtotal() {
+            let subtotal = 0;
+
+            document.querySelectorAll('[id^="qty"]').forEach(qtyEl => {
+                const qty = Number(qtyEl.textContent);
+                const price = Number(qtyEl.dataset.price);
+                subtotal += qty * price;
+            });
+
+            document.getElementById('subtotal').textContent = '₹' + subtotal;
+            document.getElementById('total').textContent = '₹' + subtotal;
+        }
+        function handleAddressSelection(value) {
+            if (value) {
+                console.log('Selected address:', value);
+            }
+        }
+        async function validatePincode(pincode, cityInput, stateInput) {
+            try {
+                const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                const data = await res.json();
+                console.log(data)
+                if (data[0].Status !== "Success") {
+                    return { valid: false, message: "Invalid pincode" };
+                }
+
+                const postOffice = data[0].PostOffice[0];
+
+                const apiCity = postOffice.District.toLowerCase();
+                const apiState = postOffice.State.toLowerCase();
+                console.log(apiCity)
+                if (
+                    !stateInput.toLowerCase().includes(apiState) &&
+                    !apiState.includes(stateInput.toLowerCase())
+                ) {
+                    return { valid: false, message: "State does not match pincode" };
+                }
+
+
+                if (
+                    !cityInput.toLowerCase().includes(apiCity) &&
+                    !apiCity.includes(cityInput.toLowerCase())
+                ) {
+                    return { valid: false, message: "City does not match pincode" };
+                }
+
+            
+
+                return {
+                    valid: true,
+                    city: postOffice.District,
+                    state: postOffice.State
+                };
+
+            } catch (err) {
+                return { valid: false, message: "Pincode validation failed" };
+            }
+        }
+        const rules = {
+            name: {
+                required: true,
+                min: 2,
+                message: "Enter a valid full name"
+            },
+            house: {
+                required: true,
+                min: 3,
+                message: "Enter a valid address"
+            },
+            city: {
+                required: true,
+                min: 2,
+                message: "Enter a valid city"
+            },
+            state: {
+                required: true,
+                min: 2,
+                message: "Enter a valid state"
+            },
+            country: {
+                required: true,
+                min: 2,
+                message: "Enter a valid country"
+            },
+            pincode: {
+                required: true,
+                pattern: /^\d{6}$/,
+                message: "Enter a valid 6-digit pincode"
+            },
+            mobile: {
+                required: true,
+                pattern: /^[6-9]\d{9}$/,
+                message: "Enter a valid mobile number"
+            }
+        };
+
+        function validateFields(rules) {
+            for (let key in rules) {
+                const input = document.getElementById(key);
+                if (!input) continue;
+
+                const value = input.value.trim();
+                const rule = rules[key];
+
+                
+                if (rule.required && value === "") {
+                    return { valid: false, field: key, message: rule.message };
+                }
+
+                if (rule.min && value.length < rule.min) {
+                    return { valid: false, field: key, message: rule.message };
+                }
+
+                if (rule.pattern && !rule.pattern.test(value)) {
+                    return { valid: false, field: key, message: rule.message };
+                }
+            }
+            return { valid: true };
+        }
+
+        (function(){
+            let addressBtn = document.getElementById('addressDropdown') 
+            let selectError = document.getElementById('select-error') 
+            let house = document.getElementById('house')
+            let name = document.getElementById('name')
+            
+            let state = document.getElementById('state')
+            let city = document.getElementById('city')
+            let pincode = document.getElementById('pincode')
+            let landmark = document.getElementById('landmark')
+            let mobile = document.getElementById('mobile')
+            let country = document.getElementById('country')
+            let addbtn = document.getElementById('ADDRESS_ADD_BTN')
+            let continuebtn =  document.getElementById('CONTINUE_BTN')
+            
+
+            addressBtn.addEventListener('click',async (e)=>{
+                
+                if(addressBtn.value=="NEW"){
+                    name.value = null
+                    house.value = null      
+                    city.value = null
+                    state.value = null
+                    landmark.value = null
+                    country.value = null
+                    pincode.value = null
+                    mobile.value = null
+                    addbtn.classList.remove('hidden')
+                    continuebtn.classList.add('hidden')
+                    return
+                }
+                addbtn.classList.add('hidden')
+                continuebtn.classList.remove('hidden')
+                selectError.textContent = ""
+
+                try{
+                    const request = await fetch('/checkout/',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({id:addressBtn.value,purpose:"DATA_FETCH"})
+                    })
+                    const result  = await request.json()
+                    if(!result.success){
+                        return Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                    let addressPoint = result.address[0]
+                    name.value = addressPoint.username
+                    house.value = addressPoint.street_address
+                   
+                    city.value = addressPoint.city
+                    state.value = addressPoint.state
+                    landmark.value = addressPoint.landmark
+                    country.value = addressPoint.country
+                    pincode.value = addressPoint.postal_code
+                    mobile.value = addressPoint.phone_number
+                }catch(e){
+
+                    console.warn("Front end error :",e)
+                }   
+            })
+
+
+            continuebtn.addEventListener('click',async(e)=>{
+
+                const check = validateFields(rules);
+
+                if (!check.valid) {
+                    const field = document.getElementById(check.field);
+                    field.focus();
+                    field.classList.add("border-red-500");
+
+                    return Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: check.message,
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+                
+                const pinCheck = await validatePincode(
+                    pincode.value,
+                    city.value,
+                    state.value
+                );
+                
+                if (!pinCheck.valid) {
+                    return Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: pinCheck.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                }
+                
+                city.value = pinCheck.city;
+                state.value = pinCheck.state;
+
+                try{
+
+                    const request = await fetch('/checkout/',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            id:addressBtn.value,
+                            purpose:"DATA_ENTER"
+                        })
+                    })
+
+                    const result = await request.json()
+                    if(!result.success){
+                        return Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                    Swal.fire({
+                        icon: "success",
+                        title: "Address verified",
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = result.redirect;
+                    }, 1200);
+
+                }catch(e){
+                    console.warn("Front end error: ",e)
+                }
+
+                
+
+            })
+
+            addbtn.addEventListener('click',async()=>{
+                const check = validateFields(rules);
+
+                if (!check.valid) {
+                    const field = document.getElementById(check.field);
+                    field.focus();
+                    field.classList.add("border-red-500");
+
+                    return Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: check.message,
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+                
+                const pinCheck = await validatePincode(
+                    pincode.value,
+                    city.value,
+                    state.value
+                );
+                
+                if (!pinCheck.valid) {
+                    return Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: pinCheck.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                }
+                
+                city.value = pinCheck.city;
+                state.value = pinCheck.state;
+
+                try{
+
+                    const request = await fetch('/profile/address-management',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            id:"<%= id %>",
+                            username:name.value,
+                            phone:mobile.value,
+                            pincode:pincode.value,
+                            city:city.value,
+                            state:state.value,
+                            landmark:landmark.value,
+                            country:country.value,
+                            street:house.value,
+                            isDefault:false,
+                            purpose:"NEW"
+                        })
+                    })
+                    const result = await request.json()
+                    if(!result.success){
+                        return Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Address verified",
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        window.location.href = result.redirect;
+                    }, 1200);
+
+                }catch(e){
+                    console.warn("Front end error :",e)
+                }
+            })
+
+
+        })()
+
+        calculateSubtotal()
+    </script>
+</body>
+</html>
