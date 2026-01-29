@@ -9,17 +9,21 @@ export const adminOrdersLoad = async (req,res)=>{
 
         if(!order.success){
 
-            return res.render('Admin/order-page',{
+            return res.status(500).render('Admin/order-page',{
                 activePage:'order',
                 order:[]
             })
         }
-        return res.render('Admin/order-page',{
+        return res.status(200).render('Admin/order-page',{
             activePage:'order',
             order:order.data
         })
     }catch(e){
         console.log("Error ",e)
+        return res.status(500).render('Admin/order-page',{
+            activePage:'order',
+            order:[]
+        })
     }
 }
 
@@ -31,17 +35,22 @@ export const adminOrdersDetailsLoad = async (req,res)=>{
         
         if(!order.success){
 
-            return res.render('Admin/order-details',{
+            return res.status(500).render('Admin/order-details',{
                 activePage:'order',
                 order:[]
             })
         }
-        return res.render('Admin/order-details',{
+        return res.status(200).render('Admin/order-details',{
             activePage:'order',
             order:order.data
         })
+
     }catch(e){
         console.log("Error ",e)
+        return res.status(500).render('Admin/order-details',{
+            activePage:'order',
+            order:[]
+        })
     }
 }
 
@@ -54,19 +63,19 @@ export const adminOrdersUpdate = async  (req,res)=>{
         const progress = await adminOrdersUpdateLogic(orderId,reasonId,purpose)
 
         if(!progress.success){
-            return res.status(401).json({
+            return res.status(500).json({
                 success:false,
                 message:progress.message
             })
         }
 
-        return res.json({
+        return res.status(200).json({
             success:true,
             message:progress.message
         })
     }catch(e){
         console.log(e)
-        return res.json({
+        return res.status(500).json({
             success:false,
             message:e
         })

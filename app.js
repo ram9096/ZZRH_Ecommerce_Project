@@ -36,7 +36,7 @@ app.use((req, res, next) => {
 //Session set-up
 
 app.use(session({
-    secret:"#ZZRH",
+    secret:process.env.SECRET,
     resave:false,
     saveUninitialized:false,
     cookie: {
@@ -108,12 +108,6 @@ app.get('/auth/google/callback',passport.authenticate("google",{
 }))
 
 
-// port setup
-
-app.listen(port,()=>{
-    console.log("Server starting.....")
-})
-
 //error handling middleware
 
 app.use((err, req, res, next) => {
@@ -125,3 +119,8 @@ app.use((err, req, res, next) => {
         message: err.message || "Internal Server Error",
     });
 });
+
+// prot setup
+app.listen(port,()=>{
+    console.log("Server starting.....")
+})

@@ -10,7 +10,17 @@ export const cartData = async()=>{
                 path: "productId"    
             }
         });
-        
+
+        for (const item of data) {
+            if (!item.variantId) continue;
+
+            const stockQty = item.variantId.stock;
+
+            if (item.quantity > stockQty) {
+                item.quantity = stockQty;
+                await item.save(); 
+            }
+        }
        
         
         if(!data){

@@ -71,7 +71,7 @@ export const OrderLogic = async (userDetails,method)=>{
         }
         const taxAmount = subTotal * 0.05; 
         const totalAmount = subTotal + taxAmount;
-
+        console.log(userDetails.addressId)
         let newOrder = new orderSchema({
 
             userId:userDetails.id,

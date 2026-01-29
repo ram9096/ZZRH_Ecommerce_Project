@@ -83,7 +83,7 @@ const orderSchema = new mongoose.Schema({
   },
   deliveryStatus: {
     type: String,
-    enum: ["pending", "shipped", "out_for_delivery", "delivered"],
+    enum: ["pending", "shipped", "out_for_delivery", "delivered","cancelled"],
     default: "pending"
   },
 
@@ -99,15 +99,6 @@ const orderSchema = new mongoose.Schema({
       return date;
     }
   },
-  cancelledProducts: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Variant"
-        }
-      ],
-      default: []
-  },
   cancelledAt: {
     type: [
       {
@@ -119,19 +110,22 @@ const orderSchema = new mongoose.Schema({
           type: Date,
           default: Date.now
         },
-        cancelledBy: {
-          type: String,
-          enum: ["user", "admin", "system"],
-          required: true
-        },
         remarks: {
           type: String,
           default: null
         },
         cancelRequestStatus: {
           type: String,
-          enum: ["pending", "approved", "rejected"],
-          default: "pending"
+          default: "Cancelled"
+        },
+        cancelledProducts: {
+            type: [
+              {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Variant"
+              }
+            ],
+            default: []
         }
       }
     ],
@@ -141,3 +135,4 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export default mongoose.model("Order", orderSchema);
+  

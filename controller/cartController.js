@@ -10,7 +10,7 @@ export const cartLoad = async (req,res)=>{
         },0)
 
         if(!Cartdata.success){
-            return res.render('User/cart-page',{ 
+            return res.status(500).render('User/cart-page',{ 
                 isLogged:req.session.user||'',
                 email:'',
                 data:[],
@@ -18,7 +18,7 @@ export const cartLoad = async (req,res)=>{
             })
         }
 
-        return res.render('User/cart-page',{ 
+        return res.status(200).render('User/cart-page',{ 
             isLogged:req.session.user||'',
             email:'',
             data:Cartdata.data,
@@ -26,7 +26,7 @@ export const cartLoad = async (req,res)=>{
         })
     }catch(e){
         console.error('Error loading cart:', e)
-        return res.render('User/cart-page',{ 
+        return res.status(500).render('User/cart-page',{ 
             isLogged:req.session.user||'',
             email:'',
             data:[],
@@ -50,12 +50,12 @@ export const cartAdd = async (req,res)=>{
 
         const CartAddProgress = await addToCart(id,userId,qty) 
         if(!CartAddProgress.success){
-            return res.status(401).json({
+            return res.status(500).json({
                 success:false,
                 message:CartAddProgress.message
             })
         }
-        return res.json({
+        return res.status(200).json({
             success:true,
             message:CartAddProgress.message
         })
@@ -83,7 +83,7 @@ export const userCartDelete = async (req,res)=>{
 
         if(!cartDeleteProgress.success){
 
-            return res.status(401).json({
+            return res.status(500).json({
                 success:false,
                 message:cartDeleteProgress.message
             })
@@ -115,7 +115,7 @@ export const quantityUpdate = async (req,res)=>{
         let editProgress = await cartEdit(cartId,variantId,quantity)
 
         if(!editProgress.success){
-            return res.status(401).json({
+            return res.status(500).json({
                 success:false,
                 message:editProgress.message
             })

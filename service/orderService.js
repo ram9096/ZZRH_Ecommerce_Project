@@ -7,13 +7,13 @@ export const getOrders = async (filter)=>{
             .populate('userId')
             .populate('shippingAddressId')
             .populate('orderItems.variantId')
-            .populate("cancelledProducts")
             .populate({
-                path: "cancelledProducts",
+                path: 'cancelledAt.cancelledProducts',
                 populate: {
-                    path: "productId"
+                path: 'productId',
+                model: 'Product'
                 }
-            })
+            });
 
         if(!data){
             return {
@@ -87,44 +87,55 @@ export const cancelRequestLogic = async (id,reason,remark,orderid)=>{
             }
 
         }
+        
         const item = requestProgress.orderItems.find(
             v => v.variantId.toString() === id.toString()
         );
 
         const quantity = item ? item.quantity : 0;
+        const Canceledprice = item.price*quantity
+
         if(!requestProgress){
             return {
                 success:false,
                 message:"Something went wrong"
             }
         }
-        
 
-         if (requestProgress.cancelledProducts.includes(id)) {
-            return {
-                success: false,
-                message: "Product already requested for cancellation"
-            };
-        }
-
-        requestProgress.cancelledProducts.push(id)
-        
         requestProgress.cancelledAt.push({
             reason: reason,
             cancelledBy: "user",
             remarks: remark,
-            requestedAt: new Date()
+            requestedAt: new Date(),
+            cancelledProducts:[id]
         });
         
-        if(requestProgress.cancelledProducts.length == requestProgress.orderItems.length){
-            requestProgress.expectedDeliveryDate=null
+        const cancelledSet = new Set();
+
+        requestProgress.cancelledAt?.forEach(cancel => {
+            cancel.cancelledProducts.forEach(id => {
+                cancelledSet.add(id.toString());
+            });
+        });
+
+        if (cancelledSet.size === requestProgress.orderItems.length) {
+            requestProgress.expectedDeliveryDate = null;
+        }
+        requestProgress.subTotal -= Canceledprice
+        requestProgress.taxAmount = requestProgress.subTotal*0.05
+        requestProgress.totalAmount = requestProgress.subTotal+requestProgress.taxAmount
+
+        if(requestProgress.orderItems.length==requestProgress.cancelledAt.length){
+            requestProgress.orderStatus = "cancelled"
+            requestProgress.deliveryStatus = "cancelled"
         }
         
         await requestProgress.save()
+
         await variantModel.updateOne({_id:id},{$inc:{stock:quantity}})
         return {
             success:true,
-            message:"Cancel order requested"
+            message:"Item got cancelled"
         }
 
     }catch(e){

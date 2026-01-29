@@ -113,12 +113,18 @@
 
         <!-- Product Items -->
         <% order[0].orderItems.forEach((o,i) => { %>
-            <% 
-                const isCancelled = order[0].cancelledProducts &&
-                order[0].cancelledProducts.some(
-                    cp => cp._id.toString() === o.variantId._id.toString()
+            <%
+                const isCancelled =
+                    order[0].cancelledAt &&
+                    order[0].cancelledAt.some(ca =>
+                        ca.cancelledProducts.some(
+                            cp => cp._id.toString() === o.variantId._id.toString()
+                        )
                 );
+
+                
             %>
+
 
             <div class="grid grid-cols-12 gap-4 items-center py-6 border-b">
                 <div class="col-span-4 flex items-center gap-4">
@@ -134,8 +140,17 @@
 
                 <div class="col-span-2">
                 <% if (isCancelled) { %>
-                    
-                    <span class="text-orange-600 font-medium"><%= order[0].cancelledAt[i].cancelRequestStatus %></span>
+                   <%
+                    const cancelObj =
+                        Array.isArray(order[0].cancelledAt)
+                        ? order[0].cancelledAt[i] || order[0].cancelledAt[0]
+                        : null;
+
+                        const status = cancelObj?.cancelRequestStatus ?? 'Canceled';
+                    %>
+
+                    <span class="text-orange-600 font-medium"><%= status %></span>
+
                 <% } else { %>
                     <% if(order[0].orderItems.length!=1) {%>
                         <button onclick="openCancelModal('<%= o.variantId._id %>','<%= order[0]._id %>')" 
@@ -211,7 +226,7 @@
                     </div>
                     <div class="flex justify-between font-semibold text-lg pt-2 border-t">
                         <span>Grand Total</span>
-                        <span>₹<%= order[0].totalAmount %></span>
+                        <span>₹<%= order[0].totalAmount.toFixed(2) %></span>
                     </div>
                 </div>
             </div>

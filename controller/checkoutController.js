@@ -9,7 +9,9 @@ export const checkoutLoad = async (req,res)=>{
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         
         const address = await addressFetcher(req.session.user.id)
-
+        if(activeCartItems.length == 0){
+            return res.redirect('/cart')
+        }
         if(!cartDetails.success){
 
             return res.render('User/checkout-page',{

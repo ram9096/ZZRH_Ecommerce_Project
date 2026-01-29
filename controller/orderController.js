@@ -42,7 +42,7 @@ export const orderDetailsLoad = async (req,res)=>{
             return res.redirect('/login')
         }
         let order = await getOrders({_id:id})
-
+        
         return res.render("User/order-details",{
             isLogged:req.session.user||'',
             name:'',
