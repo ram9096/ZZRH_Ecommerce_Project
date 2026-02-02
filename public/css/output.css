@@ -374,8 +374,14 @@
   .z-50 {
     z-index: 50;
   }
+  .col-span-1 {
+    grid-column: span 1 / span 1;
+  }
   .col-span-2 {
     grid-column: span 2 / span 2;
+  }
+  .col-span-3 {
+    grid-column: span 3 / span 3;
   }
   .col-span-4 {
     grid-column: span 4 / span 4;
@@ -488,6 +494,9 @@
   .ml-5 {
     margin-left: calc(var(--spacing) * 5);
   }
+  .ml-64 {
+    margin-left: calc(var(--spacing) * 64);
+  }
   .block {
     display: block;
   }
@@ -508,6 +517,9 @@
   }
   .inline-flex {
     display: inline-flex;
+  }
+  .table-row {
+    display: table-row;
   }
   .aspect-3\/4 {
     aspect-ratio: 3/4;
@@ -942,6 +954,10 @@
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
   }
+  .border-r {
+    border-right-style: var(--tw-border-style);
+    border-right-width: 1px;
+  }
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
@@ -949,10 +965,6 @@
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 2px;
-  }
-  .border-l-4 {
-    border-left-style: var(--tw-border-style);
-    border-left-width: 4px;
   }
   .border-dashed {
     --tw-border-style: dashed;
@@ -988,9 +1000,6 @@
   }
   .border-green-200 {
     border-color: var(--color-green-200);
-  }
-  .border-green-500 {
-    border-color: var(--color-green-500);
   }
   .border-purple-300 {
     border-color: var(--color-purple-300);
@@ -1735,6 +1744,16 @@
       }
     }
   }
+  .peer-checked\:border-blue-500 {
+    &:is(:where(.peer):checked ~ *) {
+      border-color: var(--color-blue-500);
+    }
+  }
+  .peer-checked\:bg-blue-50 {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: var(--color-blue-50);
+    }
+  }
   .hover\:-translate-y-0\.5 {
     &:hover {
       @media (hover: hover) {
@@ -2090,6 +2109,11 @@
       border-color: var(--color-blue-500);
     }
   }
+  .focus\:border-gray-400 {
+    &:focus {
+      border-color: var(--color-gray-400);
+    }
+  }
   .focus\:border-purple-500 {
     &:focus {
       border-color: var(--color-purple-500);
@@ -2140,6 +2164,11 @@
   .focus\:ring-gray-500 {
     &:focus {
       --tw-ring-color: var(--color-gray-500);
+    }
+  }
+  .focus\:ring-gray-600 {
+    &:focus {
+      --tw-ring-color: var(--color-gray-600);
     }
   }
   .focus\:ring-gray-900 {

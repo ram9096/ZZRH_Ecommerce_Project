@@ -1,3 +1,4 @@
+
 import { cancelRequestLogic, getOrders } from "../service/orderService.js"
 
 
@@ -8,6 +9,7 @@ export const ordersLoad = async (req,res)=>{
         if(!id){
             return res.redirect('/login')
         }
+        let limit = 1
         let order = await getOrders({userId:id})
         
         if(!order.success){

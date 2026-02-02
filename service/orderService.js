@@ -1,9 +1,11 @@
 import orderModel from "../model/orderModel.js"
 import variantModel from "../model/variantModel.js"
 
-export const getOrders = async (filter)=>{
+export const getOrders = async (filter,limit)=>{
     try{
-        let data  = await orderModel.find(filter)
+        let data  = await orderModel
+            .find(filter)
+            
             .populate('userId')
             .populate('shippingAddressId')
             .populate('orderItems.variantId')
@@ -14,6 +16,7 @@ export const getOrders = async (filter)=>{
                 model: 'Product'
                 }
             });
+            
 
         if(!data){
             return {

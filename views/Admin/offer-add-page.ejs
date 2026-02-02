@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management - ZZRH</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .form-input:focus {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Top Navigation -->
+    <nav class="glass-effect border-b border-white/20 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold">
+                        Z
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#ZZRH</h1>
+                </div>
+                <button class="relative p-3 hover:bg-white/50 rounded-xl transition-all">
+                    <i class="far fa-bell text-xl text-gray-700"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <%- include('../Partials/sidebar') %>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <!-- Back Link -->
+            <a href="/admin/offer" class="inline-flex items-center gap-2 text-gray-700 hover:text-black mb-8 font-medium transition-all group">
+                <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span>Back to offer Management</span>
+            </a>
+
+            <!-- Page Header -->
+            <div class="mb-10">
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">Add New Offer</h1>
+                <p class="text-gray-600 text-lg">Create a new offer for your products,variants,category</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="max-w-3xl">
+                <div class="glass-effect rounded-2xl shadow-xl p-8 border border-white/20">
+                    <form id="categoryForm">
+                        <!-- Category Name -->
+                         <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fas fa-tag text-gray-600"></i>
+                                <span>Offer Name</span>
+                            </label>
+                            <input 
+                                id="offer_name"
+                                name="offer_name"
+                                type="text" 
+                                placeholder="e.g., Men's offer / Women / Kids" 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                            >
+        
+                            <span id="offer_name-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fa-solid fa-quote-left text-gray-600"></i>
+                                <span>Offer Type</span>
+                            </label>
+                            <select id="Offer_type"
+                                name="Offer_type"
+                                type="text" 
+                                placeholder="e.g., Men / Women / Kids" 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900">
+                                <option value="">Select Offer type</option>
+                                <option value="PRODUCT">Product</option>
+                                <option value="CATEGORY">Category</option>
+                            </select>
+                            <span id="Offer_type-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+
+                    
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fa-solid fa-quote-left text-gray-600"></i>
+                                <span>Discount Type</span>
+                            </label>
+                            <select id="discount_type"
+                                name="discount_type"
+                                type="text" 
+                                placeholder="e.g., Men / Women / Kids" 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900">
+                                <option value="">Select Discount type</option>
+                                <option value="PERCENTAGE">PERCENTAGE</option>
+                                <option value="FLAT">FLAT</option>
+                            </select>
+                            <span id="discount_type-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fas fa-tag text-gray-600"></i>
+                                <span>Discount Value</span>
+                            </label>
+                            <input
+                            id="discount_value"
+                                name="discount_value"
+                                type="text" 
+                                placeholder="e.g., 75% / flat 50 off" 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900" 
+                            type="text"
+                            >
+                            <span id="discount_value-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fas fa-tag text-gray-600"></i>
+                                <span>Minimum order amount</span>
+                            </label>
+                            <input
+                            id="min-order"
+                                name="min-order"
+                                type="text" 
+                                placeholder="e.g., ₹5000" 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900" 
+                            type="text"
+                            >
+                            <span id="min-order-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fas fa-calendar-alt text-gray-600"></i>
+                                <span>Offer Validity</span>
+                            </label>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Start Date -->
+                                <div>
+                                    <input
+                                        id="start-date"
+                                        name="startDate"
+                                        type="date"
+                                        class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                                    />
+                                    <span id="start-date-error" class="text-xs text-red-500 mt-2 block"></span>
+                                </div>
+
+                                <!-- End Date -->
+                                <div>
+                                    <input
+                                        id="end-date"
+                                        name="endDate"
+                                        type="date"
+                                        class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                                    />
+                                    <span id="end-date-error" class="text-xs text-red-500 mt-2 block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                            <a href="/admin/offer">
+                                <button 
+                                    type="button" 
+                                    class="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all font-medium"
+                                >
+                                    Cancel
+                                </button>
+                            </a>
+                            <button 
+                                type="submit" 
+                                class="px-8 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center gap-2"
+                            >
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Create this offer</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Toggle status buttons
+        
+        (function (){
+            const Categoryform  = document.getElementById('categoryForm')
+            const fields = {
+                name:document.getElementById('offer_name'),
+                startDate:document.getElementById('start-date'),
+                endDate:document.getElementById('end-date'),
+                discount:document.getElementById('discount_type'),
+                value:document.getElementById('discount_value'),
+                min:document.getElementById('min-order'),
+                type:document.getElementById('Offer_type')
+            }
+            const errors = {
+                name:document.getElementById('offer_name-error'),
+                startDate:document.getElementById('start-date-error'),
+                endDate:document.getElementById('end-date-error'),
+                discount:document.getElementById('discount_type-error'),
+                value:document.getElementById('discount_value-error'),
+                min:document.getElementById('min-order-error'),
+                type:document.getElementById('Offer_type-error')
+            }
+            function validateField(field){
+                const value = fields[field].value.trim()
+                switch (field){
+                    case "name":
+                        if (value.length < 3) {
+                            errors.name.textContent = "Enter valid name"
+                            return false
+                        }
+                        if(!/^[A-Za-z0-9]+([ '-][A-Za-z0-9]+)*$/.test(value)){
+                            errors.name.textContent = "Name can contain letters, spaces, hyphens (-), and apostrophes (') only"
+                            return false
+                        }
+                        errors.name.textContent = ""
+                        return true
+                    case "type":
+                        if(value==''){
+                            errors.type.textContent = "Select a offer type"
+                            return false
+                        }
+                        errors.type.textContent = ""
+                        return true
+                    case "discount":
+                        if(value == ""){
+                            errors.discount.textContent = "Enter a valid discount"
+                            return false
+                        }
+                        errors.discount.textContent = ""
+                        return true
+                    case "startDate":
+                        if (value === "") {
+                            errors.startDate.textContent = "Select a start date";
+                            return false;
+                        }
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        if (new Date(value) < today) {
+                            errors.startDate.textContent = "Start date cannot be in the past";
+                            return false;
+                        }
+
+                        errors.startDate.textContent = "";
+                        return true;
+                    case "endDate":
+                        if (value === "") {
+                            errors.endDate.textContent = "Select an end date";
+                            return false;
+                        }
+
+                        const startDate = new Date(document.getElementById("start-date").value);
+                        const endDate = new Date(value);
+
+                        if (endDate < startDate) {
+                            errors.endDate.textContent = "End date must be after start date";
+                            return false;
+                        }
+
+                        errors.endDate.textContent = "";
+                        return true;
+
+                    case "value":
+                        if(value===""){
+                            errors.value.textContent = "Enter a value"
+                            return false
+                        }
+                        if(value<=0){
+                            errors.value.textContent = "Enter a valid  value"
+                            return false
+                        }
+                        if(!/^\d+$/.test(value)){
+                            errors.value.textContent = "Enter a number"
+                            return false
+                        }
+                        errors.value.textContent = ""
+                        return true
+                    case "min":
+                        if(value===""){
+                            errors.min.textContent = "Enter a value"
+                            return false
+                        }
+                        if(value<=0){
+                            errors.min.textContent = "Enter a valid  value"
+                            return false
+                        }
+                        if(!/^\d+$/.test(value)){
+                            errors.min.textContent = "Enter a number"
+                            return false
+                        }
+                        errors.min.textContent = ""
+                        return true
+                        
+                }
+            }
+
+             Object.keys(fields).forEach(field => {
+                fields[field].addEventListener("input", () => validateField(field))
+                fields[field].addEventListener("blur", () => validateField(field))
+            })
+            Categoryform.addEventListener("submit", async (e)=> {
+                e.preventDefault()
+
+                let valid = true
+                Object.keys(fields).forEach(field => {
+                if (!validateField(field)) valid = false
+                })
+                if (!valid) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: 'Please fix all validation errors',
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
+            
+                try{
+
+                    
+                    const formData = new FormData(Categoryform);
+                    const request = await fetch('/admin/offer-add',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            name:fields.name.value,
+                            startDate:fields.startDate.value,
+                            endDate: fields.endDate.value,
+                            discount:fields.discount.value,
+                            value:fields.value.value,
+                            min:fields.min.value,
+                            type:fields.type.value
+                        })
+                    })
+
+                    
+                   const result = await request.json()
+                    if(!result.success){
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        return;
+                    }
+                    Swal.fire({
+                        toast:true,
+                        icon: 'success',
+                        title: 'Offer added',
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
+                    window.location.href = result.redirect;
+                    return;
+
+                }catch(e){
+                    console.log("Front-end error :\n",e)
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: e,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+
+            })
+        })()
+
+
+        
+        function set_status(msg){
+            const active = document.getElementById('active')
+            const inactive = document.getElementById('inactive')
+            const status_Input = document.getElementById("status_Input")
+            active.classList.remove('gradient-bg','text-white','border-gray-500','shadow-lg');
+            inactive.classList.remove('gradient-bg', 'text-white','border-gray-500','shadow-lg');
+            if(msg){
+                active.classList.add('gradient-bg','text-white','border-gray-500','shadow-lg');
+            }else{
+                inactive.classList.add('gradient-bg', 'text-white','border-gray-500','shadow-lg');
+            }
+            status_Input.value = msg
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offers - #ZZRH Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/css/output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+        }
+
+        /* Sidebar styling */
+        .sidebar-link {
+            transition: all 0.2s;
+        }
+
+        .sidebar-link:hover {
+            background: #fee;
+        }
+
+        .sidebar-link.active {
+            background: #fee;
+            color: #dc2626;
+        }
+
+        /* Table styling */
+        .table-row {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s;
+        }
+
+        .table-row:hover {
+            background: #f9fafb;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-scheduled {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-expired {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Button styling */
+        .btn-primary {
+            background: #1e293b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #0f172a;
+        }
+
+        .btn-action {
+            background: #1e293b;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background: #0f172a;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-0 w-64 bg-white min-h-screen border-r border-gray-200">
+      <div class="p-6">
+        <nav class="space-y-1">
+          <a href="/admin/home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-home text-base"></i>
+            <span class="font-medium">Dashboard</span>
+          </a>
+          <a href="/admin/users" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-users text-base"></i>
+            <span class="font-medium">Users</span>
+          </a>
+          <a href="/admin/products" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-shopping-bag text-base"></i>
+            <span class="font-medium">Products</span>
+          </a>
+          <a href="/admin/orders" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-cube text-base"></i>
+            <span class="font-medium">Orders</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-chart-line text-base"></i>
+            <span class="font-medium">Analytics</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-ticket-alt text-base"></i>
+            <span class="font-medium">Coupons</span>
+          </a>
+          <a href="/admin/category" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-list-ul text-base"></i>
+            <span class="font-medium">Categories</span>
+          </a>
+          <a href="" class="sidebar-link active flex items-center space-x-3 px-4 py-3 rounded-lg">
+            <i class="fas fa-gift text-base"></i>
+            <span class="font-medium">Offers</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-image text-base"></i>
+            <span class="font-medium">Banners</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-user text-base"></i>
+            <span class="font-medium">Profile</span>
+          </a>
+          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <i class="fas fa-cog text-base"></i>
+            <span class="font-medium">Settings</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="ml-64 min-h-screen bg-gray-50">
+        <main>
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200">
+                <div class="px-8 py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                                <span class="text-white font-bold text-xl">Z</span>
+                            </div>
+                            <h1 class="text-2xl font-bold text-gray-900">#ZZRH</h1>
+                        </div>
+                        <button class="relative w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                            <i class="fas fa-bell text-gray-600"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                    </div>
+                    <div class="mb-8">
+                <div class="flex items-center justify-between ">
+                    <div>
+                        <h2 class="text-4xl font-bold text-gray-800 mb-1">Offers</h2>
+                        <p class="text-gray-500">Manage your offers inventory</p>
+                    </div>
+                    <a href="/admin/offer-add">
+                        <button class="px-6 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center space-x-2">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Product</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="p-8">
+                <!-- Search and Filter Bar -->
+                <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" placeholder="Search offers..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 text-sm">
+                            </div>
+                        </div>
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 text-sm text-gray-700">
+                            <option>Latest</option>
+                            <option>Highest Discount</option>
+                            <option>Most Used</option>
+                            <option>Expiring Soon</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Offers Table -->
+                <div class="bg-gray-900   text-white rounded-lg border border-gray-200 overflow-hidden">
+                    <!-- Table Header -->
+                    <div class="grid grid-cols-12 gap-4 px-6 py-4 text-sm font-medium items-center">
+    
+                        <div class="col-span-1 flex items-center">
+                            <i class="fas fa-hashtag mr-2"></i>
+                            <span>ID</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fas fa-gift mr-2"></i>
+                            <span>Offer Name</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fas fa-percent mr-2"></i>
+                            <span>Discount</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fa-solid fa-money-bill-1-wave mr-2"></i>
+                            <span>Min Order</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fas fa-calendar mr-2"></i>
+                            <span>Ends On</span>
+                        </div>
+
+                        <div class="col-span-1 flex items-center">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            <span>Status</span>
+                        </div>
+
+                        <div class="col-span-1 flex items-center justify-center">
+                            <i class="fas fa-cog mr-2"></i>
+                            <span>Actions</span>
+                        </div>
+                    </div>
+
+                    </div>
+
+                    <!-- Table Body -->
+                    <div class="divide-y divide-gray-200">
+                        <!-- Row 1 -->
+                        <% data.forEach((c,i)=>{ %>
+                            <div class="table-row grid grid-cols-12 gap-4 px-6 py-4 items-center">
+    
+                                <!-- ID -->
+                                <div class="col-span-1">
+                                    <div class="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+                                        <span class="text-white font-semibold text-sm">#<%= i + 1 %></span>
+                                    </div>
+                                </div>
+
+                                <!-- Offer Name -->
+                                <div class="col-span-2">
+                                    <h3 class="font-semibold text-gray-900 mb-1"><%= c.name %></h3>
+                                    <p class="text-sm text-gray-500">234 uses</p>
+                                </div>
+
+                                <!-- Discount -->
+                                <div class="col-span-2">
+                                    <span class="font-semibold text-gray-900">
+                                        <%= c.discountType === 'PERCENTAGE'
+                                            ? `${c.discountValue}% OFF`
+                                            : `₹${c.discountValue} FLAT OFF` %>
+                                    </span>
+                                </div>
+
+                                <!-- Min Order -->
+                                <div class="col-span-2">
+                                    <span class="text-gray-600">
+                                        <%= c.minOrderAmount ? `₹${c.minOrderAmount}` : '—' %>
+                                    </span>
+                                </div>
+
+                                <!-- Ends On -->
+                                <div class="col-span-2">
+                                    <span class="text-gray-600">
+                                        <%= new Date(c.endDate).toDateString() %>
+                                    </span>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-span-1">
+                                    <span class="status-badge <%= c.isActive ? 'status-active' : 'status-inactive' %>">
+                                        <i class="fas fa-circle text-xs"></i>
+                                        <%= c.isActive ? 'Active' : 'Inactive' %>
+                                    </span>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="col-span-1 flex items-center justify-center gap-2">
+                                    <button class="btn-action">
+                                        <i class="fas fa-edit mr-1"></i>
+                                        Edit
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        <% }) %>
+
+                        
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-6">
+                    <p class="text-sm text-gray-600">Showing 1 to 6 of 6 offers</p>
+                    <div class="flex items-center gap-2">
+                        <button class="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold hover:bg-gray-800 transition-colors">1</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Add any JavaScript functionality here
+    </script>
+</body>
+</html>

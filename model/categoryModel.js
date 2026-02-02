@@ -14,6 +14,18 @@ const categorySchema = new schema({
     isActive:{
         type:Boolean,
         required:true
+    },
+    offer:{
+        type:[
+            {
+                discountType:{
+                    type: String,
+                    enum: ["PERCENTAGE", "FLAT"]
+                },
+                discountValue: Number
+            }
+        ],
+        default:null
     }
 },{timestamps:true})
 

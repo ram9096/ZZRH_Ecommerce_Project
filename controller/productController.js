@@ -1,4 +1,5 @@
-import {   adminUserEditLogic, adminUsersLogic, categoryModelLoad, dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
+import { offerDataLoad } from "../service/admin/offerService.js";
+import {   dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
 import { adminProductEditLogic, adminProductsAddLogic } from "../service/productService.js";
 
 //Page renderings--------------------------------------------------------------------
@@ -18,12 +19,14 @@ export const adminProductsLoad =  async(req,res)=>{
         sortOption = { createdAt: 1 };
     }
     let products = await productModelLoad(filter,sortOption,req.query.page)
-    if(!products.success){
+    let offer = await offerDataLoad()
+    if(!products.success||!offer.success){
 
         return res.render('Admin/products-page',{
             error:"ERROR WHILE LOADING",
             data:products.data,
-            activePage:'products'
+            activePage:'products',
+            offer:[]
         }) 
     }
     return res.render('Admin/products-page', {
@@ -34,7 +37,8 @@ export const adminProductsLoad =  async(req,res)=>{
         totalUser:products.totalUser,
         totalPage:products.totalPages,
         search: req.query.search || "",
-        activePage:'products'
+        activePage:'products',
+        offer:offer.data
     })
 }
 export const adminProductsAddLoad = async (req,res)=>{

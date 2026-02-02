@@ -5,6 +5,7 @@ import { adminHomeLoad, adminLogin, adminLoginLoad, adminLogout, adminUserEdit, 
 import { isAdminAuthenticated } from "../middleware/adminMiddleware.js"
 import {upload} from "../config/multerConfig.js"
 import { adminOrdersDetailsLoad, adminOrdersLoad, adminOrdersUpdate } from "../controller/Admin/orderController.js"
+import { offerAdd, offerAddLoad, offerLoad } from "../controller/Admin/offerController.js"
 let router = express.Router()
 
 router.get('/',adminLoginLoad)
@@ -30,6 +31,10 @@ router.post('/orders/update',adminOrdersUpdate)
 
 router.post('/category-add',upload.none(),adminCategoryAdd)
 router.post('/category-edit/:id',upload.none(),isAdminAuthenticated,adminCategoryEdit)
+
+router.get('/offer',offerLoad)
+router.get('/offer-add',offerAddLoad)
+router.post('/offer-add',offerAdd)
 
 router.post('/product-add',upload.any(),adminProductsAdd)
 router.post('/products/:id',upload.any(),adminProductEdit)
