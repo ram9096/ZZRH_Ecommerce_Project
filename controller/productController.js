@@ -1,6 +1,6 @@
 import { offerDataLoad } from "../service/admin/offerService.js";
 import {   dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
-import { adminProductEditLogic, adminProductsAddLogic } from "../service/productService.js";
+import { adminProductEditLogic, adminProductsAddLogic, offerAddLogic } from "../service/productService.js";
 
 //Page renderings--------------------------------------------------------------------
 
@@ -197,3 +197,37 @@ export const adminProductEdit = async (req,res)=>{
     }
 }
 
+
+export const offerAddProduct = async (req,res)=>{
+    try{
+        const {productId, offerId,type} = req.body
+
+        
+        if(!productId||!offerId){
+
+            return res.status(400).json({
+                success:false,
+                message:"ID error try again"
+            })
+        }
+        const addingProgress = await offerAddLogic(productId,offerId,type)
+
+        if(!addingProgress.success){
+
+            return res.status(401).json({
+                success:false,
+                message:addingProgress.message
+            })
+        }
+        return res.json({
+            success:true,
+            message:addingProgress.message
+        })
+
+    }catch(e){
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}

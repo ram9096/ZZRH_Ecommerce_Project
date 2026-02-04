@@ -1,7 +1,7 @@
 
 //Page renderings
 
-import { AddressAddLogic, addressDelete, AddressEditLogic, addressFetcher, emailEditLogic, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
+import { AddressAddLogic, addressDelete, AddressEditLogic, addressFetcher, emailEditLogic, generateReferalLink, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
 import { findUserByEmail, generateOtp } from "../service/userService.js"
 
 export const userProfileLoad = async (req,res)=>{
@@ -21,7 +21,8 @@ export const userProfileLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             name:userDetails.username,
             email:userDetails.email,
-            mobile:userDetails.mobileNo
+            mobile:userDetails.mobileNo,
+            pageActive:'PROFILE'
         })
     }catch(e){
         console.log("Data sharing error :\n",e)
@@ -46,7 +47,8 @@ export const userNameEditLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             name:userDetails.username,
             email:userDetails.email,
-            mobile:userDetails.mobileNo
+            mobile:userDetails.mobileNo,
+            pageActive:'PROFILE'
         })
     }catch(e){
         console.log("Data sharing error :\n",e)
@@ -73,6 +75,7 @@ export const userEmailEditLoad = async(req,res)=>{
             name:userDetails.username,
             email:userDetails.email,
             mobile:userDetails.mobileNo,
+            pageActive:'PROFILE',
             otpVerified: req.session.otpContext == "EMAIL_VERIFIED" || false
 
         })
@@ -93,6 +96,7 @@ export const userPasswordEditLoad = async (req,res)=>{
             name:userDetails.username,
             email:userDetails.email,
             mobile:userDetails.mobileNo,
+            pageActive:'PROFILE',
             otpVerified: req.session.otpContext == "PASSWORD_VERIFIED" || false
         })
     }catch(e){
@@ -113,13 +117,24 @@ export const userAddressLoad = async (req,res)=>{
             name:userDetails.username,
             email:userDetails.email,
             mobile:userDetails.mobileNo,
-            address:address
+            address:address,
+            pageActive:'ADDRESS'
         })
         
     }catch(e){
        console.log("Data sharing error :",e)
         return res.status(500).redirect('/login') 
     }
+}
+
+export const referalLinkGeneratorLoad = (req,res)=>{
+    return res.render('User/referal-page',{
+        isLogged:req.session.user||'',
+        name:"usern",
+        email:"email",       
+        mobile:"mobil",
+        pageActive:"LINK"
+    })
 }
 //Controllers --------------
 
@@ -411,6 +426,42 @@ export const userAddressDelete = async (req,res)=>{
         res.status(500).json({
             success:false,
             message:"Data sharing error try again!!!"
+        })
+    }
+}
+
+export const referalLingGenerator = async (req,res)=>{
+    try{
+
+        const {userId} = req.body
+
+        if(!userId){
+
+            return res.status(401).json({
+                success:false,
+                message:"Try again!!!"
+            })
+        }
+        const token = await generateReferalLink(userId)
+
+        if(!token.success){
+
+            return res.status(400).json({
+                success:false,
+                message:"Try again!!!"
+            })
+        }
+        
+        return res.status(200).json({
+            success:true,
+            token:token.token
+        })
+
+    }catch(e){
+        console.log("Data sharing error :",e)
+        res.status(500).json({
+            success:false,
+            message:"Server error try again"
         })
     }
 }

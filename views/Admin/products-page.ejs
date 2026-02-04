@@ -162,14 +162,17 @@
                                     <td class="px-6 py-5">
                                         
                                         <select
+                                            id="offerId"
                                             name="offerId"
+                                            data-product="<%= user._id %>"
                                             class="px-4 py-2 rounded-lg border-2 border-gray-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-600"
                                         >
-                                            <option value="">No Offer</option>
+                                            <option value="NO">No Offer</option>
 
                                             <% offer.forEach(offer => { %>
                                                 <option
                                                     value="<%= offer._id %>"
+                                                    
                                                     <%= user.offer && user.offer.toString() === offer._id.toString() ? 'selected' : '' %>
                                                 >
                                                     <%= offer.name %>
@@ -242,6 +245,67 @@
                 window.location.search = params.toString();
             }, 500);
         }
+        let offer = document.querySelectorAll('#offerId')
+        offer.forEach(offerBtn => {
+            
+            offerBtn.addEventListener('change',async ()=>{
+                console.log(offerBtn.value,offerBtn.value=="")
+                
+                let productId = offerBtn.dataset.product
+                
+                try{
+    
+                    const request = await fetch('/admin/product-offer-add',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            productId:productId,
+                            offerId: offerBtn.value
+                        })
+                    })
+    
+                    const result = await request.json();
+    
+                    if (result.success) {
+    
+                        await Swal.fire({
+                            toast:true,
+                            icon: 'success',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+    
+                        
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+    
+    
+                }catch(e){
+                    console.warn(e)
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: "Server error try again!!",
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+            })
+        });
+
     </script>
 </body>
 </html>

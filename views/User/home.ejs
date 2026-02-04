@@ -16,7 +16,19 @@
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
         
       
-        
+        :root {
+            --cream:#faf9f7;
+            --card-bg:#f3f1ee;
+            --accent:#c8102e;
+            --accent-light:#f5e0e4;
+            --accent-mid:#e8a0ad;
+            --text-primary:#1a1a1a;
+            --text-muted:#7a7a7a;
+            --text-light:#a8a8a8;
+            --shadow-sm:0 2px 12px rgba(0,0,0,.06);
+            --shadow-md:0 6px 24px rgba(0,0,0,.1);
+            --radius:18px;
+        }
         .serif-font {
             font-family: 'Playfair Display', serif;
         }
@@ -26,6 +38,102 @@
         }
         .font-clash {
           font-family: "Clash-display", system-ui, sans-serif;
+        }
+
+        .hero {
+            position:relative;
+            background:#1a1a1a;
+            color:#fff;
+            padding:56px 24px 52px;
+            text-align:center;
+            overflow:hidden;
+        }
+        .hero::before {
+            content:'';
+            position:absolute;
+            inset:0;
+            background:
+            radial-gradient(ellipse 70% 60% at 20% 50%, rgba(200,16,46,.18) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 80% at 80% 40%, rgba(200,16,46,.12) 0%, transparent 70%);
+            pointer-events:none;
+        }
+        .hero-badge {
+            display:inline-block;
+            background:var(--accent);
+            color:#fff;
+            font-size:.72rem;
+            font-weight:600;
+            letter-spacing:.18em;
+            text-transform:uppercase;
+            padding:6px 18px;
+            border-radius:50px;
+            margin-bottom:18px;
+            position:relative;
+            animation:pulse-badge 2.4s ease-in-out infinite;
+        }
+        @keyframes pulse-badge {
+            0%,100%{ box-shadow:0 0 0 0 rgba(200,16,46,.45); }
+            50%   { box-shadow:0 0 0 8px rgba(200,16,46,0); }
+        }
+        .hero h1 {
+            font-family:'Playfair Display',serif;
+            font-weight:300;
+            font-size:clamp(2.4rem,6vw,3.8rem);
+            letter-spacing:-.02em;
+            line-height:1.1;
+            position:relative;
+        }
+        .hero h1 em {
+            font-style:italic;
+            color:var(--accent-mid);
+        }
+        .hero-sub {
+            margin-top:14px;
+            color:#9a9a9a;
+            font-size:.88rem;
+            font-weight:400;
+            position:relative;
+        }
+
+        .countdown-strip {
+            background:var(--accent);
+            color:#fff;
+            text-align:center;
+            padding:10px 16px;
+            font-size:.78rem;
+            font-weight:500;
+            letter-spacing:.06em;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+        }
+        .countdown-strip .timer {
+            font-family:'Playfair Display',serif;
+            font-size:.95rem;
+            font-weight:600;
+            letter-spacing:.04em;
+        }
+        .badge-discount {
+            position:absolute;
+            top:14px;
+            left:14px;
+            background:var(--accent);
+            color:#fff;
+            font-size:.72rem;
+            font-weight:600;
+            padding:5px 11px;
+            border-radius:50px;
+            z-index:2;
+            letter-spacing:.02em;
+        }
+        .price-save {
+            font-size:.72rem;
+            color:var(--accent);
+            font-weight:600;
+            background:var(--accent-light);
+            padding:2px 8px;
+            border-radius:50px;
         }
     </style>
 </head>
@@ -132,6 +240,63 @@
                             <div>
                                 <h3 class="font-medium text-sm mb-1"> <%= product.products[0].name %> </h3>
                                 <p class="text-lg font-semibold"> ₹<%= product.price %> </p>
+                                <% if (product.stock <= 0) { %>
+                                    <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
+                                <% } %>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+
+        <div class="flex justify-end">
+            <a  class="mr-10" href="/products">Shop more →</a>
+        </div>
+        
+    </section>
+
+
+    <div class="countdown-strip">
+    ⏳ &nbsp; Offers end in &nbsp; <span class="timer" id="countdown">02:14:38</span> &nbsp; — Don't miss out!
+    </div>
+    <header class="hero">
+        <div class="hero-badge">🔥 Limited Time</div>
+        <h1>Offers <em>you can't</em><br>afford to skip</h1>
+        <p class="hero-sub">Curated deals on our most-loved pieces — up to 60% off</p>
+    </header>
+    <section class="container mx-auto px-4 py-12">
+
+        <h2 class="text-4xl serif-font font-light mb-8 font-bloverly"></h2>
+        
+       
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
+            <!-- Product 1 -->
+            <% product.forEach(product=>{ %>
+                <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                    <div class="product-card relative">
+                        <span class="badge-discount">% OFF</span>
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                            <img src="/<%= product.image[0] %>" 
+                                alt="Brown Jacket" 
+                                loading="lazy"
+                                class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                            <% if (product.stock <= 0) { %>
+                                <div class="absolute inset-0 flex items-center justify-center  bg-opacity-40">
+                                    <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                        Out of Stock
+                                    </span>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-sm mb-1"> <%= product.products[0].name %> </h3>
+                                <p class="text-lg font-semibold"> ₹<%= product.price %> </p>
+                                <span class="price-save">Save ₹2000</span>
                                 <% if (product.stock <= 0) { %>
                                     <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
                                 <% } %>

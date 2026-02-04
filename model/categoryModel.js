@@ -15,17 +15,11 @@ const categorySchema = new schema({
         type:Boolean,
         required:true
     },
-    offer:{
-        type:[
-            {
-                discountType:{
-                    type: String,
-                    enum: ["PERCENTAGE", "FLAT"]
-                },
-                discountValue: Number
-            }
-        ],
-        default:null
+    offer: {
+            
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Offer",
+        default: null
     }
 },{timestamps:true})
 

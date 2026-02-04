@@ -3,7 +3,7 @@ import { addToCart, cartData, cartDelete, cartEdit } from "../service/cartServic
 export const cartLoad = async (req,res)=>{
     try{
         const Cartdata  = await cartData()
-
+        
         const price = Cartdata.data.reduce((val,arr)=>{
             val+=arr.variantId.price
             return val

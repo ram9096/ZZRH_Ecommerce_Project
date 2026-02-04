@@ -186,3 +186,113 @@ export const adminProductEditLogic = async(productData,variant,id)=>{
         }
     }
 }
+
+
+export const offerAddLogic = async (productId,offerId,type)=>{
+    try{
+        
+        if(!productId||!offerId){
+            return {
+                success:false,
+                message:"ID error try again"
+            }
+        }
+        if(type == "CATEGORY"){
+
+            const data = await categoryModel.findOne({_id:productId})
+
+            if(offerId == "NO"){
+                if(data.offer!=null){
+                    data.offer = null
+                }    
+                await data.save()
+
+                return {
+                    success:true,
+                    message:"Offer canceled for the category"
+                }
+            }
+
+            data.offer = offerId
+
+            await data.save()
+            await applyOfferToProduct(productId)
+            return {
+                success:true,
+                message:"Offer added successfully"
+            }
+
+
+        }
+        if(offerId == "NO"){
+            const data = await productModel.findOne({_id:productId})
+            if(data.offer!=null){
+                data.offer = null
+            }    
+            await data.save()
+
+            return {
+                success:true,
+                message:"Offer canceled for the product"
+            }
+        }
+        const data = await productModel.findOne({_id:productId})
+        data.offer = offerId
+
+        await data.save()
+        await applyOfferToProduct(productId)
+        return {
+            success:true,
+            message:"Offer added successfully"
+        }
+
+    }catch(e){
+
+        console.log("Error: ",e)
+        return {
+            success:false,
+            message:"ID error try again"
+        }
+
+    }
+}
+
+const applyOffer = (price, offer) => {
+  if (!offer) return price;
+
+  if (offer.discountType === "PERCENTAGE") {
+    return price - (price * offer.discountValue) / 100;
+  }
+
+  if (offer.discountType === "FLAT") {
+    return price - offer.discountValue;
+  }
+
+  return price;
+};
+
+export const applyOfferToProduct = async (productId) => {
+  const product = await productModel.findById(productId)
+    .populate("offer")
+    .populate({
+      path: "categoryId",
+      populate: { path: "offer" }
+    });
+
+  if (!product) throw new Error("Product not found");
+
+  const variants = await variantModel.find({ productId });
+
+  for (const v of variants) {
+    const productOfferPrice = applyOffer(v.price, product.offer);
+    const categoryOfferPrice = applyOffer(v.price, product.categoryId?.offer);
+
+    const finalPrice = Math.min(productOfferPrice, categoryOfferPrice);
+    console.log(finalPrice)
+    return;
+    v.price = v.price - Math.max(finalPrice, 0);
+    await v.save();
+  }
+
+  return true;
+};

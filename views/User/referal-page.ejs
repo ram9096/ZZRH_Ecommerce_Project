@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZZRH - Referral Link Generator</title>
+    <link rel="stylesheet" href="/css/output.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift { transition: all 0.3s ease; }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .profile-avatar {
+            background: linear-gradient(135deg, #6b7280 0%, #1f2937 100%);
+        }
+        .input-focus:focus {
+            outline: none;
+            border-color: #1f2937;
+            box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.1);
+        }
+
+        /* ─── Card Entrance ─── */
+        .card-animated {
+            opacity: 0;
+            transform: translateY(18px);
+            animation: cardSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+        }
+        @keyframes cardSlideIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── Header stagger ─── */
+        .card-header-icon {
+            opacity: 0;
+            transform: scale(0.7);
+            animation: iconPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s forwards;
+        }
+        @keyframes iconPop { to { opacity: 1; transform: scale(1); } }
+
+        .card-header-text {
+            opacity: 0;
+            transform: translateX(-12px);
+            animation: textSlide 0.4s ease 0.35s forwards;
+        }
+        @keyframes textSlide { to { opacity: 1; transform: translateX(0); } }
+
+        /* ─── Field rows stagger ─── */
+        .field-row {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fieldIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .field-row:nth-child(1) { animation-delay: 0.42s; }
+        .field-row:nth-child(2) { animation-delay: 0.52s; }
+        .field-row:nth-child(3) { animation-delay: 0.62s; }
+        .field-row:nth-child(4) { animation-delay: 0.72s; }
+        @keyframes fieldIn { to { opacity: 1; transform: translateY(0); } }
+
+        /* ─── Input focus ─── */
+        .input-ref:focus {
+            outline: none;
+            border-color: #1f2937;
+            box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.12);
+        }
+
+        /* ─── Shake + error ─── */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%      { transform: translateX(-7px); }
+            40%      { transform: translateX(7px); }
+            60%      { transform: translateX(-4px); }
+            80%      { transform: translateX(4px); }
+        }
+        .shake { animation: shake 0.4s ease; }
+        .input-err {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+        }
+
+        /* ─── Generate Button ─── */
+        .btn-generate {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.18s, box-shadow 0.25s;
+        }
+        .btn-generate:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(31, 41, 55, 0.3);
+        }
+        .btn-generate:active { transform: translateY(0); }
+        .btn-generate .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.28);
+            transform: scale(0);
+            animation: rippleAnim 0.55s linear;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+        /* ─── Spinner ─── */
+        .btn-spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.5s linear infinite;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ─── Generated Link Box ─── */
+        .link-box {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.34,1.56,0.64,1),
+                        transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            pointer-events: none;
+            max-height: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        .link-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            max-height: 200px;
+            margin-top: 1rem;
+            padding-top: 0;
+        }
+        .link-box-inner {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1rem;
+        }
+        .link-url-text {
+            font-size: 0.82rem;
+            color: #1f2937;
+            font-weight: 600;
+            word-break: break-all;
+            line-height: 1.5;
+            padding: 0.5rem 0.7rem;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        /* ─── Copy / Share Buttons ─── */
+        .btn-action {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+        }
+        .btn-action:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .btn-action i { font-size: 0.72rem; color: #6b7280; }
+
+        /* ─── Copy toast (inside button) ─── */
+        .copy-toast {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+            background: #1f2937;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            white-space: nowrap;
+            z-index: 5;
+        }
+        .copy-toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* ─── Stats Row ─── */
+        .stats-row {
+            display: flex;
+            gap: 10px;
+        }
+        .stat-card {
+            flex: 1;
+            background: #f9fafb;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 0.85rem 0.6rem;
+            text-align: center;
+        }
+        .stat-num {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .stat-num.bump { transform: scale(1.3); }
+        .stat-label {
+            font-size: 0.67rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #9ca3af;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* ─── History List ─── */
+        .history-list { display: flex; flex-direction: column; gap: 6px; max-height: 130px; overflow-y: auto; }
+        .history-list::-webkit-scrollbar { width: 4px; }
+        .history-list::-webkit-scrollbar-track { background: transparent; }
+        .history-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fafafa;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 0.5rem 0.7rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+            opacity: 0;
+            transform: translateX(-14px);
+            animation: historySlide 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        @keyframes historySlide { to { opacity: 1; transform: translateX(0); } }
+        .hi-name { color: #1f2937; font-weight: 600; flex: 1; }
+        .hi-time { font-size: 0.7rem; color: #9ca3af; }
+        .hi-badge {
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: rgba(34,197,94,0.1);
+            color: #16a34a;
+            border-radius: 8px;
+            padding: 2px 8px;
+            border: 1px solid rgba(34,197,94,0.18);
+        }
+
+        /* ─── Live Badge ─── */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(31,41,55,0.07);
+            border: 1px solid rgba(31,41,55,0.12);
+            border-radius: 20px;
+            padding: 4px 11px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #374151;
+            opacity: 0;
+            transform: translateY(-6px);
+            animation: badgeDrop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.2s forwards;
+        }
+        @keyframes badgeDrop { to { opacity: 1; transform: translateY(0); } }
+        .tag-badge .dot {
+            width: 6px; height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.45); }
+            50%      { opacity: 0.6; box-shadow: 0 0 0 4px rgba(34,197,94,0); }
+        }
+
+        /* ─── Success Overlay ─── */
+        .success-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(4px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .success-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .success-modal {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2.6rem 2rem 2rem;
+            text-align: center;
+            max-width: 320px; width: 90%;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            transform: scale(0.88);
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .success-overlay.show .success-modal { transform: scale(1); }
+
+        .check-circle {
+            width: 72px; height: 72px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1f2937, #374151);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 20px rgba(31,41,55,0.35);
+            opacity: 0; transform: scale(0);
+        }
+        .success-overlay.show .check-circle {
+            animation: checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.15s forwards;
+        }
+        @keyframes checkPop {
+            0%   { opacity: 0; transform: scale(0); }
+            60%  { opacity: 1; transform: scale(1.18); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .check-circle svg { width: 32px; height: 32px; stroke: #fff; }
+        .check-svg-path { stroke-dasharray: 50; stroke-dashoffset: 50; }
+        .success-overlay.show .check-svg-path {
+            animation: drawCheck 0.4s ease 0.5s forwards;
+        }
+        @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+        .success-modal h3 { font-size: 1.2rem; font-weight: 700; color: #111827; margin-bottom: 0.3rem; }
+        .success-modal p { color: #6b7280; font-size: 0.85rem; line-height: 1.5; }
+
+        .btn-dismiss {
+            margin-top: 1.2rem;
+            background: linear-gradient(135deg, #1f2937, #000);
+            color: #fff; border: none;
+            border-radius: 10px;
+            padding: 9px 28px;
+            font-size: 0.84rem; font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .btn-dismiss:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        /* ─── Confetti ─── */
+        .confetti-piece {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 2px;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body class="bg-linear-to-br from-gray-50 via-gray-100 to-gray-50 min-h-screen">
+    <!-- Header -->
+    <%- include('../Partials/nav-bar') %>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="flex gap-8">
+            <!-- Sidebar -->
+            <%- include('../Partials/user-sidebar') %>
+
+            <!-- Referral Content -->
+            <main class="flex-1">
+                <!-- Breadcrumb -->
+                <div class="mb-6">
+                    <nav class="flex items-center gap-2 text-sm text-gray-600">
+                        <a href="/profile" class="hover:text-gray-900 transition">Profile</a>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        <span class="text-gray-900 font-medium">Referral Link</span>
+                    </nav>
+                </div>
+
+                <!-- ✅ CARD -->
+                <div class="card-animated">
+                    <div class="glass-effect rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+
+                        <!-- Header -->
+                        <div class="gradient-bg px-6 py-5 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="card-header-icon w-11 h-11 rounded-xl bg-white bg-opacity-10 flex items-center justify-center">
+                                    <i class="fas fa-link text-white text-lg"></i>
+                                </div>
+                                <div class="card-header-text">
+                                    <h2 class="text-white font-semibold text-base">Referral Link</h2>
+                                    <p class="text-gray-400 text-xs">Generate & share your unique referral</p>
+                                </div>
+                            </div>
+                            <div class="tag-badge"><span class="dot"></span> Live</div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="px-6 py-6 space-y-5">
+
+                            <!-- Stats -->
+                            <div class="field-row">
+                                <div class="stats-row">
+                                    
+                                    <div class="stat-card">
+                                        <div class="stat-num" id="statReward"><i class="fa-brands fa-rockrms"></i> 0</div>
+                                        <div class="stat-label">Earned</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Info note -->
+                            <div class="field-row flex items-start gap-2.5 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+                                <i class="fas fa-circle-info text-gray-400 text-sm mt-0.5 flex-shrink-0"></i>
+                                <p class="text-xs text-gray-500 leading-relaxed">
+                                    Invite friends and earn rewards <span class="font-semibold text-gray-700"><i class="fa-brands fa-rockrms"></i> 50</span> for every successful sign-up.
+                                </p>
+                            </div>
+
+                            <!-- Input + Button row -->
+                            <div class="field-row">
+                               
+                                <div class="flex gap-3">
+                                    
+                                    <!-- Generate Button -->
+                                    <button
+                                        class="btn-generate gradient-bg text-white text-sm font-semibold px-5 py-3 rounded-xl cursor-pointer whitespace-nowrap"
+                                        id="genBtn"
+                                        onclick="handleGenerate(event)"
+                                    >
+                                        <span id="genBtnLabel">
+                                            <i class="fas fa-bolt mr-1.5"></i>Generate
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Generated Link Box (hidden until generated) -->
+                            <div class="link-box" id="linkBox">
+                                <div class="link-box-inner">
+                                    <div class="flex items-center justify-between mb-2.5">
+                                        <span class="text-xs font-600 text-gray-500 uppercase tracking-wider">Your Referral Link</span>
+                                        <span class="text-xs font-semibold text-green-600 flex items-center gap-1">
+                                            <i class="fas fa-check-circle"></i> Active
+                                        </span>
+                                    </div>
+                                    <div class="link-url-text" id="linkUrl">https://referral.zzrh.com/r/...</div>
+                                    <div class="flex gap-2 mt-3">
+                                        <button class="btn-action" style="position:relative;" onclick="copyLink()">
+                                            <i class="fas fa-copy"></i> Copy Link
+                                            <span class="copy-toast" id="copyToast">Copied!</span>
+                                        </button>
+                                        <button class="btn-action" onclick="shareLink()">
+                                            <i class="fas fa-share-nodes"></i> Share
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                            <a href="/profile" class="text-sm text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5">
+                                <i class="fas fa-arrow-left text-xs"></i> Back
+                            </a>
+                            <span class="text-xs text-gray-400">Links never expire</span>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- ✅ CARD END -->
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ─── Success Overlay ─── -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-modal">
+            <div class="check-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline class="check-svg-path" points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h3>Link Generated!</h3>
+            <p>Your referral link is now active. Share it with friends and start earning rewards.</p>
+            <button class="btn-dismiss" onclick="dismissSuccess()">Done</button>
+        </div>
+    </div>
+
+    <script>
+        // ── Mobile menu ──
+        const menuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (menuButton && mobileMenu) {
+            menuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        }
+
+        // ── State ──
+        let linksCreated = 0;
+        let totalRefs    = 0;
+        let totalEarned  = 0;
+        let history      = [];
+        let currentLink  = '';
+
+        // ── Refs ──
+        const genBtn      = document.getElementById('genBtn');
+        const genBtnLabel = document.getElementById('genBtnLabel');
+        const linkBox     = document.getElementById('linkBox');
+        const linkUrl     = document.getElementById('linkUrl');
+        const historyEmpty= document.getElementById('historyEmpty');
+
+        // ── Utility ──
+        function uid(n) { return Math.random().toString(36).slice(2, 2 + n); }
+        function sanitise(s) { return s.replace(/[^a-zA-Z0-9._@-]/g, '').toLowerCase(); }
+
+        // ── Generate ──
+        window.handleGenerate = async function(e) {
+            // Ripple
+            const rect = genBtn.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width  = ripple.style.height = size + 'px';
+            ripple.style.left   = (e.clientX - rect.left  - size / 2) + 'px';
+            ripple.style.top    = (e.clientY - rect.top   - size / 2) + 'px';
+            genBtn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 560);
+            let val = "";
+            try{
+
+                const request = await fetch('/profile/referal-link',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        userId:'<%= isLogged.id %>'
+                    })
+                })
+                const result = await request.json()
+                
+                if(!result.success){
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
+                val = result.token
+
+            }catch(e){
+                console.warn(e)
+            }
+            
+
+            // Validation
+            
+
+            // Spinner
+            genBtn.disabled   = true;
+            genBtnLabel.innerHTML = '<span class="btn-spinner"></span> Generating…';
+
+            // Fake async
+            setTimeout(() => {
+                
+                currentLink = 'localhost:5000/register?ref=' + val;
+                linkUrl.textContent = currentLink;
+
+                // Show link box
+                linkBox.classList.add('visible');
+
+
+                const reward = 5 * 10;
+                totalEarned += reward;
+                document.getElementById('statReward').innerHTML = '<i class="fa-brands fa-rockrms"></i> ' + totalEarned;
+                bumpStat('statReward');
+
+
+                // Reset button
+                genBtnLabel.innerHTML = '<i class="fas fa-bolt mr-1.5"></i>Generate';
+                genBtn.disabled = false;
+                
+
+                // 🎉 Success
+                triggerSuccess();
+            }, 1000);
+        };
+
+        // ── Bump ──
+        function bumpStat(id) {
+            const el = document.getElementById(id);
+            el.classList.add('bump');
+            setTimeout(() => el.classList.remove('bump'), 320);
+        }
+
+        // ── History ──
+        function addHistory(name) {
+            const now  = new Date();
+            const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+            history.unshift({ name, time });
+            renderHistory();
+        }
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (history.length === 0) {
+                historyList.innerHTML = '<p class="text-xs text-gray-400 italic px-1">No links generated yet.</p>';
+                return;
+            }
+            history.slice(0, 5).forEach((item, i) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.style.animationDelay = (i * 0.07) + 's';
+                div.innerHTML =
+                    '<i class="fas fa-link text-gray-300 text-xs"></i>' +
+                    '<span class="hi-name">' + item.name + '</span>' +
+                    '<span class="hi-badge">Active</span>' +
+                    '<span class="hi-time">' + item.time + '</span>';
+                historyList.appendChild(div);
+            });
+        }
+
+        // ── Copy ──
+        window.copyLink = function() {
+            if (!currentLink) return;
+            navigator.clipboard.writeText(currentLink).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 1200);
+            });
+        };
+
+        // ── Share ──
+        window.shareLink = function() {
+            if (!currentLink) return;
+            if (navigator.share) {
+                navigator.share({ title: 'Join via my referral!', url: currentLink });
+            } else {
+                copyLink();
+            }
+        };
+
+        // ── Success + Confetti ──
+        function triggerSuccess() {
+            document.getElementById('successOverlay').classList.add('show');
+            launchConfetti();
+            setTimeout(dismissSuccess, 3200);
+        }
+        window.dismissSuccess = function() {
+            document.getElementById('successOverlay').classList.remove('show');
+        };
+
+        function launchConfetti() {
+            const colors = ['#1f2937','#374151','#22c55e','#3b82f6','#f59e0b','#6b7280','#fff','#10b981'];
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => dropConfetti(colors[i % colors.length]), i * 24);
+            }
+        }
+        function dropConfetti(color) {
+            const piece   = document.createElement('div');
+            piece.className = 'confetti-piece';
+            const size   = 7 + Math.random() * 7;
+            const startX = Math.random() * window.innerWidth;
+            const endX   = startX + (Math.random() - 0.5) * 280;
+            const endY   = window.innerHeight + 50;
+            const rot    = Math.random() * 640;
+            const dur    = 1.3 + Math.random() * 1;
+
+            piece.style.cssText =
+                'width:' + size + 'px;height:' + (size + Math.random()*5) + 'px;' +
+                'background:' + color + ';' +
+                'left:' + startX + 'px;top:-16px;' +
+                'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px') + ';';
+            document.body.appendChild(piece);
+
+            piece.animate([
+                { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+                { transform: 'translate(' + (endX - startX) + 'px,' + endY + 'px) rotate(' + rot + 'deg)', opacity: 0 }
+            ], { duration: dur * 1000, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'forwards' });
+
+            setTimeout(() => piece.remove(), dur * 1000 + 80);
+        }
+    </script>
+</body>
+</html>

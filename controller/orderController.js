@@ -17,7 +17,8 @@ export const ordersLoad = async (req,res)=>{
                 isLogged:req.session.user||'',
                 name:'',
                 email:'',
-                order:[]
+                order:[],
+                pageActive:'ORDER'
             })
         }
 
@@ -25,7 +26,8 @@ export const ordersLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             name:'',
             email:'',
-            order:order.data
+            order:order.data,
+            pageActive:'ORDER'
         })
     }catch(e){
         console.log("Error",e)
@@ -33,7 +35,8 @@ export const ordersLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             name:'',
             email:'',
-            order:[]
+            order:[],
+            pageActive:'ORDER'
         })
     }
 }
@@ -49,7 +52,8 @@ export const orderDetailsLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             name:'',
             email:'',
-            order:order.data
+            order:order.data,
+            pageActive:'ORDER'
         })
     }catch(e){
         console.log("Error",e)

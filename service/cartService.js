@@ -7,10 +7,13 @@ export const cartData = async()=>{
             path: "variantId",
             match:{status:true},
             populate: {
-                path: "productId"    
+                path: "productId",
+                populate: {
+                    path: "offer"   
+                }    
             }
         });
-
+    
         for (const item of data) {
             if (!item.variantId) continue;
 

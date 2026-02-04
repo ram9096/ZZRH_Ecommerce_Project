@@ -1,6 +1,6 @@
 import express from "express"
 import { adminCategoryAdd, adminCategoryAddLoad, adminCategoryEdit, adminCategoryEditLoad, adminCategoryLoad } from "../controller/categoryController.js"
-import { adminProductEdit, adminProductEditLoad, adminProductsAdd, adminProductsAddLoad, adminProductsLoad } from "../controller/productController.js"
+import { adminProductEdit, adminProductEditLoad, adminProductsAdd, adminProductsAddLoad, adminProductsLoad, offerAddProduct } from "../controller/productController.js"
 import { adminHomeLoad, adminLogin, adminLoginLoad, adminLogout, adminUserEdit, adminUsersLoad } from "../controller/adminController.js"
 import { isAdminAuthenticated } from "../middleware/adminMiddleware.js"
 import {upload} from "../config/multerConfig.js"
@@ -38,6 +38,7 @@ router.post('/offer-add',offerAdd)
 
 router.post('/product-add',upload.any(),adminProductsAdd)
 router.post('/products/:id',upload.any(),adminProductEdit)
+router.post('/product-offer-add',offerAddProduct)
 
 
 export default router
