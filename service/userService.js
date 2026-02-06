@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { sentOtp } from "../utils/otpMailing.js";
 import { pipeline } from "stream";
 import categoryModel from "../model/categoryModel.js";
+import referalModel from "../model/referalModel.js";
 
 export const findUserByEmail = (email) => userModel.findOne({ email });
 
@@ -34,7 +35,7 @@ export const userLoginLogic = async (email, password) => {
     }
 };
 
-export const registerService = async (name, email, password, mobileno) => {
+export const registerService = async (name, email, password, mobileno,ref = null) => {
     try{
         if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(name)||name.length<3){
             return {success:false,message:"USERNAME ERROR FROM SERVER"}
@@ -54,7 +55,24 @@ export const registerService = async (name, email, password, mobileno) => {
         if (existingUser) {
             return { success: false, message: "USER ALREADY EXISTS" };
         }
+        if(ref){
+            let referalToken = await referalModel.findOne({token:ref,used:false})
 
+            if(!referalToken){
+
+                return {
+                    success:false,
+                    message:"Link already used"
+                }
+            }
+
+            let user = await userModel.findOne({_id:referalToken.referrer})
+
+            user.wallet+=50
+            referalToken.used = true
+            await user.save()
+            await referalToken.save()
+        }
         let hashedPassword = await bcrypt.hash(password, 10);
 
         let newUser = new userModel({

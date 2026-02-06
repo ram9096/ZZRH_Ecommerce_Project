@@ -190,7 +190,7 @@
                             <div class="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
                                 <span class="text-white font-bold text-xl">Z</span>
                             </div>
-                            <h1 class="text-2xl font-bold text-gray-900">#ZZRH</h1>
+                            <h1 class="text-2xl font-bold text-gray-900">#Raftaara</h1>
                         </div>
                         <button class="relative w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
                             <i class="fas fa-bell text-gray-600"></i>
@@ -206,7 +206,7 @@
                     <a href="/admin/offer-add">
                         <button class="px-6 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center space-x-2">
                             <i class="fas fa-plus-circle"></i>
-                            <span>Add Product</span>
+                            <span>Create offer</span>
                         </button>
                     </a>
                 </div>
@@ -256,7 +256,7 @@
 
                         <div class="col-span-2 flex items-center">
                             <i class="fa-solid fa-money-bill-1-wave mr-2"></i>
-                            <span>Min Order</span>
+                            <span>Save upto</span>
                         </div>
 
                         <div class="col-span-2 flex items-center">
@@ -308,7 +308,7 @@
                                 <!-- Min Order -->
                                 <div class="col-span-2">
                                     <span class="text-gray-600">
-                                        <%= c.minOrderAmount ? `₹${c.minOrderAmount}` : '—' %>
+                                        <%= c.maxDiscount ? `₹${c.maxDiscount}` : '—' %>
                                     </span>
                                 </div>
 
@@ -329,10 +329,12 @@
 
                                 <!-- Actions -->
                                 <div class="col-span-1 flex items-center justify-center gap-2">
-                                    <button class="btn-action">
-                                        <i class="fas fa-edit mr-1"></i>
-                                        Edit
-                                    </button>
+                                    <a href="/admin/offer-edit/<%= c._id %>">
+                                        <button class="btn-action">
+                                            <i class="fas fa-edit mr-1"></i>
+                                            Edit
+                                        </button>
+                                    </a>
                                 </div>
 
                             </div>

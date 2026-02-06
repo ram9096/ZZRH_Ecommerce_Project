@@ -439,8 +439,9 @@
                             </div>
 
                             <!-- Input + Button row -->
-                            <div class="field-row">
-                               
+                            
+                            <div class="field-row <%= link ? 'hidden':'' %>">
+                            
                                 <div class="flex gap-3">
                                     
                                     <!-- Generate Button -->
@@ -455,9 +456,10 @@
                                     </button>
                                 </div>
                             </div>
-
+                            
+                            
                             <!-- Generated Link Box (hidden until generated) -->
-                            <div class="link-box" id="linkBox">
+                            <div class="link-box <%= link? 'visible':'' %>" id="linkBox">
                                 <div class="link-box-inner">
                                     <div class="flex items-center justify-between mb-2.5">
                                         <span class="text-xs font-600 text-gray-500 uppercase tracking-wider">Your Referral Link</span>
@@ -465,7 +467,7 @@
                                             <i class="fas fa-check-circle"></i> Active
                                         </span>
                                     </div>
-                                    <div class="link-url-text" id="linkUrl">https://referral.zzrh.com/r/...</div>
+                                    <div class="link-url-text" id="linkUrl">localhost:5000/register?ref=<%= link!=null ? link:"" %></div>
                                     <div class="flex gap-2 mt-3">
                                         <button class="btn-action" style="position:relative;" onclick="copyLink()">
                                             <i class="fas fa-copy"></i> Copy Link
@@ -525,15 +527,15 @@
         let totalRefs    = 0;
         let totalEarned  = 0;
         let history      = [];
-        let currentLink  = '';
-
         // ── Refs ──
         const genBtn      = document.getElementById('genBtn');
         const genBtnLabel = document.getElementById('genBtnLabel');
         const linkBox     = document.getElementById('linkBox');
         const linkUrl     = document.getElementById('linkUrl');
         const historyEmpty= document.getElementById('historyEmpty');
-
+        
+        let currentLink  = linkUrl.textContent? linkUrl.textContent: '';
+        
         // ── Utility ──
         function uid(n) { return Math.random().toString(36).slice(2, 2 + n); }
         function sanitise(s) { return s.replace(/[^a-zA-Z0-9._@-]/g, '').toLowerCase(); }
@@ -612,7 +614,11 @@
 
                 // 🎉 Success
                 triggerSuccess();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             }, 1000);
+            
         };
 
         // ── Bump ──
@@ -650,6 +656,7 @@
 
         // ── Copy ──
         window.copyLink = function() {
+            console.log(currentLink)
             if (!currentLink) return;
             navigator.clipboard.writeText(currentLink).then(() => {
                 const toast = document.getElementById('copyToast');

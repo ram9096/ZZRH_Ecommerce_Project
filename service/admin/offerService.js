@@ -3,9 +3,9 @@ import { offerValidation } from "../../Joi Validation/validation.js"
 import offerModel from "../../model/offerModel.js"
 
 
-export const offerDataLoad = async ()=>{
+export const offerDataLoad = async (filter = {})=>{
     try{
-        let data = await offerModel.find()
+        let data = await offerModel.find(filter)
 
         if(!data){
             return {
@@ -30,7 +30,7 @@ export const offerAddLogic = async (
     name,
     discountType,
     discountValue,
-    minOrderAmount,
+    maxDiscount,
     startDate,
     endDate,
     type
@@ -41,7 +41,7 @@ export const offerAddLogic = async (
             name,
             discountType,
             discountValue,
-            minOrderAmount,
+            maxDiscount,
             startDate,
             endDate,
             type
@@ -63,7 +63,7 @@ export const offerAddLogic = async (
             discountValue,
             startDate,
             endDate,
-            minOrderAmount,
+            maxDiscount,
             type
         })
         await newOffer.save()
@@ -72,6 +72,79 @@ export const offerAddLogic = async (
         return {
             success:true,
             message:"Offer added"
+        }
+        
+    }catch(e){
+
+        console.log(e)
+        return {
+
+            success: false,
+            message: "Server error",
+
+        };
+    }
+}
+
+export const offerEditLogic = async (
+    _id,
+    name,
+    discountType,
+    discountValue,
+    maxDiscount,
+    startDate,
+    endDate,
+    type,
+    isActive
+)=>{
+    try{
+
+        const { error, value } = offerValidation.validate( {
+            name,
+            discountType,
+            discountValue,
+            maxDiscount,
+            startDate,
+            endDate,
+            type
+        } ,{ abortEarly: false });
+       
+        if (error) {
+        
+            const messages = error.details.map(err => err.message);
+            return {
+                success: false,
+                message: messages,
+
+            };
+        }
+
+        let offer = await offerModel.findByIdAndUpdate(_id,{
+                name,
+                discountType,
+                discountValue,
+                startDate,
+                endDate,
+                maxDiscount,
+                type,
+                isActive
+            },
+            { new: true }
+        )
+
+        if(!offer){
+
+            return {
+                success: false,
+                message: "Try again",
+
+            };
+        }
+
+        await offer.save()
+        return {
+            success:true,
+            message:"Offer updated"
         }
         
     }catch(e){

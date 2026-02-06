@@ -294,6 +294,8 @@ export const addressDelete = async ( id )=>{
     }
 }
 
+export const referalLinkFetch = (userId)=> referalModel.findOne({referrer:userId,used:false})
+
 export const generateReferalLink  = async (userId)=>{
     try{
 

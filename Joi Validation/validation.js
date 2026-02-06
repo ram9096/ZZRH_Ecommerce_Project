@@ -122,12 +122,12 @@ export const offerValidation = Joi.object({
       "any.required": "Discount value is required"
     }),
 
-  minOrderAmount: Joi.number()
+  maxDiscount: Joi.number()
     .min(0)
     .optional()
     .messages({
-      "number.base": "Minimum order amount must be a number",
-      "number.min": "Minimum order amount cannot be negative"
+      "number.base": "Max discount amount must be a number",
+      "number.min": "Max discount amount cannot be negative"
     }),
 
   startDate: Joi.date()
@@ -149,4 +149,42 @@ export const offerValidation = Joi.object({
   isActive: Joi.boolean().optional()
 });
 
+export const couponValidation = Joi.object({
+  code: Joi.string()
+    .pattern(/^[A-Z0-9]{5,10}$/)
+    .required()
+    .messages({
+      "string.pattern.base":
+        "Coupon code must be 5–10 characters long and contain only uppercase letters and numbers",
+      "string.empty": "Coupon code is required"
+    }),
 
+  discountType: Joi.string()
+    .valid("PERCENTAGE", "FLAT")
+    .required(),
+
+  discountValue: Joi.number()
+    .positive()
+    .required(),
+
+  minOrderValue: Joi.number()
+    .min(0)
+    .default(0),
+
+  maxDiscount: Joi.when("discountType", {
+    is: "PERCENTAGE",
+    then: Joi.number().positive().required(),
+    otherwise: Joi.number().optional().allow(null)
+  }),
+
+  expiryDate: Joi.date()
+    .greater("now")
+    .required(),
+
+  usageLimit: Joi.number()
+    .integer()
+    .min(1)
+    .default(1),
+
+  isActive: Joi.boolean().default(true)
+});

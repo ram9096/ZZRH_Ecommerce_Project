@@ -74,8 +74,14 @@
                                 <circle cx="11" cy="11" r="8" stroke-width="2"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35"/>
                             </svg>
-                            <input type="text" placeholder="Search orders..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+                            <input type="text" id="search-box" value="<%= search || '' %>" placeholder="Search orders..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent">
                         </div>
+                        <button
+                            type="button"
+                            id="search-btn"
+                            class="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800">
+                            Search
+                        </button>
                         <div class="relative">
                             <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
                                 <option>Latest</option>
@@ -179,18 +185,82 @@
                     </div>
                 </div>
 
+                <%
+                    const currentPage = pagination.currentPage;
+                    const totalOrders = pagination.totalOrders;
+                    const limit = order.length || 0;
+
+                    const start = totalOrders === 0 ? 0 : (currentPage - 1) * 6 + 1;
+                    const end = Math.min(start + limit - 1, totalOrders);
+                %>
+
                 <!-- Pagination -->
-                <div class="mt-6 flex items-center justify-between">
-                    <p class="text-gray-600">Showing <span class="font-semibold">1</span> to <span class="font-semibold">4</span> of <span class="font-semibold">4</span> orders</p>
+               <div class="mt-6 flex items-center justify-between">
+
+                    <!-- Showing text -->
+                    <p class="text-gray-600">
+                        Showing
+                        <span class="font-semibold"><%= start %></span>
+                        to
+                        <span class="font-semibold"><%= end %></span>
+                        of
+                        <span class="font-semibold"><%= pagination.totalOrders %></span>
+                        orders
+                    </p>
+
+                    <!-- Pagination buttons -->
                     <div class="flex gap-2">
-                        <button class="w-10 h-10 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center justify-center font-semibold">
-                            1
-                        </button>
+
+                        <!-- Prev -->
+                        <% if (pagination.currentPage > 1) { %>
+                            <a href="?page=<%= pagination.currentPage - 1 %>"
+                                class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                                ‹
+                            </a>
+                        <% } else { %>
+                            <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                                ‹
+                            </span>
+                        <% } %>
+
+                        <!-- Current page -->
+                        <span class="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold">
+                        <%= pagination.currentPage %>
+                        </span>
+
+                        <!-- Next -->
+                        <% if (pagination.currentPage < pagination.totalPages) { %>
+                        <a href="?page=<%= parseInt(pagination.currentPage) + 1 %>"
+                            class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                            ›
+                        </a>
+                        <% } else { %>
+                        <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                            ›
+                        </span>
+                        <% } %>
+
                     </div>
                 </div>
+
+
+
             </div>
         </div>
-    </div>   
+    </div> 
+    
+    
+    <script>
+        const searchBox = document.getElementById('search-box');
+        const searchBtn = document.getElementById('search-btn');
+
+        searchBtn.addEventListener('click', () => {
+            const value = searchBox.value.trim();
+
+            window.location.href = `?page=1&search=${encodeURIComponent(value)}`;
+        });
+
+    </script>
 
 </body>
 </html>

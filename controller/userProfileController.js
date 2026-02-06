@@ -1,7 +1,7 @@
 
 //Page renderings
 
-import { AddressAddLogic, addressDelete, AddressEditLogic, addressFetcher, emailEditLogic, generateReferalLink, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
+import { AddressAddLogic, addressDelete, AddressEditLogic, addressFetcher, emailEditLogic, generateReferalLink, PasswordEditLogic, referalLinkFetch, usernameEditLogic } from "../service/userProfileService.js"
 import { findUserByEmail, generateOtp } from "../service/userService.js"
 
 export const userProfileLoad = async (req,res)=>{
@@ -127,13 +127,16 @@ export const userAddressLoad = async (req,res)=>{
     }
 }
 
-export const referalLinkGeneratorLoad = (req,res)=>{
+export const referalLinkGeneratorLoad = async (req,res)=>{
+    let referaLink = await referalLinkFetch(req.session.user.id)
+    
     return res.render('User/referal-page',{
         isLogged:req.session.user||'',
         name:"usern",
         email:"email",       
         mobile:"mobil",
-        pageActive:"LINK"
+        pageActive:"LINK",
+        link:referaLink ? referaLink.token : null
     })
 }
 //Controllers --------------

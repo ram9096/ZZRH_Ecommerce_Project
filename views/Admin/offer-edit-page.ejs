@@ -30,6 +30,47 @@
         .form-input:focus {
             transform: translateY(-1px);
         }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 24px;
+            top: 0; left: 0; right: 0; bottom: 0;
+            transition: 0.3s;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            height: 28px;
+            width: 28px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        input:checked + .slider {
+            background-color: #22c55e; /* green */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -68,14 +109,16 @@
 
             <!-- Page Header -->
             <div class="mb-10">
-                <h1 class="text-4xl font-bold text-gray-900 mb-3">Add New Offer</h1>
-                <p class="text-gray-600 text-lg">Create a new offer for your products,variants,category</p>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">Edit Offer</h1>
+                <p class="text-gray-600 text-lg">Edit offer you have created</p>
             </div>
 
             <!-- Form Card -->
             <div class="max-w-3xl">
                 <div class="glass-effect rounded-2xl shadow-xl p-8 border border-white/20">
                     <form id="categoryForm">
+                        
+
                         <!-- Category Name -->
                          <div class="mb-8">
                             <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
@@ -86,6 +129,7 @@
                                 id="offer_name"
                                 name="offer_name"
                                 type="text" 
+                                value="<%= offer[0].name %>"
                                 placeholder="e.g., Men's offer / Women / Kids" 
                                 class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
                             >
@@ -104,8 +148,17 @@
                                 placeholder="e.g., Men / Women / Kids" 
                                 class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900">
                                 <option value="">Select Offer type</option>
-                                <option value="PRODUCT">Product</option>
-                                <option value="CATEGORY">Category</option>
+
+                                <option value="PRODUCT"
+                                    <%= offer[0].type === 'PRODUCT' ? 'selected' : '' %>>
+                                    Product
+                                </option>
+
+                                <option value="CATEGORY"
+                                    <%= offer[0].type === 'CATEGORY' ? 'selected' : '' %>>
+                                    Category
+                                </option>
+
                             </select>
                             <span id="Offer_type-error" class="text-xs text-red-500 mt-2 block"></span>
                         </div>
@@ -121,9 +174,9 @@
                                 type="text" 
                                 placeholder="e.g., Men / Women / Kids" 
                                 class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900">
-                                <option value="">Select Discount type</option>
-                                <option value="PERCENTAGE">PERCENTAGE</option>
-                                <option value="FLAT">FLAT</option>
+                                <option value=""  >Select Discount type</option>
+                                <option value="PERCENTAGE" <%= offer[0].discountType === 'PERCENTAGE' ? 'selected' : '' %> >PERCENTAGE</option>
+                                <option value="FLAT" <%= offer[0].discountType === 'FLAT' ? 'selected' : '' %>  >FLAT</option>
                             </select>
                             <span id="discount_type-error" class="text-xs text-red-500 mt-2 block"></span>
                         </div>
@@ -136,6 +189,7 @@
                             id="discount_value"
                                 name="discount_value"
                                 type="text" 
+                                value="<%= offer[0].discountValue %>"
                                 placeholder="e.g., 75% / flat 50 off" 
                                 class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900" 
                             type="text"
@@ -145,11 +199,12 @@
                         <div class="mb-8" id="maxDiscount">
                             <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
                                 <i class="fas fa-tag text-gray-600"></i>
-                                <span>Maximum Discount value</span>
+                                <span>Maximum discount amount</span>
                             </label>
                             <input
                             id="min-order"
                                 name="min-order"
+                                value="<%= offer[0].maxDiscount %>"
                                 type="text" 
                                 placeholder="e.g., ₹5000" 
                                 class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900" 
@@ -171,6 +226,7 @@
                                         id="start-date"
                                         name="startDate"
                                         type="date"
+                                        value="<%= offer[0].startDate.toISOString().split('T')[0] %>"
                                         class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
                                     />
                                     <span id="start-date-error" class="text-xs text-red-500 mt-2 block"></span>
@@ -182,10 +238,17 @@
                                         id="end-date"
                                         name="endDate"
                                         type="date"
+                                        value="<%= offer[0].endDate.toISOString().split('T')[0] %>"
                                         class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
                                     />
                                     <span id="end-date-error" class="text-xs text-red-500 mt-2 block"></span>
                                 </div>
+
+                                <label class="switch">
+                                    <input id="status" type="checkbox" name="isActive" <%= offer[0].isActive==true?  'checked':'' %>>
+                                    <span class="slider"></span>
+                                </label>
+                                
                             </div>
                         </div>
 
@@ -206,7 +269,7 @@
                                 class="px-8 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center gap-2"
                             >
                                 <i class="fas fa-plus-circle"></i>
-                                <span>Create this offer</span>
+                                <span>Save this offer</span>
                             </button>
                         </div>
                     </form>
@@ -221,6 +284,7 @@
         (function (){
             const Categoryform  = document.getElementById('categoryForm')
             let max_discount = document.getElementById('maxDiscount')
+            let status = document.getElementById('status')
             
             const fields = {
                 name:document.getElementById('offer_name'),
@@ -375,19 +439,21 @@
 
                     
                     const formData = new FormData(Categoryform);
-                    const request = await fetch('/admin/offer-add',{
+                    const request = await fetch('/admin/offer-edit',{
                         method:"POST",
                         headers:{
                             "Content-Type":"application/json"
                         },
                         body:JSON.stringify({
+                            _id:"<%= offer[0]._id %>",
                             name:fields.name.value,
                             startDate:fields.startDate.value,
                             endDate: fields.endDate.value,
                             discount:fields.discount.value,
                             value:fields.value.value,
                             min:fields.min.value?fields.min.value:0,
-                            type:fields.type.value
+                            type:fields.type.value,
+                            status:status.checked
                         })
                     })
 

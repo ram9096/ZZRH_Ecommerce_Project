@@ -26,6 +26,7 @@ export const userRegisterLoad = (req, res) => {
     if(req.session.user){
         return res.redirect('/home')
     }
+    req.session.ref = req.query.ref
     return res.render("User/register-page");
 };
 
@@ -201,8 +202,10 @@ export const userLogin = async (req, res) => {
 export const userRegister = async (req, res) => {
     try {
         const { name, email, password, mobileno } = req.body;
+        
+        let ref = req.session.ref
 
-        let reg = await registerService(name, email, password, mobileno);
+        let reg = await registerService(name, email, password, mobileno,ref);
 
         if (!reg.success) {
             return res.status(400).render("User/login-page",{error:reg.message});

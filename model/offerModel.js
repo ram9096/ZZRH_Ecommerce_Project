@@ -24,9 +24,9 @@ const offerSchema = new mongoose.Schema({
     required: true
   },
   
-  minOrderAmount: {
+  maxDiscount: {
     type: Number,
-    required: false
+    default: null
   },
 
   isActive: { type: Boolean, default: true }

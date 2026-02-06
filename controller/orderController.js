@@ -6,11 +6,12 @@ export const ordersLoad = async (req,res)=>{
     try{
 
         let id = req.session.user.id
+        const page = req.query.page || 1
         if(!id){
             return res.redirect('/login')
         }
         let limit = 1
-        let order = await getOrders({userId:id})
+        let order = await getOrders({userId:id},page,2)
         
         if(!order.success){
             return res.render('User/manage-order',{
@@ -18,7 +19,8 @@ export const ordersLoad = async (req,res)=>{
                 name:'',
                 email:'',
                 order:[],
-                pageActive:'ORDER'
+                pageActive:'ORDER',
+                pagination:order.pagination
             })
         }
 
@@ -27,7 +29,8 @@ export const ordersLoad = async (req,res)=>{
             name:'',
             email:'',
             order:order.data,
-            pageActive:'ORDER'
+            pageActive:'ORDER',
+            pagination:order.pagination
         })
     }catch(e){
         console.log("Error",e)
@@ -36,7 +39,8 @@ export const ordersLoad = async (req,res)=>{
             name:'',
             email:'',
             order:[],
-            pageActive:'ORDER'
+            pageActive:'ORDER',
+            pagination:order.pagination
         })
     }
 }

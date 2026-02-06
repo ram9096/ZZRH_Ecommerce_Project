@@ -1,22 +1,28 @@
 import orderModel from "../model/orderModel.js"
 import variantModel from "../model/variantModel.js"
 
-export const getOrders = async (filter,limit)=>{
+export const getOrders = async (filter,page=1,limit=0)=>{
     try{
+
+        const totalOrders = await orderModel.countDocuments(filter);
+
+        const skip = (page-1)*limit
         let data  = await orderModel
             .find(filter)
-            
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .populate('userId')
             .populate('shippingAddressId')
             .populate('orderItems.variantId')
             .populate({
                 path: 'cancelledAt.cancelledProducts',
                 populate: {
-                path: 'productId',
-                model: 'Product'
+                    path: 'productId',
+                    model: 'Product'
                 }
             });
-            
+        
 
         if(!data){
             return {
@@ -27,7 +33,12 @@ export const getOrders = async (filter,limit)=>{
 
         return {
             success:true,
-            data:data
+            data:data,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(totalOrders / limit),
+                totalOrders
+            }
         }
 
     }catch(e){

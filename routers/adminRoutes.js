@@ -4,8 +4,9 @@ import { adminProductEdit, adminProductEditLoad, adminProductsAdd, adminProducts
 import { adminHomeLoad, adminLogin, adminLoginLoad, adminLogout, adminUserEdit, adminUsersLoad } from "../controller/adminController.js"
 import { isAdminAuthenticated } from "../middleware/adminMiddleware.js"
 import {upload} from "../config/multerConfig.js"
-import { adminOrdersDetailsLoad, adminOrdersLoad, adminOrdersUpdate } from "../controller/Admin/orderController.js"
-import { offerAdd, offerAddLoad, offerLoad } from "../controller/Admin/offerController.js"
+import { adminOrdersDetailsLoad, adminOrdersLoad, adminOrdersUpdate, analyticsLoad } from "../controller/Admin/orderController.js"
+import { offerAdd, offerAddLoad, offerEdit, offerEditLoad, offerLoad } from "../controller/Admin/offerController.js"
+import { couponEditLoad, couponFormCreate, couponFormEdit, couponFormLoad, couponLoad } from "../controller/Admin/couponController.js"
 let router = express.Router()
 
 router.get('/',adminLoginLoad)
@@ -21,6 +22,10 @@ router.get('/product-add',isAdminAuthenticated,adminProductsAddLoad)
 router.get('/products/:id',adminProductEditLoad)
 router.get('/logout',adminLogout)
 
+router.get('/coupons',couponLoad)
+router.get('/coupons-add',couponFormLoad)
+router.get('/coupon-edit/:id',couponEditLoad)
+
 router.post('/login',adminLogin)
 router.post('/users/edit',adminUserEdit)
 
@@ -34,7 +39,15 @@ router.post('/category-edit/:id',upload.none(),isAdminAuthenticated,adminCategor
 
 router.get('/offer',offerLoad)
 router.get('/offer-add',offerAddLoad)
+router.get('/offer-edit/:id',offerEditLoad)
+
+router.get('/analytics',analyticsLoad)
+
 router.post('/offer-add',offerAdd)
+router.post('/offer-edit',offerEdit)
+
+router.post('/coupons-add',couponFormCreate)
+router.post('/coupons-edit',couponFormEdit)
 
 router.post('/product-add',upload.any(),adminProductsAdd)
 router.post('/products/:id',upload.any(),adminProductEdit)
