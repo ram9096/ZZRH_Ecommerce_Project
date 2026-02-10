@@ -43,61 +43,6 @@ export const adminOrdersLoad = async (req,res)=>{
     }
 }
 
-export const analyticsLoad = async (req,res)=>{
-    try{
-
-        let order = await getOrders({})
-        let variant = await variantLoad()
-        let productModel = await productModelLoad({})
-        let totalOrders = 0;
-        let fullRevenue = 0;
-
-        order.data.forEach(order => {
-            order.orderItems.forEach(item => {
-                fullRevenue += item.totalPrice;
-            });
-        });
-
-        order.data.forEach(order => {
-            order.orderItems.forEach(item => {
-                totalOrders += item.quantity;
-            });
-        });
-
-        if(!order.success){
-            return res.render('Admin/analytics-page',{
-                activePage:'analytics',
-                order:[],
-                variant:[],
-                product:[],
-                fullRevenue:0,
-                totalOrders:0
-            })    
-        }
-        return res.render('Admin/analytics-page',{
-            activePage:'analytics',
-            order:order.data,
-            variant:variant.data,
-            product:productModel.data,
-            fullRevenue,
-            totalOrders
-        })
-
-    }catch(e){
-
-        console.log(e)
-        return res.render('Admin/analytics-page',{
-            activePage:'analytics',
-            order:[],
-            variant:[],
-            product:[],
-            fullRevenue:0,
-            totalOrders:0
-        }) 
-    }
-
-}
-
 export const adminOrdersDetailsLoad = async (req,res)=>{
     try{
 

@@ -6,6 +6,7 @@ import { cartLoad } from "../controller/cartController.js"
 import CartRoutes from "./cartRoutes.js"
 import checkOutRoutes from "./checkoutRoutes.js"
 import OrderRoutes from "./orderRoutes.js"
+import { captureOrder, createOrder } from "../utils/paypal.js"
 let router = express.Router()
 
 router.get('/',userLandingLoad)
@@ -44,4 +45,6 @@ router.post('/profile/address-management',userAddressAdd)
 router.post('/profile/address-edit',userAddressEdit)
 router.post('/profile/delete-address/:id',userAddressDelete)
 router.post('/profile/referal-link',referalLingGenerator)
+router.post('/paypal/create-order',createOrder)
+router.post('/paypal/capture-order',captureOrder)
 export default router;

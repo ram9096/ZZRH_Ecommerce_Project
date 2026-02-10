@@ -253,46 +253,32 @@ export const offerAddLogic = async (productId,offerId,type)=>{
             success:false,
             message:"ID error try again"
         }
-
+ 
     }
 }
 
-const applyOffer = (price, offer) => {
-  if (!offer) return price;
 
-  if (offer.discountType === "PERCENTAGE") {
-    return price - (price * offer.discountValue) / 100;
-  }
+export const applyOffer = async (_id)=>{
+    try{
 
-  if (offer.discountType === "FLAT") {
-    return price - offer.discountValue;
-  }
+        
+        const product = await variantModel
+            .find({productId:_id})
+            .populate({
+                path: "productId",
+                populate: {
+                    path: "categoryId"
+                }
+            })
+            .populate({
+                path: "productId",
+                populate: {
+                    path: "offer"
+                }
+            })
+        
 
-  return price;
-};
+    }catch(e){
 
-export const applyOfferToProduct = async (productId) => {
-  const product = await productModel.findById(productId)
-    .populate("offer")
-    .populate({
-      path: "categoryId",
-      populate: { path: "offer" }
-    });
-
-  if (!product) throw new Error("Product not found");
-
-  const variants = await variantModel.find({ productId });
-
-  for (const v of variants) {
-    const productOfferPrice = applyOffer(v.price, product.offer);
-    const categoryOfferPrice = applyOffer(v.price, product.categoryId?.offer);
-
-    const finalPrice = Math.min(productOfferPrice, categoryOfferPrice);
-    console.log(finalPrice)
-    return;
-    v.price = v.price - Math.max(finalPrice, 0);
-    await v.save();
-  }
-
-  return true;
-};
+    }
+}

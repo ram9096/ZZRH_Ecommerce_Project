@@ -424,7 +424,7 @@
                                 <div class="stats-row">
                                     
                                     <div class="stat-card">
-                                        <div class="stat-num" id="statReward"><i class="fa-brands fa-rockrms"></i> 0</div>
+                                        <div class="stat-num" id="statReward"><i class="fa-brands fa-rockrms"></i> <%= balance %></div>
                                         <div class="stat-label">Earned</div>
                                     </div>
                                 </div>
@@ -601,9 +601,7 @@
                 linkBox.classList.add('visible');
 
 
-                const reward = 5 * 10;
-                totalEarned += reward;
-                document.getElementById('statReward').innerHTML = '<i class="fa-brands fa-rockrms"></i> ' + totalEarned;
+                
                 bumpStat('statReward');
 
 

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASETiFY Checkout</title>
+    <title>Raftaara Checkout</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=AQzSGKugPk2m7_p1oktocNYiGpWZU4Wzhwx-uBTjBrHJV-zT18_ERLT4hRrSypSS0v_pFgzhonAPDYO5&currency=USD"></script>
+
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -54,11 +56,11 @@
                         <div class="border-2 border-black rounded-lg p-4">
                             <label class="flex items-center justify-between cursor-pointer mb-4">
                                 <div class="flex items-center gap-3">
-                                    <input type="radio" value="ONLINE" name="payment" checked class="w-5 h-5 text-black accent-black">
+                                    <input type="radio" value="ONLINE" name="payment"  class="w-5 h-5 text-black accent-black">
                                     <i class="fa-solid fa-credit-card gradient-text text-2xl"></i>
                                     <div>
                                         <div class="font-medium text-gray-900">Online</div>
-                                        <div class="text-sm text-gray-500">Razorpay or PayPal</div>
+                                        <div class="text-sm text-gray-500"> PayPal</div>
                                     </div>
                                 </div>
                                 <div class="flex gap-2">
@@ -76,15 +78,15 @@
                             </label>
 
                             <!-- Card Details Form -->
-                            <div class="space-y-4 pt-4 border-t border-gray-200">
-                                <!-- Card Number -->
+                            <!-- <div class="space-y-4 pt-4 border-t border-gray-200">
+                                 Card Number 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
                                     <input type="text" placeholder="1234 5678 9101 1121" 
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
                                 </div>
 
-                                <!-- Card Details Row -->
+                                 Card Details Row 
                                 <div class="grid grid-cols-3 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
@@ -102,7 +104,7 @@
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
 
                         <!-- Wallet -->
@@ -120,6 +122,9 @@
                                 </div>
                             </div>
                         </label>
+
+
+                        <div id="paypal-button-container" class="mt-6 hidden"></div>
                     </div>
 
                     <!-- Pay Now Button -->
@@ -194,6 +199,9 @@
         </div>
     </div>
 
+    
+
+
     <style>
         .gradient-bg {
             background: radial-gradient(
@@ -218,6 +226,92 @@
     </style>
 
     <script>
+
+        const payBtn = document.getElementById("pay");
+        const paypalContainer = document.getElementById("paypal-button-container");
+
+        document.querySelectorAll('input[name="payment"]').forEach(radio => {
+            radio.addEventListener("change", () => {
+                if (radio.value === "ONLINE") {
+                    paypalContainer.classList.remove("hidden");
+                    payBtn.classList.add("hidden");
+                } else {
+                    paypalContainer.classList.add("hidden");
+                    payBtn.classList.remove("hidden");
+                }
+            });
+        });
+
+        paypal.Buttons({
+            createOrder: async () => {
+                try{
+                    const res = await fetch("/paypal/create-order", {
+                        method: "POST"
+                    });
+
+                    if (!res.ok) {
+                        throw new Error("Create order API failed");
+                    }
+                    const data = await res.json();
+
+                    if (!data.id) {
+                        throw new Error("PayPal order ID missing");
+                    }
+                    return data.id; 
+                }catch(e){
+                    console.error(e)
+                    Swal.fire("Error", e.message, "error");
+                    throw e;
+                }
+            },
+
+            onApprove: async (data) => {
+                try {
+                    console.log("Reached on Approve")
+                    const res = await fetch("/paypal/capture-order", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ orderID: data.orderID })
+                    });
+
+                    if (!res.ok) {
+                        throw new Error("Capture API failed");
+                    }
+
+                    const result = await res.json();
+
+                    console.log("In on Approve",result)
+                    
+                    if (result.status !== "COMPLETED") {
+                        throw new Error("Payment not completed");
+                    }
+
+                    
+                    const orderRes = await fetch("/checkout/method", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ method: "PAYPAL" })
+                    });
+
+                    const orderResult = await orderRes.json();
+
+                    if (!orderResult.success) {
+                        throw new Error(orderResult.message || "Order creation failed");
+                    }
+
+                    Swal.fire("Success", "Payment successful 🎉", "success");
+                    window.location.href = orderResult.redirect;
+
+                } catch (err) {
+                    console.error(err);
+                    Swal.fire("Error", err.message, "error");
+                    
+                }
+            }
+
+        }).render("#paypal-button-container");  
+
+
         function calculateSubtotal() {
             let subtotal = 0;
 

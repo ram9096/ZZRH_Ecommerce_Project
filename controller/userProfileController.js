@@ -128,16 +128,24 @@ export const userAddressLoad = async (req,res)=>{
 }
 
 export const referalLinkGeneratorLoad = async (req,res)=>{
-    let referaLink = await referalLinkFetch(req.session.user.id)
-    
-    return res.render('User/referal-page',{
-        isLogged:req.session.user||'',
-        name:"usern",
-        email:"email",       
-        mobile:"mobil",
-        pageActive:"LINK",
-        link:referaLink ? referaLink.token : null
-    })
+    try{
+        let referaLink = await referalLinkFetch(req.session.user.id)
+        
+        let user = await findUserByEmail(req.session.user.email)
+
+        return res.render('User/referal-page',{
+            isLogged:req.session.user||'',
+            name:"usern",
+            email:"email",       
+            mobile:"mobil",
+            pageActive:"LINK",
+            link:referaLink ? referaLink.token : null,
+            balance:user.wallet?user.wallet:0
+        })
+    }catch(e){
+        console.log(e)
+        return res.status(500).redirect('/login') 
+    }
 }
 //Controllers --------------
 

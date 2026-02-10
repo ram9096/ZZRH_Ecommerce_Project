@@ -1,6 +1,8 @@
 import { offerValidation } from "../../Joi Validation/validation.js"
+import categoryModel from "../../model/categoryModel.js"
 
 import offerModel from "../../model/offerModel.js"
+import productModel from "../../model/productModel.js"
 
 
 export const offerDataLoad = async (filter = {})=>{
@@ -67,6 +69,7 @@ export const offerAddLogic = async (
             type
         })
         await newOffer.save()
+
 
         
         return {
@@ -158,3 +161,4 @@ export const offerEditLogic = async (
         };
     }
 }
+
