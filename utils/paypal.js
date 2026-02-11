@@ -1,6 +1,7 @@
 import paypalClient from "../config/paypal-config.js";
 import checkoutNodeJssdk from "@paypal/checkout-server-sdk";
 import { calculateOrderTotal } from "./totalCalculate.js";
+import paymentSchema from "../model/paymentModel.js";
 
 export const createOrder = async (req, res) => {
     const total = await calculateOrderTotal()
@@ -32,17 +33,54 @@ export const createOrder = async (req, res) => {
 };
 
 export const captureOrder = async (req, res) => {
-  const { orderID } = req.body
+  try {
+    const { orderID } = req.body;
 
-  const request =
-    new checkoutNodeJssdk.orders.OrdersCaptureRequest(orderID)
-  request.requestBody({})
+    const request =
+      new checkoutNodeJssdk.orders.OrdersCaptureRequest(orderID);
 
-  const capture = await paypalClient.execute(request)
-  const status = capture.result.status   
-    console.log("Reached here status",status)
-  res.json({
-    success: status === "COMPLETED",
-    status
-  })
+    request.requestBody({});
+
+    const capture = await paypalClient.execute(request);
+
+    const result = capture.result;
+
+    const status = result.status;
+
+    if (status === "COMPLETED") {
+
+      const paymentDetails =
+        result.purchase_units[0].payments.captures[0];
+     
+      
+      let userId = req.session.user.id
+      let email = req.session.user.email
+      
+      const newOrder = new paymentSchema({
+        userId, 
+        paypalOrderId: orderID,
+        paypalCaptureId: paymentDetails.id,
+        amount: paymentDetails.amount.value,
+        currency: paymentDetails.amount.currency_code,
+        paymentStatus: status,
+        payerEmail: email,
+        payerName: result.payer.name.given_name
+      });
+
+      await newOrder.save();
+
+      return res.json({
+        success: true,
+        status:"COMPLETED"
+      });
+    }
+
+    res.json({
+      success: false
+    });
+
+  } catch (error) {
+    console.error("Capture Error:", error);
+    res.status(500).json({ message: "Payment failed" });
+  }
 }

@@ -385,7 +385,7 @@
 
                     const result = await res.json();
 
-                    console.log("In on Approve",result)
+                    
                     
                     if (result.status !== "COMPLETED") {
                         throw new Error("Payment not completed");
@@ -395,7 +395,7 @@
                     const orderRes = await fetch("/checkout/method", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ method: "PAYPAL" })
+                        body: JSON.stringify({ method: "PAYPAL",coupon:code.value ? code.value:'' })
                     });
 
                     const orderResult = await orderRes.json();
