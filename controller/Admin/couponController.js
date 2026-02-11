@@ -1,4 +1,4 @@
-import { couponFetcher, couponFormCreateLogic, couponFormEditLogic } from "../../service/admin/couponService.js"
+import { couponApplyLogic, couponFetcher, couponFormCreateLogic, couponFormEditLogic } from "../../service/admin/couponService.js"
 
 export const couponLoad = async (req,res)=>{
     try{
@@ -120,3 +120,32 @@ export const couponFormEdit = async (req,res)=>{
         })
     }
 } 
+
+
+export const couponApply = async (req,res)=>{
+    try{
+
+        const { code,total } = req.body
+        const couponProgress = await couponApplyLogic(code,total)
+        
+        if(!couponProgress.success){
+            return res.status(400).json({
+                success:false,
+                message:couponProgress.message
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:couponProgress.message,
+            discount:couponProgress.discount
+        })
+        
+    }catch(e){
+        console.log(e)
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}

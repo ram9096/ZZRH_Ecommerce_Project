@@ -74,30 +74,28 @@ export const cancelRequestLogic = async (id,reason,remark,orderid)=>{
 
         if(id=="ALL"){
             requestProgress.expectedDeliveryDate=null
+
             for(let i of requestProgress.orderItems){
 
-                if(requestProgress.cancelledProducts.includes(i.variantId)){
-                    continue
-                }
+                requestProgress.cancelledAt.push({
+                    reason: reason,
+                    cancelledBy: "user",
+                    remarks: remark,
+                    requestedAt: new Date(),
+                    cancelledProducts:[i.variantId]
+                });
 
-                requestProgress.cancelledProducts.push(i.variantId)
                 await variantModel.updateOne({_id:i.variantId},{$inc:{stock:i.quantity}})
             }
-
-            requestProgress.cancelledAt.push({
-                reason: reason,
-                cancelledBy: "user",
-                remarks: remark,
-                requestedAt: new Date()
-            });
-
-           
+            
+            requestProgress.orderStatus = "cancelled"
+            requestProgress.deliveryStatus = "cancelled"
 
             await requestProgress.save()
             
             return {
                 success:true,
-                message:"Cancel order requested"
+                message:"Order got cancelled"
             }
 
         }
@@ -157,6 +155,44 @@ export const cancelRequestLogic = async (id,reason,remark,orderid)=>{
         return {
             success:false,
             message:"Something went wrong"
+        }
+    }
+}
+
+
+export const returnRequestLogic = async (orderId,reason,remark,resolution)=>{
+    try{
+
+        let order = await orderModel.findOne({_id:orderId})
+
+        if(!order){
+            return {
+                success:false,
+                message:"Order Id error try again!"
+            }
+        }
+
+        if(order.returnedAt == null){
+            order.returnedAt = []
+        }
+        order.returnedAt.push({
+            reason:reason,
+            remark:remark,
+            resolution:resolution
+        })
+
+        await order.save()
+        return {
+            success:true,
+            message:"Return request submitted successfully"
+        }
+
+    }catch(e){
+
+        console.log(e)
+        return {
+            success:false,
+            message:"server error"
         }
     }
 }

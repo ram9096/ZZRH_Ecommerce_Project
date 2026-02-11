@@ -1,5 +1,5 @@
 
-import { cancelRequestLogic, getOrders } from "../service/orderService.js"
+import { cancelRequestLogic, getOrders, returnRequestLogic } from "../service/orderService.js"
 
 
 export const ordersLoad = async (req,res)=>{
@@ -87,4 +87,33 @@ export const cancellRequest = async (req,res)=>{
             message:"Server error"
         })
     }
+}
+
+export const returnRequest = async(req,res)=>{
+    try{
+
+        const {orderId,reason,remark,resolution}= req.body
+
+        const returnProgress = await returnRequestLogic(orderId,reason,remark,resolution)
+
+        if(!returnProgress.success){
+            return res.status(400).json({
+                success:false,
+                message:returnProgress.message
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:returnProgress.message
+        })
+        
+    }catch(e){
+        console.log(e)
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+
 }

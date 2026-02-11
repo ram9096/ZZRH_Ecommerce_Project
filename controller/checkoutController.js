@@ -1,6 +1,8 @@
+import { couponFetcher } from "../service/admin/couponService.js"
 import { cartData } from "../service/cartService.js"
 import { orderDetailsLoad, OrderLogic } from "../service/checkoutService.js"
 import { addressFetcher, addressIdFetcher } from "../service/userProfileService.js"
+import { couponLoad } from "./Admin/couponController.js"
 
 
 export const checkoutLoad = async (req,res)=>{
@@ -39,20 +41,25 @@ export const paymentMethodLoad = async (req,res)=>{
         
         const cartDetails = await cartData()
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
+        let coupons = await couponFetcher({})
+
         if(!cartDetails.success){
 
             return res.render('User/payment-method',{
-                cart:[]
+                cart:[],
+                coupons:[]
             })
 
         }        
         return res.render('User/payment-method',{
-            cart:activeCartItems
+            cart:activeCartItems,
+            coupons:coupons.data
         })
     }catch(e){
         console.log("Error ",e)
         return res.render('User/payment-method',{
-            cart:[]
+            cart:[],
+            coupons:[]
         })
 
     }
@@ -125,7 +132,7 @@ export const checkoutFetcher = async (req,res)=>{
 export const orderController = async (req,res)=>{
     try{
 
-        const { method } = req.body
+        const { method,coupon } = req.body
 
         if(!req.session.user||!method){
             return res.status(401).json({
@@ -134,7 +141,7 @@ export const orderController = async (req,res)=>{
             })
         }
         
-        let checkoutProgress = await OrderLogic(req.session.user,method)
+        let checkoutProgress = await OrderLogic(req.session.user,method,coupon)
 
         if(!checkoutProgress.success){
             return res.status(401).json({

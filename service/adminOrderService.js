@@ -1,4 +1,5 @@
 import orderModel from "../model/orderModel.js"
+import userModel from "../model/userModel.js"
 
 
 export const adminOrdersUpdateLogic = async (orderId,reasonId,purpose = null)=>{
@@ -32,7 +33,36 @@ export const adminOrdersUpdateLogic = async (orderId,reasonId,purpose = null)=>{
                 message:"Delivery status updated"
             }
         }
+        if(purpose == "REFUND_REQUEST"){
 
+            const user = await userModel.findOne({_id:updateData.userId})
+
+            user.wallet += updateData.totalAmount
+
+            updateData.returnedAt[0].returnRequestStatus = "Approved"
+            
+            await updateData.save()
+            await user.save()
+
+            return {
+                success:true,
+                message:"Amount refunded successfully"
+            }
+        }
+
+        if(purpose == "REJECT_REQUEST"){
+
+            updateData.returnedAt[0].returnRequestStatus = "Rejected"
+
+            await updateData.save()
+
+            return {
+
+                success:true,
+                message:"Request rejected"
+            }
+
+        }
        
         const index = updateData.cancelledAt.findIndex(
             o => o._id.toString() === reasonId.toString()

@@ -1,6 +1,8 @@
 import cartModel from "../model/cartModel.js"
+import couponModel from "../model/couponModel.js"
 import orderSchema from "../model/orderModel.js"
 import variantModel from "../model/variantModel.js"
+import { couponApplyLogic } from "./admin/couponService.js"
 import { cartData } from "./cartService.js"
 
 export const orderDetailsLoad = async (_id)=>{
@@ -35,7 +37,7 @@ export const orderDetailsLoad = async (_id)=>{
 
     }
 }
-export const OrderLogic = async (userDetails,method)=>{
+export const OrderLogic = async (userDetails,method,coupon)=>{
     try{
 
         if(!userDetails||!method){
@@ -69,6 +71,15 @@ export const OrderLogic = async (userDetails,method)=>{
             });
 
         }
+        let CouponAmount = 0
+        if(coupon){
+
+            let discount = await couponApplyLogic(coupon,subTotal)
+            CouponAmount = discount.discount
+            subTotal = subTotal-discount.discount
+
+        }
+
         const taxAmount = subTotal * 0.05; 
         const totalAmount = subTotal + taxAmount;
         
@@ -82,8 +93,8 @@ export const OrderLogic = async (userDetails,method)=>{
             totalAmount,
             orderMethod:method,
             orderStatus: "placed",
-            deliveryStatus: "pending"
-
+            deliveryStatus: "pending",
+            couponApllied:CouponAmount
         })
 
         await newOrder.save()

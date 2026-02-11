@@ -1,5 +1,6 @@
 import { couponValidation } from "../../Joi Validation/validation.js";
 import couponModel from "../../model/couponModel.js";
+import orderModel from "../../model/orderModel.js";
 
 export const couponFormCreateLogic = async (code,type,value,validity,limit,max)=>{
     try{
@@ -73,7 +74,8 @@ export const couponFormEditLogic = async (_id,code,type,value,validity,limit,max
         couponExist.discountType = type
         couponExist.discountValue = value
         couponExist.expiryDate = validity
-        couponExist.maxDiscount = limit
+        couponExist.usageLimit = limit
+        couponExist.maxDiscount = max
 
         await couponExist.save()
 
@@ -116,6 +118,57 @@ export const couponFetcher = async(filter,page = 1 ,limit = 0)=>{
                 total
             }
         }
+    }catch(e){
+        console.log(e)
+        return {
+            success:false,
+            message:"Server error"
+        }
+    }
+}
+
+export const calculateDiscount = (price,coupon)=>{
+    let discount = 0;
+    if(coupon.discountType == "PERCENTAGE"){
+        discount = (price*coupon.discountValue)/100
+        if (coupon.maxDiscount && discount > coupon.maxDiscount) {
+            discount = coupon.maxDiscount;
+        }
+    }else{
+        discount = coupon.discountValue
+    }
+    return discount
+}
+
+export const couponApplyLogic = async (code,total)=>{
+    try{
+
+        if(!code||!total){
+            return {
+                success:false,
+                message:"error try again"
+            }
+        }
+
+        const coupon = await couponModel.findOne({code:code})
+
+        if(!coupon){
+            return {
+                success:false,
+                message:"Code error try again"
+            }
+        }
+        if(typeof total == "string"){
+            total = Number(total.replace('₹',''))
+        }
+        const discount = calculateDiscount(total,coupon)
+        
+        return {
+            success:true,
+            discount:discount,
+            message:"Coupon applied"
+        }
+        
     }catch(e){
         console.log(e)
         return {
