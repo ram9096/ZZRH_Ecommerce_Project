@@ -467,7 +467,7 @@
                                             <i class="fas fa-check-circle"></i> Active
                                         </span>
                                     </div>
-                                    <div class="link-url-text" id="linkUrl">localhost:5000/register?ref=<%= link!=null ? link:"" %></div>
+                                    <div class="link-url-text" id="linkUrl">localhost:5000/login?ref=<%= link!=null ? link:"" %></div>
                                     <div class="flex gap-2 mt-3">
                                         <button class="btn-action" style="position:relative;" onclick="copyLink()">
                                             <i class="fas fa-copy"></i> Copy Link
@@ -594,7 +594,7 @@
             // Fake async
             setTimeout(() => {
                 
-                currentLink = 'localhost:5000/register?ref=' + val;
+                currentLink = 'localhost:5000/login?ref=' + val;
                 linkUrl.textContent = currentLink;
 
                 // Show link box

@@ -5,6 +5,7 @@ import variantModel from "../model/variantModel.js"
 import dotenv from"dotenv"
 import mongoose from "mongoose";
 import { productSchemaValidate } from "../Joi Validation/validation.js";
+import { calculateDiscount } from "./admin/couponService.js";
 dotenv.config()
 
 
@@ -200,9 +201,55 @@ export const offerAddLogic = async (productId,offerId,type)=>{
         if(type == "CATEGORY"){
 
             const data = await categoryModel.findOne({_id:productId})
+            
 
             if(offerId == "NO"){
+                const product = await variantModel.aggregate([
+                    {
+                        $lookup: {
+                        from: "products",
+                        localField: "productId",
+                        foreignField: "_id",
+                        as: "product"
+                        }
+                    },
+                    { $unwind: "$product" },
+                    {
+                        $match: {
+                            "product.categoryId": new mongoose.Types.ObjectId(productId)
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "offers", 
+                            localField: "product.offer",
+                            foreignField: "_id",
+                            as: "offer"
+                        }
+                    },
+
+                    {
+                        $unwind: {
+                            path: "$offer",
+                            preserveNullAndEmptyArrays: true 
+                        }
+                    }
+                ]);
+
+                for(let item of product){
+
+                    await variantModel.updateOne(
+                        { _id:item._id},
+                        {
+                            $set:{
+                                price:item.basePrice
+                            }
+                        }
+                    )
+                }
+
                 if(data.offer!=null){
+                    
                     data.offer = null
                 }    
                 await data.save()
@@ -216,7 +263,7 @@ export const offerAddLogic = async (productId,offerId,type)=>{
             data.offer = offerId
 
             await data.save()
-            await applyOfferToProduct(productId)
+            await applyOffer(productId,"CATEGORY")
             return {
                 success:true,
                 message:"Offer added successfully"
@@ -224,11 +271,28 @@ export const offerAddLogic = async (productId,offerId,type)=>{
 
 
         }
+
         if(offerId == "NO"){
             const data = await productModel.findOne({_id:productId})
+            const variant = await variantModel.find({
+                productId:productId
+            })
+            for(let i of variant){
+                await variantModel.updateOne(
+                    {_id:i._id},
+                    {
+                        $set:{
+                            price:i.basePrice
+                        }
+                    }
+                )
+            }
+            
             if(data.offer!=null){
                 data.offer = null
-            }    
+                
+            }   
+             
             await data.save()
 
             return {
@@ -236,11 +300,12 @@ export const offerAddLogic = async (productId,offerId,type)=>{
                 message:"Offer canceled for the product"
             }
         }
+
         const data = await productModel.findOne({_id:productId})
         data.offer = offerId
 
         await data.save()
-        await applyOfferToProduct(productId)
+        await applyOffer(productId,"PRODUCT")
         return {
             success:true,
             message:"Offer added successfully"
@@ -258,24 +323,246 @@ export const offerAddLogic = async (productId,offerId,type)=>{
 }
 
 
-export const applyOffer = async (_id)=>{
+export const applyOffer = async (_id,action)=>{
     try{
 
+        if(action == "CATEGORY"){
+            const data = await categoryModel.findOne({_id})
+                .populate("offer")
+            
+            const product = await variantModel.aggregate([
+                {
+                    $lookup: {
+                    from: "products",
+                    localField: "productId",
+                    foreignField: "_id",
+                    as: "product"
+                    }
+                },
+                { $unwind: "$product" },
+                {
+                    $match: {
+                        "product.categoryId": new mongoose.Types.ObjectId(_id)
+                    }
+                },
+                 {
+                    $lookup: {
+                        from: "offers", 
+                        localField: "product.offer",
+                        foreignField: "_id",
+                        as: "offer"
+                    }
+                },
+
+                {
+                    $unwind: {
+                        path: "$offer",
+                        preserveNullAndEmptyArrays: true 
+                    }
+                }
+            ]);
+            for(let i in product){
+                let productDiscountValue = 0
+
+                if(!product[i].basePrice){
+            
+                    await variantModel.updateOne(
+                        { _id: product[i]._id },
+                        {
+                            $set: {
+                                basePrice:product[i].price
+                            }
+                        }
+                    );
+                    product[i].basePrice = product[i].price
+                }
+                let categoryDiscountValue = calculateDiscount(product[i].basePrice,data.offer)
+
+                if(product[i].product.offer != null){
+
+                    productDiscountValue = calculateDiscount(product[i].basePrice,product[i].product.offer)
+                }
+
+                if(product[i].basePrice-categoryDiscountValue<product[i].basePrice-productDiscountValue){
+
+                    await variantModel.updateOne(
+                        { _id: product[i]._id },
+                        {
+                            $set: {
+                                price: product[i].basePrice - categoryDiscountValue,
+                                appliedOffer: data.offer?._id
+                            }
+                        }
+                    );
+
+                }else{
+
+                    await variantModel.updateOne(
+                        { _id: product[i]._id },
+                        {
+                            $set: {
+                                price: product[i].basePrice - productDiscountValue,
+                                appliedOffer: product[i].product.offer?._id
+                            }
+                        }
+                    );
+
+                }
+
+            }
+
+            return;
+
+        }
+
+        if(action == "PRODUCT"){
+
+            const product = await variantModel.aggregate([
+                {
+                    $match: {
+                        productId: new mongoose.Types.ObjectId(_id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "products",
+                        localField: "productId",
+                        foreignField: "_id",
+                        as: "productId"
+                    }
+                },
+                { $unwind: "$productId" },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "productId.categoryId",
+                        foreignField: "_id",
+                        as: "productId.categoryId"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$productId.categoryId",
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "offers",
+                        localField: "productId.categoryId.offer",
+                        foreignField: "_id",
+                        as: "productId.categoryId.offer"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$productId.categoryId.offer",
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "offers",
+                        localField: "appliedOffer",
+                        foreignField: "_id",
+                        as: "appliedOffer"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$appliedOffer",
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "offers",
+                        localField: "productId.offer",
+                        foreignField: "_id",
+                        as: "productId.offer"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$productId.offer",
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "offers",
+                        localField: "offer",
+                        foreignField: "_id",
+                        as: "offer"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$offer",
+                        preserveNullAndEmptyArrays: true
+                    }
+                }
+            ]);
+
+            
+            for(let item of product){
+
+                let productDiscountValue = 0
+                let categoryDiscountValue = 0
+
+                if(!item.basePrice){
+            
+                    await variantModel.updateOne(
+                        { _id: item._id },
+                        {
+                            $set: {
+                                basePrice:item.price
+                            }
+                        }
+                    );
+                    item.basePrice = item.price
+                }
+
+                if(item.productId.offer){
+
+                    productDiscountValue = calculateDiscount(item.basePrice,item.productId.offer)
+                }
+
+                if(item.productId.categoryId.offer){
+
+                    categoryDiscountValue = calculateDiscount(item.basePrice,item.productId.categoryId.offer)
+                }
+
+                if(item.basePrice-categoryDiscountValue<item.basePrice-productDiscountValue){
+
+                    await variantModel.updateOne(
+                        { _id: item._id },
+                        {
+                            $set: {
+                                price: item.basePrice - categoryDiscountValue,
+                                appliedOffer: item.productId.categoryId.offer._id
+                            }
+                        }
+                    );
+
+                }else{
+
+                    await variantModel.updateOne(
+                        { _id: item._id },
+                        {
+                            $set: {
+                                price: item.basePrice - productDiscountValue,
+                                appliedOffer: item.productId.offer._id
+                            }
+                        }
+                    );
+
+                }
+            }
+
+            return
+        }
         
-        const product = await variantModel
-            .find({productId:_id})
-            .populate({
-                path: "productId",
-                populate: {
-                    path: "categoryId"
-                }
-            })
-            .populate({
-                path: "productId",
-                populate: {
-                    path: "offer"
-                }
-            })
         
 
     }catch(e){

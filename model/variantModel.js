@@ -25,6 +25,10 @@ let variantSchema = new schema({
         type:Number,
         required:true
     },
+    basePrice:{
+        type:Number,
+        default:null
+    },
     SKU:{
         type:String,
         required:true
@@ -36,7 +40,13 @@ let variantSchema = new schema({
     discount:{
         type:Number,
         required:true
+    },
+    appliedOffer:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Offer",
+        default:null
     }
+
 },{timestamps:true})
 
 export default mongoose.model("Variant",variantSchema)
