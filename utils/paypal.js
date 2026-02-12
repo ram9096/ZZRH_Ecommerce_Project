@@ -4,6 +4,7 @@ import { calculateOrderTotal } from "./totalCalculate.js";
 import paymentSchema from "../model/paymentModel.js";
 
 export const createOrder = async (req, res) => {
+  
     const total = await calculateOrderTotal()
     if (!total.success) {
         return res.status(400).json({ message: "Cart empty" })

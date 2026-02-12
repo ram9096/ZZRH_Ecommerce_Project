@@ -1,11 +1,13 @@
 
 import { cancelRequestLogic, getOrders, returnRequestLogic } from "../service/orderService.js"
+import { findUserByEmail } from "../service/userService.js"
 
 
 export const ordersLoad = async (req,res)=>{
     try{
 
         let id = req.session.user.id
+        let user = await findUserByEmail(req.session.user.email)
         const page = req.query.page || 1
         if(!id){
             return res.redirect('/login')
@@ -16,7 +18,7 @@ export const ordersLoad = async (req,res)=>{
         if(!order.success){
             return res.render('User/manage-order',{
                 isLogged:req.session.user||'',
-                name:'',
+                name:user.name,
                 email:'',
                 order:[],
                 pageActive:'ORDER',
@@ -26,8 +28,8 @@ export const ordersLoad = async (req,res)=>{
 
         return res.render('User/manage-order',{
             isLogged:req.session.user||'',
-            name:'',
-            email:'',
+            name:user.username,
+            email:user.email,
             order:order.data,
             pageActive:'ORDER',
             pagination:order.pagination
