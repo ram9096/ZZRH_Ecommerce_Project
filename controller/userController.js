@@ -16,10 +16,10 @@ export const userLandingLoad = async(req, res) => {
 };
 
 export const userLoginload = (req, res) => {
-    req.session.ref = req.query.ref
     if(req.session.user){
         return res.redirect('/home')
     }
+    req.session.ref = req.query.ref
     return res.render("User/login-page",{error:req.flash("error")[0]});
 };
 

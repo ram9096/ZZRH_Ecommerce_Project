@@ -118,7 +118,7 @@
         <a href="https://www.termsfeed.com/live/f0b72f23-646b-4895-a9cb-f3067d45871f" class="underline">Privacy Policy</a>
       </p>
 
-      <a href="/auth/google" class="block mt-2">
+      <a href="/auth/google" id="googleLoginBtn" class="block mt-2">
         <button class="w-full py-3 border border-black text-black font-bloverly font-medium tracking-wider hover:bg-gray-50 transition-colors text-lg md:text-2xl">
           Continue with google
         </button>
@@ -144,9 +144,21 @@
     }
   </style>
 
-  <!-- Client-side Validation Script -->
+
   <script>
-    // Toggle password visibility
+    // const params = new URLSearchParams(window.location.search)
+    // const ref = params.get("ref")
+
+    // if (ref) {
+    //     localStorage.setItem("referralCode", ref)
+    // }
+    // const storedRef = localStorage.getItem("referralCode")
+
+    // if (storedRef) {
+    //     document.getElementById("googleLoginBtn").href = `/auth/google?ref=${storedRef}`
+    // }
+   
+
     document.getElementById('toggle-password').addEventListener('click', function () {
       const passwordInput = document.getElementById('password');
       const eyeIcon = document.getElementById('eye-icon');
