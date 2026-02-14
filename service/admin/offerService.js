@@ -3,6 +3,7 @@ import categoryModel from "../../model/categoryModel.js"
 
 import offerModel from "../../model/offerModel.js"
 import productModel from "../../model/productModel.js"
+import variantModel from "../../model/variantModel.js"
 
 
 export const offerDataLoad = async (filter = {})=>{
@@ -19,6 +20,33 @@ export const offerDataLoad = async (filter = {})=>{
             success:true,
             data:data
         }
+    }catch(e){
+        console.log(e)
+        return {
+            success:false,
+            message:"Error while loading data"
+        }
+    }
+}
+
+export const offeredProducts = async ()=>{
+    try{
+
+        const data = await variantModel.find({appliedOffer:{$ne:null}})
+            .populate('appliedOffer')
+            .populate('productId')
+            
+        if(!data){
+            return {
+                success:false,
+                message:"Error while loading data"
+            }
+        }
+        return {
+            success:true,
+            data:data
+        }
+        
     }catch(e){
         console.log(e)
         return {

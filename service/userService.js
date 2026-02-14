@@ -7,6 +7,7 @@ import { sentOtp } from "../utils/otpMailing.js";
 import { pipeline } from "stream";
 import categoryModel from "../model/categoryModel.js";
 import referalModel from "../model/referalModel.js";
+import walletModel from "../model/walletModel.js";
 
 export const findUserByEmail = (email) => userModel.findOne({ email });
 
@@ -70,8 +71,16 @@ export const registerService = async (name, email, password, mobileno,ref = null
 
             user.wallet+=50
             referalToken.used = true
+            let transacton = new walletModel({
+                userId:user._id,
+                type:"credit",
+                amount:50,
+                reason:"Referal Bonous"
+            })
             await user.save()
             await referalToken.save()
+            await transacton.save()
+        
         }
         let hashedPassword = await bcrypt.hash(password, 10);
 
@@ -161,7 +170,6 @@ export const forgotPasswordLogic = async(email,password)=>{
 
 export const ProductsLoad = async (filter,limit = null)=>{
     filter["status"] = true
-    //filter["stock"] = {$gt:0}
     let color = new Set([...(await variantModel.find()).map(v=>v.color)])
     let size = new Set([...(await variantModel.find()).map(v=>v.size)])
     const pipeline = [

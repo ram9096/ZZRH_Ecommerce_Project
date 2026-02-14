@@ -204,13 +204,19 @@ export const offerAddLogic = async (productId,offerId,type)=>{
             
 
             if(offerId == "NO"){
+                if (!data.offer) {
+                    return {
+                        success: true,
+                        message: "No offer already applied to this category"
+                    };
+                }
                 const product = await variantModel.aggregate([
                     {
                         $lookup: {
-                        from: "products",
-                        localField: "productId",
-                        foreignField: "_id",
-                        as: "product"
+                            from: "products",
+                            localField: "productId",
+                            foreignField: "_id",
+                            as: "product"
                         }
                     },
                     { $unwind: "$product" },
@@ -238,14 +244,19 @@ export const offerAddLogic = async (productId,offerId,type)=>{
 
                 for(let item of product){
 
-                    await variantModel.updateOne(
-                        { _id:item._id},
-                        {
-                            $set:{
-                                price:item.basePrice
+                    if(item.appliedOffer?.toString() == data.offer._id.toString()){
+
+                        await variantModel.updateOne(
+                            { _id:item._id},
+                            {
+                                $set:{
+                                    price:item.basePrice,
+                                    appliedOffer:null
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
+
                 }
 
                 if(data.offer!=null){
@@ -277,15 +288,20 @@ export const offerAddLogic = async (productId,offerId,type)=>{
             const variant = await variantModel.find({
                 productId:productId
             })
+
             for(let i of variant){
-                await variantModel.updateOne(
-                    {_id:i._id},
-                    {
-                        $set:{
-                            price:i.basePrice
+                if(i.appliedOffer?.toString() == data.offer._id.toString()){
+
+                    await variantModel.updateOne(
+                        {_id:i._id},
+                        {
+                            $set:{
+                                price:i.basePrice,
+                                appliedOffer:null
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
             
             if(data.offer!=null){
@@ -322,6 +338,24 @@ export const offerAddLogic = async (productId,offerId,type)=>{
     }
 }
 
+const validateOffer = (offer) => {
+
+    if (!offer) return false;
+
+    if (!offer.isActive) return false;
+
+    const now = new Date();
+
+    if (offer.startDate && offer.startDate > now) return false;
+
+    if (offer.endDate && offer.endDate < now) return false;
+
+    if (offer.usageLimit && offer.usedCount >= offer.usageLimit) return false;
+
+    return true;
+};
+
+
 
 export const applyOffer = async (_id,action)=>{
     try{
@@ -333,10 +367,10 @@ export const applyOffer = async (_id,action)=>{
             const product = await variantModel.aggregate([
                 {
                     $lookup: {
-                    from: "products",
-                    localField: "productId",
-                    foreignField: "_id",
-                    as: "product"
+                        from: "products",
+                        localField: "productId",
+                        foreignField: "_id",
+                        as: "product"
                     }
                 },
                 { $unwind: "$product" },
@@ -363,6 +397,7 @@ export const applyOffer = async (_id,action)=>{
             ]);
             for(let i in product){
                 let productDiscountValue = 0
+                let categoryDiscountValue = 0
 
                 if(!product[i].basePrice){
             
@@ -376,14 +411,17 @@ export const applyOffer = async (_id,action)=>{
                     );
                     product[i].basePrice = product[i].price
                 }
-                let categoryDiscountValue = calculateDiscount(product[i].basePrice,data.offer)
+                if(validateOffer(data.offer)){
 
-                if(product[i].product.offer != null){
+                    categoryDiscountValue = calculateDiscount(product[i].basePrice,data.offer)
+                }
+
+                if(product[i].product.offer != null && validateOffer(product[i].product.offer)){
 
                     productDiscountValue = calculateDiscount(product[i].basePrice,product[i].product.offer)
                 }
 
-                if(product[i].basePrice-categoryDiscountValue<product[i].basePrice-productDiscountValue){
+                if(categoryDiscountValue>productDiscountValue){
 
                     await variantModel.updateOne(
                         { _id: product[i]._id },
@@ -523,17 +561,17 @@ export const applyOffer = async (_id,action)=>{
                     item.basePrice = item.price
                 }
 
-                if(item.productId.offer){
+                if(validateOffer(item.productId.offer)){
 
                     productDiscountValue = calculateDiscount(item.basePrice,item.productId.offer)
                 }
 
-                if(item.productId.categoryId.offer){
+                if(validateOffer(item.productId.categoryId.offer)){
 
                     categoryDiscountValue = calculateDiscount(item.basePrice,item.productId.categoryId.offer)
                 }
 
-                if(item.basePrice-categoryDiscountValue<item.basePrice-productDiscountValue){
+                if(categoryDiscountValue>productDiscountValue){
 
                     await variantModel.updateOne(
                         { _id: item._id },

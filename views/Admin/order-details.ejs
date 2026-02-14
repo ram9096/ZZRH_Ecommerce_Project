@@ -551,6 +551,10 @@
         async function ReturnRequestApproval(orderId,reasonId){
             
             try{
+                const resolutionType = 
+                    "<%= order[0]?.returnedAt?.[0]?.resolution === 'refund' ? 'REFUND_REQUEST' : 'OTHER_REQUEST' %>"
+                
+
                 const request = await fetch('/admin/orders/update',{
                     method:"POST",
                     headers:{
@@ -559,7 +563,7 @@
                     body:JSON.stringify({
                         orderId:orderId,
                         reasonId:reasonId,
-                        purpose:"REFUND_REQUEST"
+                        purpose:resolutionType
                     })
                 }) 
                 

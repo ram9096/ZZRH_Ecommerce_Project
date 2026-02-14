@@ -88,20 +88,20 @@
                     </div>
 
                     <!-- Filters -->
-                    <form action="/admin/category" method="GET" class="flex gap-3">
-                        <select name="status" onchange="this.form.submit()" class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
+                    <form  class="flex gap-3">
+                        <select name="status"  class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
                             <option value="" >📊 All Status</option>
                             <option value="true" >✅ Active</option>
                             <option value="false" >❌ Inactive</option>
                         </select>
                         
-                        <select name="sort" onchange="this.form.submit()" class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
+                        <select name="sort"  class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
                             <option value="latest" >🕐 Latest</option>
                             <option value="oldest" >⏰ Oldest</option>
                         </select>
                     </form>
 
-                    <a href="/admin/category">
+                    <a href="/admin/coupon">
                         <button class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all flex items-center space-x-2">
                             <i class="fas fa-redo-alt text-gray-700"></i>
                             <span>Reset</span>

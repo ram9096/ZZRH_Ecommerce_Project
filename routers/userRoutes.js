@@ -9,6 +9,7 @@ import OrderRoutes from "./orderRoutes.js"
 import { captureOrder, createOrder } from "../utils/paypal.js"
 import { couponApply } from "../controller/Admin/couponController.js"
 import { whishlistLoad, wishlistUpdate } from "../controller/whishlistController.js"
+import { walletLoad } from "../controller/walletController.js"
 let router = express.Router()
 
 router.get('/',userLandingLoad)
@@ -27,11 +28,12 @@ router.get('/profile/change-username',isAuthenticated,userNameEditLoad)
 router.get('/profile/change-email',isAuthenticated,userEmailEditLoad)
 router.get('/profile/change-password',isAuthenticated,userPasswordEditLoad)
 router.get('/profile/address-management',isAuthenticated,userAddressLoad)
-router.get('/profile/referal-link',referalLinkGeneratorLoad)
+router.get('/profile/referal-link',isAuthenticated,referalLinkGeneratorLoad)
 router.get('/profile/wishlist',whishlistLoad)
 router.use('/cart',isAuthenticated,CartRoutes)
 router.use('/checkout',isAuthenticated,checkOutRoutes)
 router.use('/order',isAuthenticated,OrderRoutes)
+router.get('/profile/wallet',isAuthenticated,walletLoad)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)

@@ -1,3 +1,4 @@
+import { offeredProducts } from "../service/admin/offerService.js";
 import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails, variantFilterLogic } from "../service/userService.js";
 
 //--------------Page renderings------------------
@@ -46,6 +47,8 @@ export const homePageLoad = async (req, res) => {
     try{
        
         let products = await ProductsLoad({},5)
+        let offer = await offeredProducts()
+        
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -60,6 +63,7 @@ export const homePageLoad = async (req, res) => {
             color:products.color,
             size:products.size,
             error:'',
+            offer:offer.data? offer.data : [],
             isLogged:req.session.user||''
         });
     }catch(e){

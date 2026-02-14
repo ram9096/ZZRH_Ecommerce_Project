@@ -27,6 +27,7 @@ export const offerLoad = async (req,res)=>{
         })
     }
 }
+
 export const offerAddLoad = (req,res)=>{
     return res.render('Admin/offer-add-page',{
         activePage:'offer',

@@ -10,6 +10,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import userModel from "./model/userModel.js"
 import flash from 'connect-flash'
 import referalModel from "./model/referalModel.js"
+import walletModel from "./model/walletModel.js"
 dotenv.config()
 
 
@@ -97,11 +98,18 @@ passport.use(
                 }
     
                 let user = await userModel.findOne({_id:referalToken.referrer})
-    
+                
                 user.wallet+=50
                 referalToken.used = true
+                let transacton = new walletModel({
+                    userId:user._id,
+                    type:"credit",
+                    amount:50,
+                    reason:"Referal Bonous"
+                })
                 await user.save()
                 await referalToken.save()
+                await transacton.save()
 
             }
             

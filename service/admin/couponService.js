@@ -129,6 +129,7 @@ export const couponFetcher = async(filter,page = 1 ,limit = 0)=>{
 
 export const calculateDiscount = (price,coupon)=>{
     let discount = 0;
+    
     if(coupon.discountType == "PERCENTAGE"){
         discount = (price*coupon.discountValue)/100
         if (coupon.maxDiscount && discount > coupon.maxDiscount) {
@@ -150,14 +151,33 @@ export const couponApplyLogic = async (code,total)=>{
             }
         }
 
-        const coupon = await couponModel.findOne({code:code})
+        const coupon = await couponModel.findOne({code:code,isActive:true})
 
         if(!coupon){
             return {
                 success:false,
-                message:"Code error try again"
+                message:"Code is not active"
             }
         }
+
+        if(coupon.usageLimit <= 0){
+            return {
+                success: false,
+                message: "Coupon expired"
+            };
+        }
+
+        if(coupon.expiryDate < new Date()){
+            
+            return {
+                success: false,
+                message: "Coupon expired"
+            };
+        }
+        coupon.usageLimit = coupon.usageLimit - 1
+
+        await coupon.save()
+
         if(typeof total == "string"){
             total = Number(total.replace('₹',''))
         }

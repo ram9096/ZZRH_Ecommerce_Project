@@ -50,6 +50,19 @@ export const adminOrdersUpdateLogic = async (orderId,reasonId,purpose = null)=>{
             }
         }
 
+        if(purpose == "OTHER_REQUEST"){
+            
+            updateData.returnedAt[0].returnRequestStatus = "Approved"
+            
+            await updateData.save()
+            
+
+            return {
+                success:true,
+                message:"Request approved"
+            }
+        }
+
         if(purpose == "REJECT_REQUEST"){
 
             updateData.returnedAt[0].returnRequestStatus = "Rejected"

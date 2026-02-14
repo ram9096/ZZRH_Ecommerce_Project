@@ -1,7 +1,9 @@
 import cartModel from "../model/cartModel.js"
 import couponModel from "../model/couponModel.js"
 import orderSchema from "../model/orderModel.js"
+import userModel from "../model/userModel.js"
 import variantModel from "../model/variantModel.js"
+import walletModel from "../model/walletModel.js"
 import { couponApplyLogic } from "./admin/couponService.js"
 import { cartData } from "./cartService.js"
 
@@ -82,6 +84,20 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
 
         const taxAmount = subTotal * 0.05; 
         const totalAmount = subTotal + taxAmount;
+
+        if(method == "WALLET"){
+            
+            let user = await userModel.findOne({_id:userDetails.id})
+            if(user.wallet < totalAmount){
+                return {
+                    success:false,
+                    message:"Limited balance in wallet"
+                }
+            }
+            user.wallet-=totalAmount
+            await user.save()
+
+        }
         
         let newOrder = new orderSchema({
 
@@ -110,6 +126,18 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
         const Order_id = await orderSchema
         .findOne({ userId:userDetails.id })
         .sort({ createdAt: -1 });
+
+        if(method == "WALLET"){
+
+            let transaction = new walletModel({
+                userId:userDetails.id,
+                type:"debit",
+                amount:totalAmount,
+                reason:"Order Transfer",
+                orderId:Order_id._id
+            })
+            await transaction.save()
+        }
         return {
             success:true,
             message:"Ordered successfully",
