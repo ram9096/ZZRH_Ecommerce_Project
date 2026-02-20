@@ -1,5 +1,6 @@
 import { offeredProducts } from "../service/admin/offerService.js";
 import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails, variantFilterLogic } from "../service/userService.js";
+import { whishlistData } from "../service/whishlistService.js";
 
 //--------------Page renderings------------------
 
@@ -48,7 +49,8 @@ export const homePageLoad = async (req, res) => {
        
         let products = await ProductsLoad({},5)
         let offer = await offeredProducts()
-        
+        let wishlist = await whishlistData()
+
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -64,7 +66,8 @@ export const homePageLoad = async (req, res) => {
             size:products.size,
             error:'',
             offer:offer.data? offer.data : [],
-            isLogged:req.session.user||''
+            isLogged:req.session.user||'',
+            wishlist:wishlist.data||[]
         });
     }catch(e){
         console.log("Home page load Error: ",e)
@@ -152,13 +155,16 @@ export const VariantFilter = async(req,res)=>{
 export const productShowcaseLoad = async (req,res)=>{
     try{
         let products = await ProductsLoad({})
+        let wishlist = await whishlistData()
+
         return res.render('User/product-showcase',{
             product:products.data,
             color:[...products.color],
             size:products.size,
             category:products.category,
             isLogged:req.session.user||'',
-            error:''
+            error:'',
+            wishlist:wishlist.data || []
         })
     }catch(e){
 

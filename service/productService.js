@@ -395,59 +395,50 @@ export const applyOffer = async (_id,action)=>{
                     }
                 }
             ]);
-            for(let i in product){
-                let productDiscountValue = 0
-                let categoryDiscountValue = 0
+            for (let item of product) {
 
-                if(!product[i].basePrice){
-            
-                    await variantModel.updateOne(
-                        { _id: product[i]._id },
-                        {
-                            $set: {
-                                basePrice:product[i].price
-                            }
+                let productDiscountValue = 0;
+                let categoryDiscountValue = 0;
+
+                const basePrice = item.basePrice || item.price;
+
+              
+                if (validateOffer(data.offer)) {
+                    categoryDiscountValue = calculateDiscount(basePrice, data.offer);
+                }
+
+               
+                if (validateOffer(item.product.offer)) {
+                    productDiscountValue = calculateDiscount(basePrice, item.product.offer);
+                }
+
+                console.log("CATEGORY:", categoryDiscountValue, productDiscountValue);
+
+                
+                const bestDiscount = Math.max(categoryDiscountValue, productDiscountValue);
+
+                let appliedOfferId = null;
+
+                if (bestDiscount === categoryDiscountValue && categoryDiscountValue > 0) {
+                    appliedOfferId = data.offer?._id;
+                } 
+                else if (bestDiscount === productDiscountValue && productDiscountValue > 0) {
+                    appliedOfferId = item.product.offer?._id;
+                }
+
+                const finalPrice = basePrice - bestDiscount;
+
+                await variantModel.updateOne(
+                    { _id: item._id },
+                    {
+                        $set: {
+                            price: finalPrice,
+                            appliedOffer: appliedOfferId
                         }
-                    );
-                    product[i].basePrice = product[i].price
-                }
-                if(validateOffer(data.offer)){
-
-                    categoryDiscountValue = calculateDiscount(product[i].basePrice,data.offer)
-                }
-
-                if(product[i].product.offer != null && validateOffer(product[i].product.offer)){
-
-                    productDiscountValue = calculateDiscount(product[i].basePrice,product[i].product.offer)
-                }
-
-                if(categoryDiscountValue>productDiscountValue){
-
-                    await variantModel.updateOne(
-                        { _id: product[i]._id },
-                        {
-                            $set: {
-                                price: product[i].basePrice - categoryDiscountValue,
-                                appliedOffer: data.offer?._id
-                            }
-                        }
-                    );
-
-                }else{
-
-                    await variantModel.updateOne(
-                        { _id: product[i]._id },
-                        {
-                            $set: {
-                                price: product[i].basePrice - productDiscountValue,
-                                appliedOffer: product[i].product.offer?._id
-                            }
-                        }
-                    );
-
-                }
-
+                    }
+                );
             }
+
 
             return;
 
@@ -604,6 +595,6 @@ export const applyOffer = async (_id,action)=>{
         
 
     }catch(e){
-
+        console.log(e)
     }
 }

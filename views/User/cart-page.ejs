@@ -76,10 +76,10 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <% if (item.variantId.stock > 0 ) { %>
+                                    <% if (item.variantId && item.variantId.stock > 0 && item.variantId.status ) { %>
                                         <div class="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
                                             <button class="w-9 h-9 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors font-semibold decreser" data-index="<%= index %>"  data-max="<%= item.variantId.stock %>">−</button>
-                                            <span id="qty<%= index %>" data-cart="<%= item._id %>" data-variant="<%= item.variantId._id %>" data-price="<%= item.variantId.price %>" class="w-8 text-center font-semibold"><%= item.quantity || 1 %></span>
+                                            <span id="qty<%= index %>" data-status="<%= item.variantId.status %>"  data-cart="<%= item._id %>" data-variant="<%= item.variantId._id %>" data-price="<%= item.variantId.price %>" class="w-8 text-center font-semibold"><%= item.quantity || 1 %></span>
                                             <button class="w-9 h-9 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors font-semibold increser" data-index="<%= index %>"  data-max="<%= item.variantId.stock %>">+</button>
                                         </div>
                                     <% } else { %>
@@ -155,7 +155,11 @@
             document.querySelectorAll('[id^="qty"]').forEach(qtyEl => {
                 const qty = Number(qtyEl.textContent);
                 const price = Number(qtyEl.dataset.price);
-                subtotal += qty * price;
+                const status = qtyEl.dataset.status
+                
+                if(status=='true'){
+                    subtotal += qty * price;
+                }
             });
 
             document.getElementById('subtotal').textContent = '₹' + subtotal;

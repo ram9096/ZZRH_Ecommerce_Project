@@ -5,10 +5,12 @@ export const cartLoad = async (req,res)=>{
         const Cartdata  = await cartData()
         
         const price = Cartdata.data.reduce((val,arr)=>{
-            val+=arr.variantId.price
+            if(arr.variantId.status){
+                val+=arr.variantId.price
+            }
             return val
         },0)
-
+        
         if(!Cartdata.success){
             return res.status(500).render('User/cart-page',{ 
                 isLogged:req.session.user||'',

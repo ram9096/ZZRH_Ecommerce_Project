@@ -53,5 +53,5 @@ router.post('/profile/referal-link',referalLingGenerator)
 router.post('/paypal/create-order',createOrder)
 router.post('/paypal/capture-order',captureOrder)
 router.post('/coupon-apply',couponApply)
-router.post('/profile/wishlist/update',wishlistUpdate)
+router.post('/profile/wishlist/update',isAuthenticated,wishlistUpdate)
 export default router;

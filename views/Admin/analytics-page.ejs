@@ -135,7 +135,7 @@
                             <i class="fa-solid fa-percent text-2xl opacity-50"></i>
                         </div>
                         <h3 class="text-sm font-medium mb-1 opacity-90">Overall Discount</h3>
-                        <p class="text-3xl font-bold" id="overallDiscount">₹0</p>
+                        <p class="text-3xl font-bold" id="overallDiscount">₹<%= fullDiscount %></p>
                         <p class="text-xs mt-2 opacity-75">Total discounts applied</p>
                     </div>
 
@@ -148,8 +148,8 @@
                             <i class="fa-solid fa-sack-dollar text-2xl opacity-50"></i>
                         </div>
                         <h3 class="text-sm font-medium mb-1 opacity-90">Net Revenue</h3>
-                        <p class="text-3xl font-bold" id="netRevenue">₹<%= fullRevenue.toLocaleString('en-IN') %></p>
-                        <p class="text-xs mt-2 opacity-75">After discounts & coupons</p>
+                        <p class="text-3xl font-bold" id="netRevenue">₹<%= fullRevenue - fullDiscount %></p>
+                        <p class="text-xs mt-2 opacity-75">After discounts </p>
                     </div>
                 </div>
 
@@ -164,16 +164,20 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fa-regular fa-calendar mr-1"></i>Time Period
                             </label>
-                            <select id="dateRange" onchange="toggleCustomDate()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                                <option value="today">Today</option>
-                                <option value="yesterday">Yesterday</option>
-                                <option value="week" selected>This Week</option>
-                                <option value="last_week">Last Week</option>
-                                <option value="month">This Month</option>
-                                <option value="last_month">Last Month</option>
-                                <option value="year">This Year</option>
-                                <option value="custom">Custom Date Range</option>
+                            <select id="dateRange" name="period" onchange="toggleCustomDate()"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+
+                                <option value="today" <%= period === "today" ? "selected" : "" %>>Today</option>
+                                <option value="yesterday" <%= period === "yesterday" ? "selected" : "" %>>Yesterday</option>
+                                <option value="week" <%= period === "week" ? "selected" : "" %>>This Week</option>
+                                
+                                <option value="month" <%= period === "month" ? "selected" : "" %>>This Month</option>
+                                
+                                <option value="year" <%= period === "year" ? "selected" : "" %>>This Year</option>
+                                <option value="custom" <%= period === "custom" ? "selected" : "" %>>Custom Date Range</option>
+
                             </select>
+
                         </div>
                         
                         
@@ -182,25 +186,32 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fa-solid fa-circle-check mr-1"></i>Order Status
                             </label>
-                            <select id="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                                <option value="all">All Orders</option>
-                                <option value="completed">Completed</option>
-                                <option value="pending">Pending</option>
-                                <option value="cancelled">Cancelled</option>
+                            <select id="statusFilter" name="status"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+
+                                <option value="all" <%= status === "all" ? "selected" : "" %>>All Orders</option>
+                                <option value="completed" <%= status === "completed" ? "selected" : "" %>>Completed</option>
+                                <option value="placed" <%= status === "placed" ? "selected" : "" %>>Pending</option>
+                                <option value="cancelled" <%= status === "cancelled" ? "selected" : "" %>>Cancelled</option>
+
                             </select>
+
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fa-solid fa-credit-card mr-1"></i>Payment Method
                             </label>
-                            <select id="paymentFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                                <option value="all">All Methods</option>
-                                <option value="card">Credit/Debit Card</option>
-                                <option value="upi">UPI</option>
-                                <option value="cod">Cash on Delivery</option>
-                                <option value="wallet">Wallet</option>
+                            <select id="paymentFilter" name="payment"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+
+                                <option value="all" <%= payment === "all" ? "selected" : "" %>>All Methods</option>
+                                <option value="WALLET" <%= payment === "WALLET" ? "selected" : "" %>>WALLET</option>
+                                <option value="PAYPAL" <%= payment === "PAYPAL" ? "selected" : "" %>>PAYPAL</option>
+                                <option value="COD" <%= payment === "COD" ? "selected" : "" %>>Cash on Delivery</option>
+
                             </select>
+
                         </div>
                     </div>
 
@@ -221,9 +232,11 @@
                     </div>
 
                     <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                        <button onclick="resetFilters()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">
-                            <i class="fa-solid fa-rotate-left mr-2"></i>Reset Filters
-                        </button>
+                        <a href="/admin/analytics">
+                            <button  class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">
+                                <i class="fa-solid fa-rotate-left mr-2"></i>Reset Filters
+                            </button>
+                        </a>
                         <button id="generate-btn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md hover:shadow-lg">
                             <i class="fa-solid fa-chart-bar mr-2"></i>Generate Report
                         </button>
@@ -308,7 +321,6 @@
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Gross Amount</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Discount</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Net Revenue</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">% of Total</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
@@ -317,23 +329,32 @@
                                         let totalUnits = 0;
                                         let totalRevenue = 0;
                                         let totalDiscount = 0;
-
+                                        let statusv = status!="all" ? status.toUpperCase():'COMPLETED' 
                                         order.forEach(orders => {
                                             orders.orderItems.forEach(item => {
-                                                if (item.productName === itemName) {
-                                                    totalUnits += item.quantity;
-                                                    totalRevenue += item.quantity * item.price;
-                                                    // Assuming discount is stored in item object
-                                                    totalDiscount += (item.discount || 0) * item.quantity;
+
+                                                if(orders.orderStatus.toUpperCase()==statusv){
+                                                    
+                                                    if (item.productName === itemName) {
+                                                        totalUnits += item.quantity;
+                                                        totalRevenue += item.quantity * item.price;
+                                                        // Assuming discount is stored in item object
+                                                        if(item.variantId.basePrice != null&&item.variantId.basePrice!=item.variantId.price){
+                                                            
+                                                            totalDiscount += (item.variantId.basePrice - item.variantId.price)*item.quantity
+                                                            
+                                                        }
+                                                        
+                                                    }
                                                 }
                                             });
                                         });
-
+                                        
                                         return {
                                             totalUnits,
                                             totalRevenue,
                                             totalDiscount,
-                                            netRevenue: totalRevenue - totalDiscount
+                                            netRevenue: totalRevenue 
                                         };
                                     } 
                                     
@@ -343,24 +364,26 @@
                                 %>
                                 <% product.forEach(item => { %>
                                     <% const { totalUnits, totalRevenue, totalDiscount, netRevenue } = getUnitsSoldByItemName(item.name) %>
-                                    <% grandTotalUnits += totalUnits; %>
-                                    <% grandTotalRevenue += totalRevenue; %>
-                                    <% grandTotalDiscount += totalDiscount; %>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-                                                    <i class="fa-solid fa-box text-gray-500"></i>
+                                    <% if(totalUnits>0) {%>
+                                        <% grandTotalUnits += totalUnits; %>
+                                        <% grandTotalRevenue += totalRevenue; %>
+                                        <% grandTotalDiscount += totalDiscount; %>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-4 py-4">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                                                        <i class="fa-solid fa-box text-gray-500"></i>
+                                                    </div>
+                                                    <span class="font-medium text-gray-800"><%= item.name %></span>
                                                 </div>
-                                                <span class="font-medium text-gray-800"><%= item.name %></span>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-4 text-gray-600"><%= totalUnits %></td>
-                                        <td class="px-4 py-4 text-gray-800 font-medium">₹<%= totalRevenue.toLocaleString('en-IN') %></td>
-                                        <td class="px-4 py-4 text-orange-600">-₹<%= totalDiscount.toLocaleString('en-IN') %></td>
-                                        <td class="px-4 py-4 text-green-600 font-semibold">₹<%= netRevenue.toLocaleString('en-IN') %></td>
-                                        <td class="px-4 py-4 text-gray-600"><%= grandTotalRevenue > 0 ? ((netRevenue / (grandTotalRevenue - grandTotalDiscount)) * 100).toFixed(1) : 0 %>%</td>
-                                    </tr>
+                                            </td>
+                                            <td class="px-4 py-4 text-gray-600"><%= totalUnits %></td>
+                                            <td class="px-4 py-4 text-gray-800 font-medium">₹<%= totalRevenue.toLocaleString('en-IN') %></td>
+                                            <td class="px-4 py-4 text-orange-600">-₹<%= totalDiscount.toLocaleString('en-IN') %></td>
+                                            <td class="px-4 py-4 text-green-600 font-semibold">₹<%= netRevenue.toLocaleString('en-IN') %></td>
+                                            
+                                        </tr>
+                                    <% } %>
                                 <% }) %>
                                 <tr class="bg-gray-100 font-semibold border-t-2 border-gray-300">
                                     <td class="px-4 py-4 text-gray-800">TOTAL</td>
@@ -368,12 +391,48 @@
                                     <td class="px-4 py-4 text-gray-800">₹<%= grandTotalRevenue.toLocaleString('en-IN') %></td>
                                     <td class="px-4 py-4 text-orange-600">-₹<%= grandTotalDiscount.toLocaleString('en-IN') %></td>
                                     <td class="px-4 py-4 text-green-600">₹<%= (grandTotalRevenue - grandTotalDiscount).toLocaleString('en-IN') %></td>
-                                    <td class="px-4 py-4 text-gray-800">100%</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <%
+                        function getPercentage(){
+                            let COD = 0
+                            let PAYPAL = 0
+                            let WALLET = 0
+                            let completed = 0
+                            let placed = 0
+                            let cancelled = 0
+                            order.forEach(o=>{
+                                if(o.orderStatus.toUpperCase() == "COMPLETED"){
+                                    completed += 1
+                                    if(o.orderMethod == "COD"){
+                                        COD+=o.totalAmount
+                                    }else if(o.orderMethod == "PAYPAL"){
+                                        PAYPAL+=o.totalAmount
+                                    }else{
+                                        WALLET+=o.totalAmount
+                                    }
+                                }else if(o.orderStatus.toUpperCase() == "PLACED"){
+                                    placed+=1
+                                }else{
+                                    cancelled+=1
+                                }
+                            })
+
+                            return {
+                                cod:COD,
+                                paypal:PAYPAL,
+                                wallet:WALLET,
+                                completed,
+                                placed,
+                                cancelled
+                            }
+                        } 
+                    %>
+                    <% const {cod,paypal,wallet,completed,placed,cancelled } = getPercentage() %>
 
                 <!-- Additional Analytics -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -390,8 +449,7 @@
                                     <span class="text-gray-700 font-medium">Completed</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800">652</span>
-                                    <span class="text-sm text-gray-500 ml-2">(52.4%)</span>
+                                    <span class="font-bold text-gray-800"><%= completed %></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
@@ -400,33 +458,22 @@
                                     <span class="text-gray-700 font-medium">Processing</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800">342</span>
-                                    <span class="text-sm text-gray-500 ml-2">(27.5%)</span>
+                                    <span class="font-bold text-gray-800"><%= placed %></span>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-4 h-4 bg-orange-500 rounded-full"></div>
-                                    <span class="text-gray-700 font-medium">Pending</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="font-bold text-gray-800">189</span>
-                                    <span class="text-sm text-gray-500 ml-2">(15.2%)</span>
-                                </div>
-                            </div>
+                            
                             <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-4 h-4 bg-red-500 rounded-full"></div>
                                     <span class="text-gray-700 font-medium">Cancelled</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800">62</span>
-                                    <span class="text-sm text-gray-500 ml-2">(5.0%)</span>
+                                    <span class="font-bold text-gray-800"><%= cancelled %></span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Payment Methods Distribution -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                         <h2 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
@@ -437,21 +484,19 @@
                             <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
                                     <i class="fa-solid fa-credit-card text-blue-600 text-lg"></i>
-                                    <span class="text-gray-700 font-medium">Credit/Debit Card</span>
+                                    <span class="text-gray-700 font-medium">WALLET</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800">₹28,450</span>
-                                    <span class="text-sm text-gray-500 ml-2">(55%)</span>
+                                    <span class="font-bold text-gray-800">₹<%= wallet.toFixed(2) %></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
-                                    <i class="fa-brands fa-google-pay text-purple-600 text-lg"></i>
-                                    <span class="text-gray-700 font-medium">UPI</span>
+                                    <i class="fa-brands fa-paypal text-blue-600 text-lg"></i>
+                                    <span class="text-gray-700 font-medium">PAYPAL</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800">₹15,680</span>
-                                    <span class="text-sm text-gray-500 ml-2">(30%)</span>
+                                    <span class="font-bold text-gray-800">₹<%= paypal.toFixed(2) %></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
@@ -460,8 +505,7 @@
                                     <span class="text-gray-700 font-medium">Cash on Delivery</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800">₹7,800</span>
-                                    <span class="text-sm text-gray-500 ml-2">(15%)</span>
+                                    <span class="font-bold text-gray-800">₹<%= cod.toFixed(2) %></span>
                                 </div>
                             </div>
                         </div>
@@ -490,6 +534,41 @@
 
     <script>
         // Initialize dates
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text("Sales Report - #Raftaara", 14, 20);
+
+            doc.setFontSize(12);
+            doc.text("Generated on: " + new Date().toLocaleString(), 14, 30);
+
+            // AutoTable from HTML table
+            doc.autoTable({
+                html: "#productSalesTable",
+                startY: 40,
+                theme: "grid",
+                styles: {
+                    fontSize: 9
+                }
+            });
+
+            doc.save("Sales_Report.pdf");
+        }
+        function downloadExcel() {
+            const table = document.getElementById("productSalesTable");
+
+            // Convert HTML table to worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.table_to_sheet(table);
+
+            XLSX.utils.book_append_sheet(wb, ws, "Sales Report");
+
+            // Download file
+            XLSX.writeFile(wb, "Sales_Report.xlsx");
+        }
+
         const today = new Date();
         document.getElementById('endDate').valueAsDate = today;
         const weekAgo = new Date(today);
@@ -505,48 +584,15 @@
             const payment = document.getElementById('paymentFilter')
             const from = document.getElementById('startDate')
             const to = document.getElementById('endDate')
-            filter.period = period.value
-            filter.status = status.value
-            filter.payment = payment.value
-            if(period.value == 'custom'){
-                filter.from =from.value
-                filter.to = to.value
+            
+             let url = `/admin/analytics?period=${period.value}&status=${status.value}&payment=${payment.value}`;
+
+            if (period.value === "custom") {
+                url += `&from=${from.value}&to=${to.value}`;
             }
-            try{
 
-                const request = await fetch('/admin/analytics-data',{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify(filter)
-                })
-
-                const result = await request.json()
-                if(!result.success){
-                    Swal.fire({
-                        toast: true,
-                        icon: 'error',
-                        title: result.message,
-                        position: 'top-right',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                    return;
-                }
-                Swal.fire({
-                    toast:true,
-                    icon: 'success',
-                    title: 'Report generated',
-                    position: 'top-right',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-                
-            }catch(e){
-                console.warn(e)
-
-            }
+            // Redirect instead of fetch
+            window.location.href = url;
         })
 
         // Toggle custom date inputs
@@ -562,9 +608,7 @@
         }
 
         
-        document.addEventListener('DOMContentLoaded', function() {
-            loadCouponData();
-        });
+        
     </script>
 </body>
 </html>

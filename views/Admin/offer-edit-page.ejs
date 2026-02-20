@@ -350,11 +350,6 @@
                         }
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
-                        
-                        if (new Date(value) < today) {
-                            errors.startDate.textContent = "Start date cannot be in the past";
-                            return false;
-                        }
 
                         errors.startDate.textContent = "";
                         return true;

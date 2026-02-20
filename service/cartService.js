@@ -1,11 +1,11 @@
 import cartModel from "../model/cartModel.js"
 import variantModel from "../model/variantModel.js";
+import whilistModel from "../model/whilistModel.js";
 
 export const cartData = async()=>{
     try{
         const data = await cartModel.find({}).populate({
             path: "variantId",
-            match:{status:true},
             populate: {
                 path: "productId",
                 populate: {
@@ -13,6 +13,8 @@ export const cartData = async()=>{
                 }    
             }
         });
+
+        
     
         for (const item of data) {
             if (!item.variantId) continue;
@@ -24,7 +26,8 @@ export const cartData = async()=>{
                 await item.save(); 
             }
         }
-       
+
+        
         
         if(!data){
             return {
@@ -54,6 +57,19 @@ export const addToCart = async (id,userId,qty)=>{
             }
         }
         let variantExists = await cartModel.findOne({variantId:id})
+        
+        let wishlist = await whilistModel.findOne({
+            userId,
+            variantId:id
+        })
+
+        if(wishlist){
+            await whilistModel.deleteOne({
+                userId,
+                variantId:id
+            })
+        }
+        
         if(variantExists){
             return {
                 success:false,

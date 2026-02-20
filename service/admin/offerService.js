@@ -4,6 +4,7 @@ import categoryModel from "../../model/categoryModel.js"
 import offerModel from "../../model/offerModel.js"
 import productModel from "../../model/productModel.js"
 import variantModel from "../../model/variantModel.js"
+import { applyOffer } from "../productService.js"
 
 
 export const offerDataLoad = async (filter = {})=>{
@@ -32,10 +33,22 @@ export const offerDataLoad = async (filter = {})=>{
 export const offeredProducts = async ()=>{
     try{
 
-        const data = await variantModel.find({appliedOffer:{$ne:null}})
-            .populate('appliedOffer')
-            .populate('productId')
-            
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const data = await variantModel.find({
+            appliedOffer: { $ne: null }
+        })
+            .populate({
+                path: 'appliedOffer',
+                match: {
+                    isActive: true,
+                    startDate: { $lte: today },
+                    endDate: { $gte: today }
+                }
+            })
+            .populate('productId');
+        
         if(!data){
             return {
                 success:false,
@@ -162,6 +175,26 @@ export const offerEditLogic = async (
             },
             { new: true }
         )
+
+        if(isActive == false){
+            let data = await variantModel.find({appliedOffer:_id})
+
+            for(let item of data){
+                await variantModel.findOneAndUpdate({_id:item._id},{price:item.basePrice})
+            }
+        }
+
+        if(isActive){
+            
+            let data = await variantModel.find({appliedOffer:_id})
+
+            for(let item of data){
+                console.log(item._id)
+                let apply = await applyOffer(item.productId,"PRODUCT")
+
+                
+            }   
+        }
 
         if(!offer){
 
