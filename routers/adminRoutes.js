@@ -7,7 +7,7 @@ import {upload} from "../config/multerConfig.js"
 import { adminOrdersDetailsLoad, adminOrdersLoad, adminOrdersUpdate } from "../controller/Admin/orderController.js"
 import { offerAdd, offerAddLoad, offerEdit, offerEditLoad, offerLoad } from "../controller/Admin/offerController.js"
 import { couponEditLoad, couponFormCreate, couponFormEdit, couponFormLoad, couponLoad } from "../controller/Admin/couponController.js"
-import { analyticsLoad, reportGenerator } from "../controller/Admin/salesReportController.js"
+import { analyticsLoad } from "../controller/Admin/salesReportController.js"
 let router = express.Router()
 
 router.get('/',adminLoginLoad)
@@ -42,9 +42,7 @@ router.get('/offer',offerLoad)
 router.get('/offer-add',offerAddLoad)
 router.get('/offer-edit/:id',offerEditLoad)
 
-router.get('/analytics',analyticsLoad)
-
-router.post('/analytics-data',reportGenerator)
+router.get('/analytics',isAdminAuthenticated,analyticsLoad)
 
 router.post('/offer-add',offerAdd)
 router.post('/offer-edit',offerEdit)

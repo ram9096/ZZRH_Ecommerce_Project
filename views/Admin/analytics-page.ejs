@@ -167,11 +167,11 @@
                             <select id="dateRange" name="period" onchange="toggleCustomDate()"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg">
 
+                                <option value="month" <%= period === "month" ? "selected" : "" %>>This Month</option>
                                 <option value="today" <%= period === "today" ? "selected" : "" %>>Today</option>
                                 <option value="yesterday" <%= period === "yesterday" ? "selected" : "" %>>Yesterday</option>
                                 <option value="week" <%= period === "week" ? "selected" : "" %>>This Week</option>
                                 
-                                <option value="month" <%= period === "month" ? "selected" : "" %>>This Month</option>
                                 
                                 <option value="year" <%= period === "year" ? "selected" : "" %>>This Year</option>
                                 <option value="custom" <%= period === "custom" ? "selected" : "" %>>Custom Date Range</option>
@@ -242,7 +242,16 @@
                         </button>
                     </div>
                 </div>
-
+                <% 
+                   let total = 0
+                   let deduction = 0
+                   coupon.forEach(c=>{
+                    if(c.baseLimit&&c.usageLimit<c.baseLimit){
+                        total += (c.baseLimit-c.usageLimit)*c.discountValue
+                        deduction += (c.baseLimit-c.usageLimit)
+                    }
+                   })
+                 %>
                 <!-- Discount & Coupon Breakdown -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
                     <h2 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
@@ -255,25 +264,18 @@
                                 <span class="text-sm font-medium text-gray-700">Product Discounts</span>
                                 <i class="fa-solid fa-tag text-orange-600"></i>
                             </div>
-                            <p class="text-2xl font-bold text-gray-800" id="productDiscounts">₹0</p>
+                            <p class="text-2xl font-bold text-gray-800" id="productDiscounts">₹<%= total %></p>
                             <p class="text-xs text-gray-600 mt-1">Item-level discounts</p>
                         </div>
                         
-                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-sm font-medium text-gray-700">Coupon Discounts</span>
-                                <i class="fa-solid fa-ticket text-blue-600"></i>
-                            </div>
-                            <p class="text-2xl font-bold text-gray-800" id="couponDiscounts">₹0</p>
-                            <p class="text-xs text-gray-600 mt-1">Coupon code redemptions</p>
-                        </div>
+                        
                         
                         <div class="bg-red-50 p-4 rounded-lg border border-red-200">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm font-medium text-gray-700">Total Deductions</span>
                                 <i class="fa-solid fa-calculator text-red-600"></i>
                             </div>
-                            <p class="text-2xl font-bold text-gray-800" id="totalDeductions">₹0</p>
+                            <p class="text-2xl font-bold text-gray-800" id="totalDeductions"><%= deduction %></p>
                             <p class="text-xs text-gray-600 mt-1">All discounts combined</p>
                         </div>
                     </div>
@@ -293,14 +295,29 @@
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Total Discount</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200" id="couponTableBody">
-                                    <tr>
-                                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">
-                                            <i class="fa-solid fa-ticket text-3xl mb-2 opacity-30"></i>
-                                            <p>No coupon usage in selected period</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                <% if(coupon.length == 0) {%>
+                                    <tbody class="divide-y divide-gray-200" id="couponTableBody">
+                                        <tr>
+                                            <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                                                <i class="fa-solid fa-ticket text-3xl mb-2 opacity-30"></i>
+                                                <p>No coupon usage in selected period</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                <% }else{ %>
+                                    <tbody class="divide-y divide-gray-200" >
+                                        <% coupon.forEach(c=>{ %>
+                                            <% if(c.baseLimit&&c.usageLimit<c.baseLimit) {%>
+                                                <tr>
+                                                    <td class="px-4 py-3 text-left text-s font-medium text-gray-800 uppercase"><%= c.code %></td>
+                                                    <td class="px-4 py-3 text-left text-s font-medium text-gray-800 uppercase"><%= c.baseLimit-c.usageLimit %></td>
+                                                    <td class="px-4 py-3 text-left text-s font-medium text-gray-800 uppercase"><%= c.discountType %></td>
+                                                    <td class="px-4 py-3 text-left text-s font-medium text-gray-800 uppercase"><%= (c.baseLimit-c.usageLimit)*c.discountValue %></td>
+                                                </tr>
+                                            <% } %>
+                                        <% }) %>
+                                    </tbody>
+                                <% } %>
                             </table>
                         </div>
                     </div>

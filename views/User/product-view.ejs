@@ -271,7 +271,7 @@
                             <button class="quantity-btn" id="increaseBtn">+</button>
                         </div>
                     </div>
-                    <% if(isLogged){ %>
+                    <% if(isLogged&&selectedVariant.status==true&&selectedVariant.stock>0){ %>
                         <button id="heartBtn"  class="text-red-500 text-3xl hover:text-red-600" data-variant="<%= selectedVariant._id %>">
                             <i id="change" class="fa-regular fa-heart transition-transform duration-200"></i>
                         </button>
@@ -283,11 +283,11 @@
                 <% if(isLogged){ %>
 
                     <div class="space-y-3">
-                        <button id="buyNowBtn" class="w-full bg-black text-white py-3 rounded hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        <!-- <button id="buyNowBtn" class="w-full bg-black text-white py-3 rounded hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                             Buy now
-                        </button>
+                        </button> -->
                         <form  id="cartForm">
-                            <button type="submit" id="addToCartBtn" class="w-full border border-black text-black py-3 rounded hover:bg-gray-50 transition disabled:border-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed">
+                            <button type="submit" id="addToCartBtn" class="w-full border border-black text-black py-3 rounded hover:bg-gray-50 transition disabled:border-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed" <%= (selectedVariant.stock<=0||selectedVariant.status==false)?'disabled':'' %>>
                                 Add to cart
                             </button>
                         </form>

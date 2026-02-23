@@ -2,10 +2,10 @@ import cartModel from "../model/cartModel.js"
 import whilistModel from "../model/whilistModel.js"
 
 
-export const whishlistData = async ()=>{
+export const whishlistData = async (filter = {})=>{
     try{
 
-        const data = await whilistModel.find()
+        const data = await whilistModel.find(filter)
             .populate({
                 path:'variantId',
                 populate:{

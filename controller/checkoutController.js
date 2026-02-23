@@ -7,7 +7,8 @@ import { couponLoad } from "./Admin/couponController.js"
 
 export const checkoutLoad = async (req,res)=>{
     try{
-        const cartDetails = await cartData()
+        let user = req.session.user.id
+        const cartDetails = await cartData({userId:user})
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         
         const address = await addressFetcher(req.session.user.id)
@@ -38,18 +39,13 @@ export const checkoutLoad = async (req,res)=>{
 
 export const paymentMethodLoad = async (req,res)=>{
     try{
-        
-        const cartDetails = await cartData()
+        let user = req.session.user.id
+        const cartDetails = await cartData({userId:user})
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         let coupons = await couponFetcher({})
-
-        if(!cartDetails.success){
-
-            return res.render('User/payment-method',{
-                cart:[],
-                coupons:[]
-            })
-
+        
+        if(!cartDetails.success||activeCartItems.length==0){
+            return res.redirect('/cart')
         }        
         return res.render('User/payment-method',{
             cart:activeCartItems,
@@ -96,6 +92,16 @@ export const checkoutFetcher = async (req,res)=>{
     try{
 
         const { id,purpose } = req.body
+        let user = req.session.user.id
+        const cartDetails = await cartData({userId:user})
+        const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
+
+        if(activeCartItems.length == 0){
+            return res.status(400).json({
+                success:false,
+                message:"Cart empty error"
+            })
+        }
         
         if(!id||!purpose){
             return res.status(401).json({
@@ -133,7 +139,17 @@ export const orderController = async (req,res)=>{
     try{
 
         const { method,coupon } = req.body
+        let user = req.session.user.id
+        const cartDetails = await cartData({userId:user})
+        const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
 
+        if(activeCartItems.length == 0){
+            return res.status(400).json({
+                success:false,
+                message:"Cart empty error"
+            })
+        }
+        
         if(!req.session.user||!method){
             return res.status(401).json({
                 success:false,

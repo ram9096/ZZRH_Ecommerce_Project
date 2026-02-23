@@ -174,6 +174,9 @@ export const couponApplyLogic = async (code,total)=>{
                 message: "Coupon expired"
             };
         }
+        if(!coupon.baseLimit){
+            coupon.baseLimit = coupon.usageLimit
+        }
         coupon.usageLimit = coupon.usageLimit - 1
 
         await coupon.save()

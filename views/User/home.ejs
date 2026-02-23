@@ -245,14 +245,16 @@
                         </a>
 
                         <!-- Wishlist Button (Top Right) — now outside <a>, still inside the relative container -->
-                        <button 
-                            data-variant="<%= product._id %>"
-                            
-                            class="heartBtn absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors z-10"
-                            <%= product.stock <= 0 ? 'disabled' : '' %>
-                            aria-label="Add to wishlist">
-                            <i class="change <%= isWishlist==true ? 'fa-solid fa-heart':'fa-regular fa-heart'  %>   transition-transform duration-200 "></i>
-                        </button>
+                        <% if(product.stock>0) {%>
+                            <button 
+                                data-variant="<%= product._id %>"
+                                
+                                class="heartBtn absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors z-10"
+                                <%= product.stock <= 0 ? 'disabled' : '' %>
+                                aria-label="Add to wishlist">
+                                <i class="change <%= isWishlist==true ? 'fa-solid fa-heart':'fa-regular fa-heart'  %>   transition-transform duration-200 "></i>
+                            </button>
+                        <% } %>
                     </div>
                     
                     <div class="flex justify-between items-start mb-3">
@@ -312,7 +314,23 @@
                     <% } %>
 
                     <!-- Product Image with Wishlist Button -->
-                    <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                    <% if(product.status==true){%>
+                        <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                            <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                                <img src="/<%= product.image[0] %>" 
+                                    alt="<%= product.productId.name %>" 
+                                    loading="lazy"
+                                    class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                                <% if (product.stock <= 0) { %>
+                                    <div class="absolute inset-0 flex items-center justify-center bg-opacity-40">
+                                        <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                            Out of Stock
+                                        </span>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </a>
+                    <% }else{%>
                         <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
                             <img src="/<%= product.image[0] %>" 
                                 alt="<%= product.productId.name %>" 
@@ -326,14 +344,16 @@
                                 </div>
                             <% } %>
                         </div>
-                    </a>
-                    <button 
-                        data-variant="<%= product._id %>"
-                        
-                        class="heartBtn absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors z-10"
-                        aria-label="Add to wishlist">
-                        <i class="change <%= isWishlist==true ? 'fa-solid fa-heart' : 'fa-regular fa-heart'  %>  transition-transform duration-200"></i>
-                    </button>
+                    <% } %>
+                    <% if(product.stock>0&& product.status == true) {%>
+                        <button 
+                            data-variant="<%= product._id %>"
+                            
+                            class="heartBtn absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors z-10"
+                            aria-label="Add to wishlist">
+                            <i class="change <%= isWishlist==true ? 'fa-solid fa-heart' : 'fa-regular fa-heart'  %>  transition-transform duration-200"></i>
+                        </button>
+                    <% } %>
                     <!-- Product Info -->
                     <div class="flex justify-between items-start mb-3">
                         <% const save = product.basePrice - product.price %>
@@ -343,23 +363,30 @@
                                 <span class="text-gray-500 line-through">₹<%= product.discount %></span> ₹<%= product.price %>
                             </p>
                             <% if(save <= 0) { %>
-                                <span class="price-save">Offer expired</span>
+                                <span class="price-save">Offer expired or getting started</span>
                             <% } else { %>
                                 <span class="price-save">Save ₹<%= save %></span>
                                 <span class="price-save"><%= product.appliedOffer.name ? product.appliedOffer.name:'Offer Inactive' %></span>
                             <% } %>
-                            <% if (product.stock <= 0) { %>
+                            <% if (product.stock <= 0||!product.status) { %>
                                 <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
                             <% } %>
                         </div>
                     </div>
 
                     <!-- Add to Cart Button -->
+                     
                     <button 
                         onclick="addToCart('<%= product._id %>')"
-                        class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all <%= product.stock <= 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800' %>"
-                        <%= product.stock <= 0 ? 'disabled' : '' %>>
-                        <%= product.stock <= 0 ? 'Out of Stock' : 'Add to Cart' %>
+                        class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all 
+                        <%= (product.stock <= 0 || product.status === false) 
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                            : 'bg-black text-white hover:bg-gray-800' %>"
+                        <%= (product.stock <= 0 || product.status === false) ? 'disabled' : '' %>>
+                        
+                        <%= (product.stock <= 0 || product.status === false) 
+                            ? 'Out of Stock' 
+                            : 'Add to Cart' %>
                     </button>
 
                 </div>

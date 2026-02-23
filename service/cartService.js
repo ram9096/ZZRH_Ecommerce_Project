@@ -2,9 +2,9 @@ import cartModel from "../model/cartModel.js"
 import variantModel from "../model/variantModel.js";
 import whilistModel from "../model/whilistModel.js";
 
-export const cartData = async()=>{
+export const cartData = async(filter={})=>{
     try{
-        const data = await cartModel.find({}).populate({
+        const data = await cartModel.find(filter).populate({
             path: "variantId",
             populate: {
                 path: "productId",
@@ -56,7 +56,7 @@ export const addToCart = async (id,userId,qty)=>{
                 message:"Error while adding to cart try again!!!"
             }
         }
-        let variantExists = await cartModel.findOne({variantId:id})
+        let variantExists = await cartModel.findOne({variantId:id,userId})
         
         let wishlist = await whilistModel.findOne({
             userId,
@@ -171,4 +171,23 @@ export const cartEdit = async(_id,variantId,quantity)=>{
             message:"Server error"
         }
     }   
+}
+
+
+export const cartCount = async (_id)=>{
+    try{
+        let total = 0
+        let cart = await cartData({userId:_id})
+        cart.data.forEach(v=>{
+            if(v.variantId.status&&v.variantId.stock>v.quantity){
+                total+=v.quantity
+            }
+        })
+        return {
+            success:true,
+            count:total
+        }
+    }catch(e){
+
+    }
 }

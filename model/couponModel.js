@@ -40,7 +40,10 @@ const couponSchema = new mongoose.Schema(
       type: Number,
       default: 1
     },
-
+    baseLimit:{
+      type: Number,
+      default: null
+    },
     isActive: {
       type: Boolean,
       default: true

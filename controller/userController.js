@@ -1,4 +1,5 @@
 import { offeredProducts } from "../service/admin/offerService.js";
+import { cartCount } from "../service/cartService.js";
 import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails, variantFilterLogic } from "../service/userService.js";
 import { whishlistData } from "../service/whishlistService.js";
 
@@ -49,8 +50,8 @@ export const homePageLoad = async (req, res) => {
        
         let products = await ProductsLoad({},5)
         let offer = await offeredProducts()
-        let wishlist = await whishlistData()
-
+        let wishlist = await whishlistData({userId:req.session.user.id})
+        let cart = await cartCount(req.session.user.id)
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -67,7 +68,8 @@ export const homePageLoad = async (req, res) => {
             error:'',
             offer:offer.data? offer.data : [],
             isLogged:req.session.user||'',
-            wishlist:wishlist.data||[]
+            wishlist:wishlist.data||[],
+            cart:cart.count||0
         });
     }catch(e){
         console.log("Home page load Error: ",e)
@@ -155,8 +157,10 @@ export const VariantFilter = async(req,res)=>{
 export const productShowcaseLoad = async (req,res)=>{
     try{
         let products = await ProductsLoad({})
-        let wishlist = await whishlistData()
-
+        
+        let wishlist = await whishlistData({userId:req.session.user?.id})
+        let cart = await cartCount(req.session.user?.id)
+        
         return res.render('User/product-showcase',{
             product:products.data,
             color:[...products.color],
@@ -164,10 +168,11 @@ export const productShowcaseLoad = async (req,res)=>{
             category:products.category,
             isLogged:req.session.user||'',
             error:'',
-            wishlist:wishlist.data || []
+            wishlist:wishlist.data || [],
+            cart:cart.count||0
         })
     }catch(e){
-
+        console.log(e)
     }
 }
 

@@ -1,3 +1,4 @@
+import { couponFetcher } from "../../service/admin/couponService.js";
 import { salesReportLogic } from "../../service/admin/salesReportService.js";
 import { productModelLoad, variantLoad } from "../../service/adminService.js";
 import { getOrders } from "../../service/orderService.js";
@@ -13,6 +14,7 @@ export const analyticsLoad = async (req,res)=>{
             let order = await getOrders({})
             let variant = await variantLoad()
             let productModel = await productModelLoad({})
+            let coupon = await couponFetcher({})
             let totalOrders = 0;
             let fullRevenue =0;
             let fullDiscount  =0 
@@ -40,7 +42,8 @@ export const analyticsLoad = async (req,res)=>{
                     fullDiscount:0,
                     period:period||"today",
                     status:status||"all",
-                    payment:payment||"all"
+                    payment:payment||"all",
+                    coupon:[]
                 })    
             }
             return res.render('Admin/analytics-page',{
@@ -53,7 +56,8 @@ export const analyticsLoad = async (req,res)=>{
                 fullDiscount,
                 period:period||"today",
                 status:status||"all",
-                payment:payment||"all"
+                payment:payment||"all",
+                coupon:coupon.data
             })
         }
 
@@ -61,6 +65,7 @@ export const analyticsLoad = async (req,res)=>{
         
         let variant = await variantLoad()
         let productModel = await productModelLoad({})
+        let coupon = await couponFetcher({})
         let totalOrders = 0;
         let fullRevenue =0;
         let fullDiscount  =0 
@@ -88,7 +93,8 @@ export const analyticsLoad = async (req,res)=>{
                 fullDiscount:0,
                 period:period||"today",
                 status:status||"all",
-                payment:payment||"all"
+                payment:payment||"all",
+                coupon:[]
             })    
         }
         return res.render('Admin/analytics-page',{
@@ -101,7 +107,8 @@ export const analyticsLoad = async (req,res)=>{
             fullDiscount,
             period:period||"today",
             status:status||"all",
-            payment:payment||"all"
+            payment:payment||"all",
+            coupon:coupon.data
         })
 
     }catch(e){
@@ -114,24 +121,11 @@ export const analyticsLoad = async (req,res)=>{
             product:[],
             fullRevenue:0,
             totalOrders:0,
-            fullDiscount:0
+            fullDiscount:0,
+            coupon:[]
         }) 
     }
 
 }
 
 
-export const reportGenerator = async (req,res)=>{
-    try {
-        const { period, status, payment, from, to } = req.body
-
-        const data = await salesReportLogic(period, status, payment, from, to)
-        
-        return res.json({
-            success:true,
-            data:data.data
-        })  
-    } catch (e) {
-        
-    }
-}

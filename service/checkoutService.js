@@ -48,7 +48,7 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
                 message:"Try again!!"
             }
         }
-        let cartItems = await cartData()
+        let cartItems = await cartData({userId:userDetails.id})
         const activeCartItems = cartItems.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         if(!cartItems.success){
             return {

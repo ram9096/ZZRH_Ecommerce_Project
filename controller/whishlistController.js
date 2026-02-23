@@ -1,3 +1,4 @@
+import { cartCount } from "../service/cartService.js"
 import { findUserByEmail } from "../service/userService.js"
 import { whishlistData, wishlistUpdateLogic } from "../service/whishlistService.js"
 
@@ -6,15 +7,17 @@ export const whishlistLoad = async (req,res)=>{
     try{
 
         let user = await findUserByEmail(req.session.user.email)
-        let data = await whishlistData()
-        
+        let data = await whishlistData({userId:req.session.user.id})
+        let cart = await cartCount(req.session.user.id)
+
         if(!data){
             return res.render('User/whishlist',{
                 isLogged:req.session.user||'',
                 name:user.name,
                 email:'',
                 order:[],
-                pageActive:"WISHLIST"
+                pageActive:"WISHLIST",
+                cart:cart.count||0
             })    
         }
         return res.render('User/whishlist',{
@@ -22,7 +25,8 @@ export const whishlistLoad = async (req,res)=>{
             name:user.name,
             email:'',
             order:data.data,
-            pageActive:"WISHLIST"
+            pageActive:"WISHLIST",
+            cart:cart.count||0
         })
 
     }catch(e){

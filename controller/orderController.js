@@ -1,4 +1,5 @@
 
+import { cartCount } from "../service/cartService.js"
 import { cancelRequestLogic, getOrders, returnRequestLogic } from "../service/orderService.js"
 import { findUserByEmail } from "../service/userService.js"
 
@@ -9,6 +10,7 @@ export const ordersLoad = async (req,res)=>{
         let id = req.session.user.id
         let user = await findUserByEmail(req.session.user.email)
         const page = req.query.page || 1
+        let cart = await cartCount(req.session.user.id)
         if(!id){
             return res.redirect('/login')
         }
@@ -22,7 +24,8 @@ export const ordersLoad = async (req,res)=>{
                 email:'',
                 order:[],
                 pageActive:'ORDER',
-                pagination:order.pagination
+                pagination:order.pagination,
+                cart:cart.count||0
             })
         }
 
@@ -32,7 +35,8 @@ export const ordersLoad = async (req,res)=>{
             email:user.email,
             order:order.data,
             pageActive:'ORDER',
-            pagination:order.pagination
+            pagination:order.pagination,
+            cart:cart.count||0
         })
     }catch(e){
         console.log("Error",e)
@@ -42,13 +46,15 @@ export const ordersLoad = async (req,res)=>{
             email:'',
             order:[],
             pageActive:'ORDER',
-            pagination:order.pagination
+            pagination:order.pagination,
+            cart:0
         })
     }
 }
 export const orderDetailsLoad = async (req,res)=>{
     try{
         let id = req.params.id
+        let cart = await cartCount(req.session.user.id)
         if(!id){
             return res.redirect('/login')
         }
@@ -59,7 +65,8 @@ export const orderDetailsLoad = async (req,res)=>{
             name:'',
             email:'',
             order:order.data,
-            pageActive:'ORDER'
+            pageActive:'ORDER',
+            cart:cart.count||0
         })
     }catch(e){
         console.log("Error",e)
