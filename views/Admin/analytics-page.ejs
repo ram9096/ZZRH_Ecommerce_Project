@@ -221,13 +221,13 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fa-regular fa-calendar-days mr-1"></i>Start Date
                             </label>
-                            <input type="date" id="startDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <input type="date" id="startDate" value="<%= start ? new Date(start).toISOString().split('T')[0] : '' %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fa-regular fa-calendar-days mr-1"></i>End Date
                             </label>
-                            <input type="date" id="endDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <input type="date" id="endDate" value="<%= end ? new Date(end).toISOString().split('T')[0] : '' %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
                         </div>
                     </div>
 
@@ -338,6 +338,8 @@
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Gross Amount</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Discount</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Net Revenue</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Return orders</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Cancelled</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
@@ -346,6 +348,8 @@
                                         let totalUnits = 0;
                                         let totalRevenue = 0;
                                         let totalDiscount = 0;
+                                        let totalReturn  = 0
+                                        let totalCancelled = 0
                                         let statusv = status!="all" ? status.toUpperCase():'COMPLETED' 
                                         order.forEach(orders => {
                                             orders.orderItems.forEach(item => {
@@ -353,17 +357,53 @@
                                                 if(orders.orderStatus.toUpperCase()==statusv){
                                                     
                                                     if (item.productName === itemName) {
-                                                        totalUnits += item.quantity;
-                                                        totalRevenue += item.quantity * item.price;
-                                                        // Assuming discount is stored in item object
-                                                        if(item.variantId.basePrice != null&&item.variantId.basePrice!=item.variantId.price){
+                                                        if(orders.cancelledAt){
+                                                            orders.cancelledAt.forEach((e=>{
+                                                                e.cancelledProducts.forEach(u=>{
+                                                                    
+                                                                    if(u==item.variantId._id){
+                                                                        totalCancelled+=item.quantity
+                                                                    }
+                                                                })
+                                                            }))
+                                                        }
+
+                                                        if(orders.returnedAt){
                                                             
-                                                            totalDiscount += (item.variantId.basePrice - item.variantId.price)*item.quantity
-                                                            
+                                                            totalReturn+=item.quantity
+                                                        }else{
+
+                                                            totalUnits += item.quantity;
+                                                            totalRevenue += item.quantity * item.price;
+                                                            // Assuming discount is stored in item object
+                                                            if(item.variantId.basePrice != null&&item.variantId.basePrice!=item.variantId.price){
+                                                                
+                                                                totalDiscount += (item.variantId.basePrice - item.variantId.price)*item.quantity
+                                                                
+                                                            }
                                                         }
                                                         
                                                     }
                                                 }
+                                            });
+                                        });
+                                        order.forEach(orders => {
+                                            orders.orderItems.forEach(item => {
+    
+                                                if (item.productName === itemName) {
+                                                    
+                                                    if(orders.cancelledAt){
+                                                        orders.cancelledAt.forEach((e=>{
+                                                            e.cancelledProducts.forEach(u=>{
+                                                                if(u._id.toString()==item.variantId._id.toString()){
+                                                                    totalCancelled+=item.quantity
+                                                                }
+                                                            })
+                                                        }))
+                                                    }
+                                                    
+                                                }
+                                                
                                             });
                                         });
                                         
@@ -371,20 +411,26 @@
                                             totalUnits,
                                             totalRevenue,
                                             totalDiscount,
-                                            netRevenue: totalRevenue 
+                                            totalReturn,
+                                            netRevenue: totalRevenue,
+                                            totalCancelled
                                         };
                                     } 
                                     
                                     let grandTotalUnits = 0;
                                     let grandTotalRevenue = 0;
                                     let grandTotalDiscount = 0;
+                                    let grandTotalReturn = 0
+                                    let grandTotalCancel = 0
                                 %>
                                 <% product.forEach(item => { %>
-                                    <% const { totalUnits, totalRevenue, totalDiscount, netRevenue } = getUnitsSoldByItemName(item.name) %>
+                                    <% const { totalUnits, totalRevenue, totalDiscount,totalReturn, netRevenue,totalCancelled } = getUnitsSoldByItemName(item.name) %>
                                     <% if(totalUnits>0) {%>
                                         <% grandTotalUnits += totalUnits; %>
                                         <% grandTotalRevenue += totalRevenue; %>
                                         <% grandTotalDiscount += totalDiscount; %>
+                                        <% grandTotalReturn+=totalReturn %>
+                                        <% grandTotalCancel+=totalCancelled %>
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-4 py-4">
                                                 <div class="flex items-center space-x-3">
@@ -398,6 +444,8 @@
                                             <td class="px-4 py-4 text-gray-800 font-medium">₹<%= totalRevenue.toLocaleString('en-IN') %></td>
                                             <td class="px-4 py-4 text-orange-600">-₹<%= totalDiscount.toLocaleString('en-IN') %></td>
                                             <td class="px-4 py-4 text-green-600 font-semibold">₹<%= netRevenue.toLocaleString('en-IN') %></td>
+                                            <td class="px-4 py-4 text-red-600 font-semibold"><%= totalReturn%></td>
+                                            <td class="px-4 py-4 text-red-600 font-semibold"><%= totalCancelled %></td>
                                             
                                         </tr>
                                     <% } %>
@@ -407,7 +455,9 @@
                                     <td class="px-4 py-4 text-gray-800"><%= grandTotalUnits %></td>
                                     <td class="px-4 py-4 text-gray-800">₹<%= grandTotalRevenue.toLocaleString('en-IN') %></td>
                                     <td class="px-4 py-4 text-orange-600">-₹<%= grandTotalDiscount.toLocaleString('en-IN') %></td>
-                                    <td class="px-4 py-4 text-green-600">₹<%= (grandTotalRevenue - grandTotalDiscount).toLocaleString('en-IN') %></td>
+                                    <td class="px-4 py-4 text-green-600">&#8377;<%= (grandTotalRevenue - grandTotalDiscount).toLocaleString('en-IN') %></td>
+                                    <td class="px-4 py-4 text-red-600"><%= grandTotalReturn%></td>
+                                    <td class="px-4 py-4 text-red-600"><%= grandTotalCancel%></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -423,14 +473,27 @@
                             let placed = 0
                             let cancelled = 0
                             order.forEach(o=>{
+                            
                                 if(o.orderStatus.toUpperCase() == "COMPLETED"){
                                     completed += 1
                                     if(o.orderMethod == "COD"){
-                                        COD+=o.totalAmount
+                                        if(!o.returnedAt){
+
+                                            COD+=o.totalAmount
+                                        }
+                                        
                                     }else if(o.orderMethod == "PAYPAL"){
-                                        PAYPAL+=o.totalAmount
+                                        if(!o.returnedAt){
+                                            
+                                            PAYPAL+=o.totalAmount
+                                        }
                                     }else{
-                                        WALLET+=o.totalAmount
+                                        if(!o.returnedAt){
+
+                                            WALLET+=o.totalAmount
+                                        }
+                                        
+                                        
                                     }
                                 }else if(o.orderStatus.toUpperCase() == "PLACED"){
                                     placed+=1
@@ -466,7 +529,7 @@
                                     <span class="text-gray-700 font-medium">Completed</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800"><%= completed %></span>
+                                    <span class="font-bold text-gray-800"><%= grandTotalUnits %></span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
@@ -485,7 +548,7 @@
                                     <span class="text-gray-700 font-medium">Cancelled</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-800"><%= cancelled %></span>
+                                    <span class="font-bold text-gray-800"><%= grandTotalCancel %></span>
                                 </div>
                             </div>
                         </div>
@@ -551,38 +614,103 @@
 
     <script>
         // Initialize dates
+        const todayDate = new Date().toISOString().split("T")[0];
+        const startInput = document.getElementById("startDate");
+        const endInput = document.getElementById("endDate");
+
+        startInput.max = todayDate
+        endInput.max = todayDate
+        startInput.addEventListener('input',(e)=>{
+            endInput.min = e.target.value
+            if (endInput.value && endInput.value < e.target.value) {
+                endInput.value = "";
+            }
+        })
         async function downloadPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
+            const pageWidth = doc.internal.pageSize.getWidth();
+
+            
+            doc.setFont("helvetica", "bold");
             doc.setFontSize(18);
-            doc.text("Sales Report - #Raftaara", 14, 20);
+            doc.text("SALES REPORT", 14, 20);
 
             doc.setFontSize(12);
-            doc.text("Generated on: " + new Date().toLocaleString(), 14, 30);
+            doc.setFont("helvetica", "normal");
+            doc.text("Raftaara", 14, 28);
 
-            // AutoTable from HTML table
+            doc.setFontSize(10);
+            doc.text("Generated on: " + new Date().toLocaleString(), 14, 35);
+
+            
+            const start = document.getElementById("startDate")?.value;
+            const end = document.getElementById("endDate")?.value;
+
+            if (start && end) {
+                doc.text(`Report Period: ${start} to ${end}`, 14, 42);
+            }
+
+            // ===== TABLE =====
             doc.autoTable({
                 html: "#productSalesTable",
-                startY: 40,
+                startY: 50,
                 theme: "grid",
+                headStyles: {
+                    fillColor: [22, 160, 133], 
+                    textColor: 255,
+                    fontStyle: "bold"
+                },
                 styles: {
-                    fontSize: 9
+                    fontSize: 9,
+                    cellPadding: 3
+                },
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
                 }
             });
 
-            doc.save("Sales_Report.pdf");
+            // ===== FOOTER =====
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(9);
+                doc.text(
+                    `Page ${i} of ${pageCount}`,
+                    pageWidth - 30,
+                    doc.internal.pageSize.height - 10
+                );
+            }
+
+            doc.save("Raftaara_Sales_Report.pdf");
         }
         function downloadExcel() {
             const table = document.getElementById("productSalesTable");
 
-            // Convert HTML table to worksheet
             const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.table_to_sheet(table);
+
+            // Convert table to JSON first (clean method)
+            const tableData = XLSX.utils.sheet_to_json(
+                XLSX.utils.table_to_sheet(table),
+                { header: 1 }
+            );
+
+            const now = new Date();
+            const formattedDate = now.toLocaleString();
+
+            // Create final sheet data
+            const finalData = [
+                ["SALES REPORT"],
+                ["Generated On:", formattedDate],
+                [],
+                ...tableData
+            ];
+
+            const ws = XLSX.utils.aoa_to_sheet(finalData);
 
             XLSX.utils.book_append_sheet(wb, ws, "Sales Report");
 
-            // Download file
             XLSX.writeFile(wb, "Sales_Report.xlsx");
         }
 
@@ -623,7 +751,7 @@
                 customInputs.classList.remove('active');
             }
         }
-
+        toggleCustomDate()
         
         
     </script>

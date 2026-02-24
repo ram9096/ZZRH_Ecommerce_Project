@@ -1,5 +1,7 @@
 import orderModel from "../model/orderModel.js"
+import userModel from "../model/userModel.js";
 import variantModel from "../model/variantModel.js"
+import walletModel from "../model/walletModel.js";
 
 export const getOrders = async (filter,page=1,limit=0)=>{
     try{
@@ -74,23 +76,35 @@ export const cancelRequestLogic = async (id,reason,remark,orderid)=>{
 
         if(id=="ALL"){
             requestProgress.expectedDeliveryDate=null
-
+            let products = []
             for(let i of requestProgress.orderItems){
-
-                requestProgress.cancelledAt.push({
-                    reason: reason,
-                    cancelledBy: "user",
-                    remarks: remark,
-                    requestedAt: new Date(),
-                    cancelledProducts:[i.variantId]
-                });
-
+                products.push(i.variantId)
+                
                 await variantModel.updateOne({_id:i.variantId},{$inc:{stock:i.quantity}})
             }
             
             requestProgress.orderStatus = "cancelled"
             requestProgress.deliveryStatus = "cancelled"
+            requestProgress.cancelledAt.push({
+                reason: reason,
+                cancelledBy: "user",
+                remarks: remark,
+                requestedAt: new Date(),
+                cancelledProducts:products
+            });
+            if(requestProgress.orderMethod == "WALLET"||requestProgress.orderMethod == "PAYPAL"){
+                let wallet = await userModel.findOne({_id:requestProgress.userId})
+                wallet.wallet+=requestProgress.totalAmount
+                let transaction = new walletModel({
+                    userId:requestProgress.userId,
+                    type:"credit",
+                    amount:requestProgress.totalAmount,
+                    reason:"Order Refund"
+                })
 
+                transaction.save()
+                wallet.save()
+            }   
             await requestProgress.save()
             
             return {
@@ -113,7 +127,19 @@ export const cancelRequestLogic = async (id,reason,remark,orderid)=>{
                 message:"Something went wrong"
             }
         }
+        if(requestProgress.orderMethod == "WALLET"||requestProgress.orderMethod == "PAYPAL"){
+            let wallet = await userModel.findOne({_id:requestProgress.userId})
+            wallet.wallet+=Canceledprice
+            let transaction = new walletModel({
+                userId:requestProgress.userId,
+                type:"credit",
+                amount:Canceledprice,
+                reason:"Order Refund"
+            })
 
+            transaction.save()
+            wallet.save()
+        }  
         requestProgress.cancelledAt.push({
             reason: reason,
             cancelledBy: "user",
@@ -160,7 +186,7 @@ export const cancelRequestLogic = async (id,reason,remark,orderid)=>{
 }
 
 
-export const returnRequestLogic = async (orderId,reason,remark,resolution)=>{
+export const returnRequestLogic = async (orderId,reason,remark,resolution,variantId)=>{
     try{
 
         let order = await orderModel.findOne({_id:orderId})
@@ -178,9 +204,10 @@ export const returnRequestLogic = async (orderId,reason,remark,resolution)=>{
         order.returnedAt.push({
             reason:reason,
             remark:remark,
-            resolution:resolution
+            resolution:resolution,
+            variant:variantId
         })
-
+        
         await order.save()
         return {
             success:true,

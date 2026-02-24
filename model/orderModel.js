@@ -150,6 +150,10 @@ const orderSchema = new mongoose.Schema({
           type: String,
           default: null
         },
+        variant:{
+          type:String,
+          defalt:null
+        },
         returnRequestStatus: {
           type: String,
           default: "Pending" 

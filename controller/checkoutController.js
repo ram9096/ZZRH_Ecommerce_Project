@@ -42,6 +42,13 @@ export const paymentMethodLoad = async (req,res)=>{
         let user = req.session.user.id
         const cartDetails = await cartData({userId:user})
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
+        let offer = activeCartItems.reduce((val,arr)=>{
+            if(arr.variantId.appliedOffer){
+                val+=arr.variantId.basePrice-arr.variantId.price
+            }
+            return val
+        },0)
+        
         let coupons = await couponFetcher({})
         
         if(!cartDetails.success||activeCartItems.length==0){
@@ -49,13 +56,15 @@ export const paymentMethodLoad = async (req,res)=>{
         }        
         return res.render('User/payment-method',{
             cart:activeCartItems,
-            coupons:coupons.data
+            coupons:coupons.data,
+            offer:offer||0
         })
     }catch(e){
         console.log("Error ",e)
         return res.render('User/payment-method',{
             cart:[],
-            coupons:[]
+            coupons:[],
+            offer:0
         })
 
     }
@@ -71,20 +80,25 @@ export const orderSuccessLoad = async (req,res)=>{
             })
         }
         const order = await orderDetailsLoad(orderId)
-        
+        const offer = order.data.orderItems.reduce((val,arr)=>{
+            if(arr.variantId.appliedOffer){
+                val+=arr.variantId.basePrice - arr.variantId.price 
+            }
+            return val
+        },0)
         if(!order.success){
             return res.render('User/order-success',{
-                order:[]
+                order:[],
+                offer:0
             })
         }
         return res.render('User/order-success',{
-            order:order.data
+            order:order.data,
+            offer:offer||0
         })
     }catch(e){
         console.log("Error ",e)
-        return res.render('User/order-success',{
-            order:[]
-        })
+        return res.redirect('/login')
     }
 }
 

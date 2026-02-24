@@ -254,7 +254,7 @@
                                             <i class="fas fa-ban mr-1"></i><%= status %>
                                         </span>
                                     <% } else { %>
-                                        <% if(order[0].orderItems.length!=1) {%>
+                                        <% if(order[0].orderItems.length!=1&&order[0].orderStatus !="completed") {%>
                                             <button onclick="openCancelModal('<%= o.variantId._id %>','<%= order[0]._id %>')" 
                                             class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-all flex items-center gap-2 border border-red-200 hover:border-red-300">
                                                 <i class="fas fa-times-circle"></i>
@@ -553,7 +553,16 @@
 
                     <div class="space-y-4">
                         <input type="hidden" id="returnOrderId">
-                        
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Return product *</span>
+                            <select id="returnProduct" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                <option value="">Select a Product</option>
+                                <% order[0].orderItems.forEach((e)=>{ %>
+                                    <option value="<%= e.variantId._id %>"><%= e.productName %></option>
+                                <% }) %>
+                                <option value="ALL">All</option>
+                            </select>
+                        </label>
                         <label class="block">
                             <span class="text-gray-700 font-medium mb-2 block">Reason for return *</span>
                             <select id="returnReason" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
@@ -630,7 +639,18 @@
             const remark = document.getElementById('returnRemark');
             const resolution = document.getElementById('returnResolution');
             const orderId = document.getElementById('returnOrderId');
-            
+            const product = document.getElementById('returnProduct')
+            if(product.value == ""){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Please select a product to return",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
             if(reason.value == ''){
                 Swal.fire({
                     toast: true,
@@ -675,7 +695,8 @@
                         orderId: orderId.value,
                         reason: reason.value,
                         remark: remark.value,
-                        resolution: resolution.value
+                        resolution: resolution.value,
+                        variant:product.value
                     })
                 });
                 const result = await request.json();

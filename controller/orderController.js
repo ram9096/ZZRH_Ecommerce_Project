@@ -101,9 +101,9 @@ export const cancellRequest = async (req,res)=>{
 export const returnRequest = async(req,res)=>{
     try{
 
-        const {orderId,reason,remark,resolution}= req.body
+        const {orderId,reason,remark,resolution,variant}= req.body
 
-        const returnProgress = await returnRequestLogic(orderId,reason,remark,resolution)
+        const returnProgress = await returnRequestLogic(orderId,reason,remark,resolution,variant)
 
         if(!returnProgress.success){
             return res.status(400).json({

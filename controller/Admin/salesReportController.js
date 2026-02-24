@@ -22,15 +22,18 @@ export const analyticsLoad = async (req,res)=>{
             order.data.forEach(order => {
                 order.orderItems.forEach(item => {
                     if(order.orderStatus.toUpperCase()=="COMPLETED"){
-                        fullRevenue += item.totalPrice;
-                        totalOrders += item.quantity;
-                        if(item.basePrice!=null){
-                            fullDiscount += (item.basePrice-item.price)*item.quantity
+                        if(!order.returnedAt){
+
+                            fullRevenue += item.totalPrice;
+                            totalOrders += item.quantity;
+                            if(item.variantId.basePrice!=null){
+                                fullDiscount += (item.variantId.basePrice-item.variantId.price)*item.quantity
+                            }
                         }
                     }
                 });
             });
-    
+
             if(!order.success){
                 return res.render('Admin/analytics-page',{
                     activePage:'analytics',
@@ -43,7 +46,9 @@ export const analyticsLoad = async (req,res)=>{
                     period:period||"today",
                     status:status||"all",
                     payment:payment||"all",
-                    coupon:[]
+                    coupon:[],
+                    start:from,
+                    end:to,
                 })    
             }
             return res.render('Admin/analytics-page',{
@@ -57,6 +62,8 @@ export const analyticsLoad = async (req,res)=>{
                 period:period||"today",
                 status:status||"all",
                 payment:payment||"all",
+                start:from,
+                end:to,
                 coupon:coupon.data
             })
         }
@@ -94,7 +101,9 @@ export const analyticsLoad = async (req,res)=>{
                 period:period||"today",
                 status:status||"all",
                 payment:payment||"all",
-                coupon:[]
+                coupon:[],
+                start:from,
+                end:to,
             })    
         }
         return res.render('Admin/analytics-page',{
@@ -108,7 +117,9 @@ export const analyticsLoad = async (req,res)=>{
             period:period||"today",
             status:status||"all",
             payment:payment||"all",
-            coupon:coupon.data
+            coupon:coupon.data,
+            start:from,
+            end:to,
         })
 
     }catch(e){
@@ -122,7 +133,9 @@ export const analyticsLoad = async (req,res)=>{
             fullRevenue:0,
             totalOrders:0,
             fullDiscount:0,
-            coupon:[]
+            coupon:[],
+            start:null,
+            end:null,
         }) 
     }
 

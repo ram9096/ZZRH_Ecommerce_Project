@@ -188,6 +188,13 @@
                             </div>
                             <span id="coupon">₹0.00</span>
                         </div>
+                        <div class="flex justify-between text-sm items-center">
+                            <div class="flex items-center gap-2">
+                                <span>Offer Deduction</span>
+                                
+                            </div>
+                            <span >₹<%= offer.toFixed(2) %></span>
+                        </div>
                     </div>
 
                     
@@ -445,6 +452,7 @@
                 return;
             }
             try{
+                console.log(code.value)
                 const request = await fetch('/checkout/method',{
                     method:"POST",
                     headers:{
