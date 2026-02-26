@@ -43,7 +43,7 @@ export const analyticsLoad = async (req,res)=>{
                     fullRevenue:0,
                     totalOrders:0,
                     fullDiscount:0,
-                    period:period||"year",
+                    period:period||"all",
                     status:status||"all",
                     payment:payment||"all",
                     coupon:[],
@@ -59,7 +59,7 @@ export const analyticsLoad = async (req,res)=>{
                 fullRevenue,
                 totalOrders,
                 fullDiscount,
-                period:period||"year",
+                period:period||"all",
                 status:status||"all",
                 payment:payment||"all",
                 start:from,
@@ -80,10 +80,13 @@ export const analyticsLoad = async (req,res)=>{
         ReportData.data.forEach(order => {
             order.orderItems.forEach(item => {
                 if(order.orderStatus.toUpperCase()=="COMPLETED"){
-                    fullRevenue += item.totalPrice;
-                    totalOrders += item.quantity;
-                    if(item.basePrice!=null){
-                        fullDiscount += (item.basePrice-item.price)*item.quantity
+                    if(!order.returnedAt){
+
+                        fullRevenue += item.totalPrice;
+                        totalOrders += item.quantity;
+                        if(item.variantId.basePrice!=null){
+                            fullDiscount += (item.variantId.basePrice-item.variantId.price)*item.quantity
+                        }
                     }
                 }
             });

@@ -3,32 +3,39 @@ import { getOrders } from "../orderService.js"
 export const salesReportLogic = async (period, status, payment, from, to )=>{
     try{
 
-        if(period == "custom"){
+        if (period === "custom") {
 
-            if(payment != "all"&&status!="all"){
-                const start = new Date(from + "T00:00:00.000Z");
-                const end = new Date(to + "T23:59:59.999Z");
-                const data  = await getOrders({
+            let filter = {};
 
-                    createdAt:{$gte:start,$lte:end},
-                    orderStatus:status,
-                    orderMethod:payment
-                })
-                
-                if(!data.success){
+            const start = new Date(from + "T00:00:00.000Z");
+            const end = new Date(to + "T23:59:59.999Z");
 
-                    return {
-                        success:false,
-                        message:"Error while loading"
-                    }    
-                }
+            filter.createdAt = {
+                $gte: start,
+                $lte: end
+            };
 
-                return {
-                    success:true,
-                    data:data.data||[]
-                }
+            if (status !== "all") {
+                filter.orderStatus = status;
             }
-            
+
+            if (payment !== "all") {
+                filter.orderMethod = payment;
+            }
+
+            const data = await getOrders(filter);
+
+            if (!data.success) {
+                return {
+                    success: false,
+                    message: "Error while loading"
+                };
+            }
+
+            return {
+                success: true,
+                data: data.data || []
+            };
         }
 
         let filter = {};
