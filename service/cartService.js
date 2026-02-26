@@ -178,8 +178,9 @@ export const cartCount = async (_id)=>{
     try{
         let total = 0
         let cart = await cartData({userId:_id})
+        
         cart.data.forEach(v=>{
-            if(v.variantId.status&&v.variantId.stock>v.quantity){
+            if(v.variantId.status&&v.variantId.stock>=v.quantity){
                 total+=v.quantity
             }
         })

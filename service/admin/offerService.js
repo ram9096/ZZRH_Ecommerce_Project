@@ -7,10 +7,14 @@ import variantModel from "../../model/variantModel.js"
 import { applyOffer } from "../productService.js"
 
 
-export const offerDataLoad = async (filter = {})=>{
+export const offerDataLoad = async (filter = {},page=1,limit=0)=>{
     try{
-        let data = await offerModel.find(filter)
+        let skip = (page-1)*limit
 
+        let data = await offerModel.find(filter)
+            .skip(skip)
+            .limit(limit)
+        let total = await offerModel.countDocuments(filter)
         if(!data){
             return {
                 success:false,
@@ -19,7 +23,12 @@ export const offerDataLoad = async (filter = {})=>{
         }
         return {
             success:true,
-            data:data
+            data:data,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                total
+            }
         }
     }catch(e){
         console.log(e)

@@ -509,9 +509,6 @@
   .ml-5 {
     margin-left: calc(var(--spacing) * 5);
   }
-  .ml-64 {
-    margin-left: calc(var(--spacing) * 64);
-  }
   .block {
     display: block;
   }
@@ -1009,10 +1006,6 @@
   .border-t-2 {
     border-top-style: var(--tw-border-style);
     border-top-width: 2px;
-  }
-  .border-r {
-    border-right-style: var(--tw-border-style);
-    border-right-width: 1px;
   }
   .border-b {
     border-bottom-style: var(--tw-border-style);
@@ -2341,11 +2334,6 @@
   .focus\:border-blue-500 {
     &:focus {
       border-color: var(--color-blue-500);
-    }
-  }
-  .focus\:border-gray-400 {
-    &:focus {
-      border-color: var(--color-gray-400);
     }
   }
   .focus\:border-purple-500 {

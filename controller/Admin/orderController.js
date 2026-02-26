@@ -8,6 +8,7 @@ export const adminOrdersLoad = async (req,res)=>{
         let filter = {}
         const page = req.query.page || 1
         let search = req.query.search || ''
+        let status = req.query.status || ''
         if(search){
             filter.orderItems = {
                     $elemMatch: {
@@ -15,6 +16,10 @@ export const adminOrdersLoad = async (req,res)=>{
                     }
             }
         }
+        if(status&&status!="ALL"){
+            filter.orderStatus = status
+        }
+
         let order = await getOrders(filter,page,3)
 
         if(!order.success){
@@ -23,14 +28,16 @@ export const adminOrdersLoad = async (req,res)=>{
                 activePage:'order',
                 order:[],
                 pagination:order.pagination,
-                search:search
+                search:search||'',
+                status:status||''
             })
         }
         return res.status(200).render('Admin/order-page',{
             activePage:'order',
             order:order.data,
             pagination:order.pagination,
-            search:search
+            search:search||'',
+            status:status||''
         })
     }catch(e){
         console.log("Error ",e)
@@ -38,7 +45,8 @@ export const adminOrdersLoad = async (req,res)=>{
             activePage:'order',
             order:[],
             pagination:order.pagination,
-            search:search
+            search:'',
+            status:''
         })
     }
 }

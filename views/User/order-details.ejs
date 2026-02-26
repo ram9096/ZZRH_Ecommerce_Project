@@ -302,7 +302,11 @@
                     <div class="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 <%= order[0].returnedAt[0].returnRequestStatus == "Approved" ? 'bg-green-600' : 'bg-purple-600' %>  rounded-full flex items-center justify-center">
-                                <i class="fas fa-check text-white text-xl"></i>
+                                <% if(order[0].returnedAt[0].returnRequestStatus == "Approved"||order[0].returnedAt[0].returnRequestStatus == "Pending"){ %>
+                                    <i class="fas fa-check text-white text-xl"></i>
+                                <% }else{ %>
+                                    <i class="fa-solid fa-x text-white text-xl"></i>
+                                <% } %>
                             </div>
                             <div>
                                 <h3 class="font-bold text-xl text-gray-900">Return Request Submitted</h3>
@@ -558,7 +562,18 @@
                             <select id="returnProduct" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                 <option value="">Select a Product</option>
                                 <% order[0].orderItems.forEach((e)=>{ %>
-                                    <option value="<%= e.variantId._id %>"><%= e.productName %></option>
+                                    <% if(order[0].cancelledAt) {%>
+                                        <% order[0].cancelledAt.forEach(c=>{ %>
+                                            <% c.cancelledProducts.forEach(v=>{ %>
+                                                
+                                                <% if(v._id.toString()!=e.variantId._id.toString()) {%>
+                                                    <option value="<%= e.variantId._id %>"><%= e.productName %> (<%= e.variantName %>)</option>
+                                                <% } %>
+                                            <% }) %>
+                                        <% }) %>
+                                    <% }else{ %>
+                                        <option value="<%= e.variantId._id %>"><%= e.productName %> (<%= e.variantName %>)</option>
+                                    <% } %>
                                 <% }) %>
                                 <option value="ALL">All</option>
                             </select>

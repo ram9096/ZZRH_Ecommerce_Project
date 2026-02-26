@@ -3,28 +3,40 @@ import { offerAddLogic, offerDataLoad, offerEditLogic } from "../../service/admi
 
 export const offerLoad = async (req,res)=>{
     try{
-
-        let data = await offerDataLoad()
+        let filter = {}
+        let page = req.query.page || 1
+        let search = req.query.search||''
+        let status = req.query.status ||''
+        if(search){
+            filter.name = {$regex: search, $options: 'i'}
+        }
+        if(status){
+            filter.isActive = status == "true"? true:false
+        }
+        let data = await offerDataLoad(filter,page,3)
         
         if(!data.success){
 
             return res.render('Admin/offer-page',{
                 activePage:'offer',
-                data:[]
+                data:[],
+                search:search||'',
+                status:status||'',
+                pagination:data.pagination,
             })
         }
 
         return res.render('Admin/offer-page',{
             activePage:'offer',
-            data:data.data
+            data:data.data,
+            search:search||'',
+            status:status||'',
+            pagination:data.pagination,
         })
     }catch(e){
 
         console.log(e)
-        return res.render('Admin/offer-page',{
-            activePage:'offer',
-            data:[]
-        })
+        return res.redirect('/admin')
     }
 }
 

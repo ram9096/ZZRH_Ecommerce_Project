@@ -2,29 +2,43 @@ import { couponApplyLogic, couponFetcher, couponFormCreateLogic, couponFormEditL
 
 export const couponLoad = async (req,res)=>{
     try{
+        let filter = {}
         let page = req.query.page || 1
-
-        const data  = await couponFetcher({},page,3)
+        let search = req.query.search || ''
+        let status = req.query.status || ''
+        if(search){
+            filter.code = {$regex: search, $options: 'i'}
+        }
+        if(status){
+            filter.isActive = status == "true" ? true:false 
+        }
+        const data  = await couponFetcher(filter,page,3)
         
         if(!data.success){
             return res.status(400).render('Admin/coupon-page',{
                 activePage:"coupon",
                 data:[],
-                pagination:data.pagination
+                pagination:data.pagination,
+                search:search||'',
+                status:status||''
             })    
         }
         
         return res.status(200).render('Admin/coupon-page',{
             activePage:"coupon",
             data:data.data,
-            pagination:data.pagination
+            pagination:data.pagination,
+            search:search||'',
+            status:status||''
         })
     }catch(e){
         console.log(e)
        return res.status(500).render('Admin/coupon-page',{
             activePage:"coupon",
             data:[],
-            pagination:data.pagination
+            pagination:data.pagination,
+            search:'',
+            status:''
         }) 
     }
 }

@@ -125,114 +125,87 @@
         }
     </style>
 </head>
-<body>
-    
-    <!-- Sidebar -->
-    <aside class="fixed left-0 top-0 w-64 bg-white min-h-screen border-r border-gray-200">
-      <div class="p-6">
-        <nav class="space-y-1">
-          <a href="/admin/home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-home text-base"></i>
-            <span class="font-medium">Dashboard</span>
-          </a>
-          <a href="/admin/users" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-users text-base"></i>
-            <span class="font-medium">Users</span>
-          </a>
-          <a href="/admin/products" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-shopping-bag text-base"></i>
-            <span class="font-medium">Products</span>
-          </a>
-          <a href="/admin/orders" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-cube text-base"></i>
-            <span class="font-medium">Orders</span>
-          </a>
-          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-chart-line text-base"></i>
-            <span class="font-medium">Analytics</span>
-          </a>
-          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-ticket-alt text-base"></i>
-            <span class="font-medium">Coupons</span>
-          </a>
-          <a href="/admin/category" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-list-ul text-base"></i>
-            <span class="font-medium">Categories</span>
-          </a>
-          <a href="" class="sidebar-link active flex items-center space-x-3 px-4 py-3 rounded-lg">
-            <i class="fas fa-gift text-base"></i>
-            <span class="font-medium">Offers</span>
-          </a>
-          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-image text-base"></i>
-            <span class="font-medium">Banners</span>
-          </a>
-          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-user text-base"></i>
-            <span class="font-medium">Profile</span>
-          </a>
-          <a href="#" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-            <i class="fas fa-cog text-base"></i>
-            <span class="font-medium">Settings</span>
-          </a>
-        </nav>
-      </div>
-    </aside>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="glass-effect border-b border-white/20 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold">
+                        Z
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#ZZRH</h1>
+                </div>
+                <button class="relative p-3 hover:bg-white/50 rounded-xl transition-all">
+                    <i class="far fa-bell text-xl text-gray-700"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Content -->
-    <div class="ml-64 min-h-screen bg-gray-50">
-        <main>
+    <div class="flex min-h-screen">
+        <%- include('../Partials/sidebar') %>
+        <main class="flex-1 p-8">
             <!-- Header -->
-            <header class="bg-white border-b border-gray-200">
-                <div class="px-8 py-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
-                                <span class="text-white font-bold text-xl">Z</span>
-                            </div>
-                            <h1 class="text-2xl font-bold text-gray-900">#Raftaara</h1>
-                        </div>
-                        <button class="relative w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-                            <i class="fas fa-bell text-gray-600"></i>
-                            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
-                    </div>
+            <header class="bg-white">
+                <div class="">
+                    
                     <div class="mb-8">
-                <div class="flex items-center justify-between ">
-                    <div>
-                        <h2 class="text-4xl font-bold text-gray-800 mb-1">Offers</h2>
-                        <p class="text-gray-500">Manage your offers inventory</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <div>
+                                <h2 class="text-4xl font-bold text-gray-800 mb-1">Offers</h2>
+                                <p class="text-gray-500">Manage your offers inventory</p>
+                            </div>
+                            <a href="/admin/offer-add">
+                                <button class="px-6 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center space-x-2">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>Create offer</span>
+                                </button>
+                            </a>
+                        </div>
                     </div>
-                    <a href="/admin/offer-add">
-                        <button class="px-6 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center space-x-2">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Create offer</span>
-                        </button>
-                    </a>
-                </div>
-            </div>
                 </div>
             </header>
 
             <!-- Content Area -->
-            <div class="p-8">
-                <!-- Search and Filter Bar -->
-                <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="flex-1">
-                            <div class="relative">
-                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                                <input type="text" placeholder="Search offers..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 text-sm">
-                            </div>
+            <div class="glass-effect rounded-2xl shadow-xl p-6 mb-6 border border-white/20">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <!-- Search -->
+                    <div class="flex-1 min-w-[300px]">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                placeholder="Search coupon..." 
+                                value="<%= search ?search:'' %>"
+                                onkeyup="handleSearch(this.value)"
+                                class="w-full pl-12 pr-4 py-3 bg-white/70 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all"
+                            >
                         </div>
-                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 text-sm text-gray-700">
-                            <option>Latest</option>
-                            <option>Highest Discount</option>
-                            <option>Most Used</option>
-                            <option>Expiring Soon</option>
-                        </select>
                     </div>
+
+                    <!-- Filters -->
+                    <form  class="flex gap-3">
+                        <select name="status" onchange="handleStatus(this.value)"  class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
+                            <option value=""<%= status=='' ? 'selected':'' %> >📊 All Status</option>
+                            <option value="true"<%= status=="true" ? 'selected':'' %> >✅ Active</option>
+                            <option value="false" <%= status=="false" ? 'selected':'' %>>❌ Inactive</option>
+                        </select>
+                        
+                        
+                    </form>
+
+                    <a href="/admin/offer">
+                        <button class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all flex items-center space-x-2">
+                            <i class="fas fa-redo-alt text-gray-700"></i>
+                            <span>Reset</span>
+                        </button>
+                    </a>
                 </div>
+            </div>
+            <div class="">
+                <!-- Search and Filter Bar -->
 
                 <!-- Offers Table -->
                 <div class="bg-gray-900   text-white rounded-lg border border-gray-200 overflow-hidden">
@@ -281,7 +254,7 @@
                     <div class="divide-y divide-gray-200">
                         <!-- Row 1 -->
                         <% data.forEach((c,i)=>{ %>
-                            <div class="table-row grid grid-cols-12 gap-4 px-6 py-4 items-center">
+                            <div class="table-row grid grid-cols-12 gap-5 px-6 py-4 items-center">
     
                                 <!-- ID -->
                                 <div class="col-span-1">
@@ -328,9 +301,9 @@
                                 </div>
 
                                 <!-- Actions -->
-                                <div class="col-span-1 flex items-center justify-center gap-2">
+                                <div class="col-span-1 ">
                                     <a href="/admin/offer-edit/<%= c._id %>">
-                                        <button class="btn-action">
+                                        <button class="btn-action px-4 py-2 bg-gradient-to-r from-gray-700 to-black text-white rounded-lg hover-lift font-medium text-sm flex items-center space-x-2" >
                                             <i class="fas fa-edit mr-1"></i>
                                             Edit
                                         </button>
@@ -346,10 +319,59 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="flex items-center justify-between mt-6">
-                    <p class="text-sm text-gray-600">Showing 1 to 6 of 6 offers</p>
-                    <div class="flex items-center gap-2">
-                        <button class="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold hover:bg-gray-800 transition-colors">1</button>
+                <%
+                    const currentPage = pagination.currentPage;
+                    const totalOrders = pagination.total;   // total count from DB
+                    const pageLimit = 3;                   // backend limit
+                    const currentCount = data.length;      // items in current page
+
+                    const start = totalOrders === 0 ? 0 : (currentPage - 1) * pageLimit + 1;
+                    const end = totalOrders === 0 ? 0 : start + currentCount - 1;
+                %>
+        
+                <div class="mt-6 flex items-center justify-between">
+        
+                    <!-- Showing text -->
+                    <p class="text-gray-600">
+                        Showing
+                        <span class="font-semibold"><%= start %></span>
+                        of
+                        <span class="font-semibold"><%= totalOrders %></span>
+                        orders
+                    </p>
+        
+                    <!-- Pagination buttons -->
+                    <div class="flex gap-2">
+        
+                        <!-- Prev -->
+                        <% if (currentPage > 1) { %>
+                        <a href="?page=<%= Number(currentPage) - 1 %>"
+                            class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                            ‹
+                        </a>
+                        <% } else { %>
+                        <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                            ‹
+                        </span>
+                        <% } %>
+        
+                        <!-- Current -->
+                        <span class="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold">
+                        <%= currentPage %>
+                        </span>
+        
+                        <!-- Next -->
+                        <% if (currentPage < totalOrders) { %>
+                        <a href="?page=<%= Number(currentPage) + 1 %>"
+                            class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                            ›
+                        </a>
+                        <% } else { %>
+                        <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                            ›
+                        </span>
+                        <% } %>
+        
                     </div>
                 </div>
             </div>
@@ -357,7 +379,29 @@
     </div>
 
     <script>
-        // Add any JavaScript functionality here
+        let timer;
+        function handleSearch(value) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("search", value);
+                params.set("page", 1);
+                window.location.search = params.toString();
+            }, 400);
+        }
+
+        function handleStatus(value) {
+            const params = new URLSearchParams(window.location.search);
+
+            if (value) {
+                params.set("status", value);
+            } else {
+                params.delete("status");
+            }
+
+            params.set("page", 1);
+            window.location.search = params.toString();
+        }
     </script>
 </body>
 </html>

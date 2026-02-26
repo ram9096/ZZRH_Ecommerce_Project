@@ -1,7 +1,8 @@
 import { cartData } from "../service/cartService.js"
 
-export const calculateOrderTotal = async () => {
-  let cartItems = await cartData()
+export const calculateOrderTotal = async (_id) => {
+
+  let cartItems = await cartData({userId:_id})
 
   if (!cartItems.success || cartItems.data.length === 0) {
     return { success: false }
@@ -15,7 +16,6 @@ export const calculateOrderTotal = async () => {
   )
 
   let subTotal = 0
-
   for (let i of activeCartItems) {
     subTotal += i.variantId.price * i.quantity
   }

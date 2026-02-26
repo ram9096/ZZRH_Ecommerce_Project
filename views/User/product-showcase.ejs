@@ -521,7 +521,6 @@
                 grid.innerHTML = `<p class="text-gray-500 col-span-full text-center py-8">No products found</p>`;
                 return;
             }
-            
             products.forEach(product => {
                 const stock = product.stock || 0;
                 const isOutOfStock = stock <= 0;
@@ -543,7 +542,7 @@
                 ` : '';
 
                 const linkStart = !isOutOfStock ? 
-                    `<a href="/home/product-details/${product._id}?size=${product.size}&color=${product.color}">` : '';
+                    `<a href="/home/product-details/${product.productId}?size=${product.size}&color=${product.color}">` : '';
                 const linkEnd = !isOutOfStock ? `</a>` : '';
 
                 grid.insertAdjacentHTML("beforeend", `

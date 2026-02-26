@@ -27,7 +27,7 @@ export const walletLoad = async (req,res)=>{
             email:"email",       
             mobile:"mobil",
             pageActive:"WALLET",
-            balance: user.wallet||0,
+            balance: user.wallet.toFixed(2)||0,
             transaction:transaction.data,
             cart:cart.count||0
         })

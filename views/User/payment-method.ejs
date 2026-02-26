@@ -353,10 +353,10 @@
         });
 
     
-        
         paypal.Buttons({
+
             createOrder: async () => {
-                try{
+                try {
                     const res = await fetch("/paypal/create-order", {
                         method: "POST"
                     });
@@ -364,22 +364,24 @@
                     if (!res.ok) {
                         throw new Error("Create order API failed");
                     }
+
                     const data = await res.json();
 
                     if (!data.id) {
                         throw new Error("PayPal order ID missing");
                     }
-                    return data.id; 
-                }catch(e){
-                    console.error(e)
+
+                    return data.id;
+
+                } catch (e) {
+                    console.error(e);
                     Swal.fire("Error", e.message, "error");
-                    throw e;
+                    throw e; 
                 }
             },
 
             onApprove: async (data) => {
                 try {
-                    console.log("Reached on Approve")
                     const res = await fetch("/paypal/capture-order", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -392,17 +394,17 @@
 
                     const result = await res.json();
 
-                    
-                    
                     if (result.status !== "COMPLETED") {
                         throw new Error("Payment not completed");
                     }
 
-                    
                     const orderRes = await fetch("/checkout/method", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ method: "PAYPAL",coupon:code.value ? code.value:'' })
+                        body: JSON.stringify({
+                            method: "PAYPAL",
+                            coupon: code.value ? code.value : ''
+                        })
                     });
 
                     const orderResult = await orderRes.json();
@@ -416,12 +418,36 @@
 
                 } catch (err) {
                     console.error(err);
-                    Swal.fire("Error", err.message, "error");
-                    
+
+                    Swal.fire(
+                        "Payment Failed",
+                        "Your payment was not completed. If amount was deducted, it will be refunded automatically.",
+                        "error"
+                    );
                 }
+            },
+
+            onCancel: function (data) {
+                console.log("Payment cancelled", data);
+
+                Swal.fire(
+                    "Payment Cancelled",
+                    "You cancelled the PayPal payment.",
+                    "warning"
+                );
+            },
+
+            onError: function (err) {
+                console.error("PayPal Error:", err);
+
+                Swal.fire(
+                    "Payment Error",
+                    "Something went wrong with PayPal. Please try again.",
+                    "error"
+                );
             }
 
-        }).render("#paypal-button-container");  
+        }).render("#paypal-button-container");
 
 
         function calculateSubtotal() {

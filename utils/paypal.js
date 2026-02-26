@@ -5,12 +5,12 @@ import paymentSchema from "../model/paymentModel.js";
 
 export const createOrder = async (req, res) => {
   
-    const total = await calculateOrderTotal()
+    const total = await calculateOrderTotal(req.session.user.id)
     if (!total.success) {
         return res.status(400).json({ message: "Cart empty" })
     }
-    const usdAmount = Number((total.totalAmount / 90.72).toFixed(2));
-
+    const usdAmount = Math.round((total.totalAmount / 90.72) * 100) / 100;
+    
     if (!usdAmount || usdAmount <= 0) {
         return res.status(400).json({ message: "Invalid amount" });
     }

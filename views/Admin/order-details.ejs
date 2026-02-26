@@ -306,7 +306,7 @@
                                         <button onclick="ReturnRequestApproval('<%= order[0]._id %>','<%= order[0].userId._id %>')" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition">
                                             Approve Request
                                         </button>
-                                        <button class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300 transition">
+                                        <button onclick="ReturnRequestReject('<%= order[0]._id %>','<%= order[0].userId._id %>')" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300 transition">
                                             Reject Request
                                         </button>
                                     </div>
@@ -564,6 +564,61 @@
                         orderId:orderId,
                         reasonId:reasonId,
                         purpose:resolutionType
+                    })
+                }) 
+                
+                const result = await request.json();
+                
+                if (!result.success) {
+                    Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: result.message || "Something went wrong",
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: result.message,
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 2000);
+
+            }catch(e){
+                console.warn(e)
+                return Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: e || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+            }
+        }
+
+        async function ReturnRequestReject(orderId,reasonId){
+            
+            try{
+                
+                
+
+                const request = await fetch('/admin/orders/update',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        orderId:orderId,
+                        reasonId:reasonId,
+                        purpose:"REJECT_REQUEST"
                     })
                 }) 
                 

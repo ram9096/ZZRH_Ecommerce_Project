@@ -146,7 +146,7 @@ export const referalLinkGeneratorLoad = async (req,res)=>{
             mobile:"mobil",
             pageActive:"LINK",
             link:referaLink ? referaLink.token : null,
-            balance:user.wallet?user.wallet:0,
+            balance:user.wallet?user.wallet.toFixed(2):0,
             cart:cart.count||0
         })
     }catch(e){
