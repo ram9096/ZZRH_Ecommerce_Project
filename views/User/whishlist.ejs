@@ -143,8 +143,9 @@
             c.addEventListener('click',async(e)=>{
                 let id = c.dataset.id 
 
-                console.log(id)  
+                  
                 try{
+
                     const request = await fetch('/cart/add-cart',{
                         method:"POST",
                         headers:{

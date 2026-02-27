@@ -56,6 +56,25 @@ export const addToCart = async (id,userId,qty)=>{
                 message:"Error while adding to cart try again!!!"
             }
         }
+
+        let variantStatus = await variantModel.findOne({_id:id,status:true,stock:{$gte:1}})
+            .populate({
+                path:"productId",
+                populate:{
+                    path:"categoryId",
+                    match: { isActive: true }
+                }
+            })
+        if(!variantStatus){
+
+            return {
+                success:false,
+                message:"Product might be blocked or stock empty"
+            }
+
+        }
+
+        
         let variantExists = await cartModel.findOne({variantId:id,userId})
         
         let wishlist = await whilistModel.findOne({
@@ -76,22 +95,7 @@ export const addToCart = async (id,userId,qty)=>{
                 message:"Product already in cart go to cart!!"
             }
         }
-        let variantStatus = await variantModel.find({_id:id,status:true,stock:{$gte:1}})
-            .populate({
-                path:"productId",
-                populate:{
-                    path:"categoryId",
-                    match: { isActive: true }
-                }
-            })
-        if(!variantStatus){
-
-            return {
-                success:false,
-                message:"Product might be blocked or stock empty"
-            }
-
-        }
+        
         let Item = new cartModel({
             userId:userId,
             quantity:qty,
