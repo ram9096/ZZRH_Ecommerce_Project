@@ -369,13 +369,11 @@
                                                         }
 
                                                         if(orders.returnedAt){
-                                                            
                                                             totalReturn+=item.quantity
                                                         }else{
 
                                                             totalUnits += item.quantity;
                                                             totalRevenue += item.quantity * item.price;
-                                                            // Assuming discount is stored in item object
                                                             if(item.variantId.basePrice != null&&item.variantId.basePrice!=item.variantId.price){
                                                                 
                                                                 totalDiscount += (item.variantId.basePrice - item.variantId.price)*item.quantity
@@ -646,9 +644,12 @@
             
             const start = document.getElementById("startDate")?.value;
             const end = document.getElementById("endDate")?.value;
+            const period = document.getElementById("dateRange")
+            if(period == 'custom'){
 
-            if (start && end) {
-                doc.text(`Report Period: ${start} to ${end}`, 14, 42);
+                if (start && end) {
+                    doc.text(`Report Period: ${start} to ${end}`, 14, 42);
+                }
             }
 
             // ===== TABLE =====
