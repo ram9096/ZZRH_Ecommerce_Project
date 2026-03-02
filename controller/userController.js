@@ -1,4 +1,7 @@
+import { offeredProducts } from "../service/admin/offerService.js";
+import { cartCount } from "../service/cartService.js";
 import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails, variantFilterLogic } from "../service/userService.js";
+import { whishlistData } from "../service/whishlistService.js";
 
 //--------------Page renderings------------------
 
@@ -19,6 +22,7 @@ export const userLoginload = (req, res) => {
     if(req.session.user){
         return res.redirect('/home')
     }
+    req.session.ref = req.query.ref
     return res.render("User/login-page",{error:req.flash("error")[0]});
 };
 
@@ -26,6 +30,7 @@ export const userRegisterLoad = (req, res) => {
     if(req.session.user){
         return res.redirect('/home')
     }
+    
     return res.render("User/register-page");
 };
 
@@ -44,6 +49,9 @@ export const homePageLoad = async (req, res) => {
     try{
        
         let products = await ProductsLoad({},5)
+        let offer = await offeredProducts()
+        let wishlist = await whishlistData({userId:req.session.user.id})
+        let cart = await cartCount(req.session.user.id)
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -58,7 +66,10 @@ export const homePageLoad = async (req, res) => {
             color:products.color,
             size:products.size,
             error:'',
-            isLogged:req.session.user||''
+            offer:offer.data? offer.data : [],
+            isLogged:req.session.user||'',
+            wishlist:wishlist.data||[],
+            cart:cart.count||0
         });
     }catch(e){
         console.log("Home page load Error: ",e)
@@ -146,16 +157,22 @@ export const VariantFilter = async(req,res)=>{
 export const productShowcaseLoad = async (req,res)=>{
     try{
         let products = await ProductsLoad({})
+        
+        let wishlist = await whishlistData({userId:req.session.user?.id})
+        let cart = await cartCount(req.session.user?.id)
+        
         return res.render('User/product-showcase',{
             product:products.data,
             color:[...products.color],
             size:products.size,
             category:products.category,
             isLogged:req.session.user||'',
-            error:''
+            error:'',
+            wishlist:wishlist.data || [],
+            cart:cart.count||0
         })
     }catch(e){
-
+        console.log(e)
     }
 }
 
@@ -201,8 +218,10 @@ export const userLogin = async (req, res) => {
 export const userRegister = async (req, res) => {
     try {
         const { name, email, password, mobileno } = req.body;
+        
+        let ref = req.session.ref
 
-        let reg = await registerService(name, email, password, mobileno);
+        let reg = await registerService(name, email, password, mobileno,ref);
 
         if (!reg.success) {
             return res.status(400).render("User/login-page",{error:reg.message});

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offers - #ZZRH Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/css/output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+        }
+
+        /* Sidebar styling */
+        .sidebar-link {
+            transition: all 0.2s;
+        }
+
+        .sidebar-link:hover {
+            background: #fee;
+        }
+
+        .sidebar-link.active {
+            background: #fee;
+            color: #dc2626;
+        }
+
+        /* Table styling */
+        .table-row {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s;
+        }
+
+        .table-row:hover {
+            background: #f9fafb;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-scheduled {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-expired {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Button styling */
+        .btn-primary {
+            background: #1e293b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #0f172a;
+        }
+
+        .btn-action {
+            background: #1e293b;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background: #0f172a;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="glass-effect border-b border-white/20 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold">
+                        Z
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#ZZRH</h1>
+                </div>
+                <button class="relative p-3 hover:bg-white/50 rounded-xl transition-all">
+                    <i class="far fa-bell text-xl text-gray-700"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex min-h-screen">
+        <%- include('../Partials/sidebar') %>
+        <main class="flex-1 p-8">
+            <!-- Header -->
+            <header class="bg-white">
+                <div class="">
+                    
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-2">
+                            <div>
+                                <h2 class="text-4xl font-bold text-gray-800 mb-1">Offers</h2>
+                                <p class="text-gray-500">Manage your offers inventory</p>
+                            </div>
+                            <a href="/admin/offer-add">
+                                <button class="px-6 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center space-x-2">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>Create offer</span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="glass-effect rounded-2xl shadow-xl p-6 mb-6 border border-white/20">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <!-- Search -->
+                    <div class="flex-1 min-w-[300px]">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                placeholder="Search coupon..." 
+                                value="<%= search ?search:'' %>"
+                                onkeyup="handleSearch(this.value)"
+                                class="w-full pl-12 pr-4 py-3 bg-white/70 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <form  class="flex gap-3">
+                        <select name="status" onchange="handleStatus(this.value)"  class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
+                            <option value=""<%= status=='' ? 'selected':'' %> >📊 All Status</option>
+                            <option value="true"<%= status=="true" ? 'selected':'' %> >✅ Active</option>
+                            <option value="false" <%= status=="false" ? 'selected':'' %>>❌ Inactive</option>
+                        </select>
+                        
+                        
+                    </form>
+
+                    <a href="/admin/offer">
+                        <button class="px-5 py-3 bg-white/70 border-2 border-gray-300 rounded-xl font-medium hover:bg-white transition-all flex items-center space-x-2">
+                            <i class="fas fa-redo-alt text-gray-700"></i>
+                            <span>Reset</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="">
+                <!-- Search and Filter Bar -->
+
+                <!-- Offers Table -->
+                <div class="bg-gray-900   text-white rounded-lg border border-gray-200 overflow-hidden">
+                    <!-- Table Header -->
+                    <div class="grid grid-cols-12 gap-4 px-6 py-4 text-sm font-medium items-center">
+    
+                        <div class="col-span-1 flex items-center">
+                            <i class="fas fa-hashtag mr-2"></i>
+                            <span>ID</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fas fa-gift mr-2"></i>
+                            <span>Offer Name</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fas fa-percent mr-2"></i>
+                            <span>Discount</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fa-solid fa-money-bill-1-wave mr-2"></i>
+                            <span>Save upto</span>
+                        </div>
+
+                        <div class="col-span-2 flex items-center">
+                            <i class="fas fa-calendar mr-2"></i>
+                            <span>Ends On</span>
+                        </div>
+
+                        <div class="col-span-1 flex items-center">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            <span>Status</span>
+                        </div>
+
+                        <div class="col-span-1 flex items-center justify-center">
+                            <i class="fas fa-cog mr-2"></i>
+                            <span>Actions</span>
+                        </div>
+                    </div>
+
+                    </div>
+
+                    <!-- Table Body -->
+                    <div class="divide-y divide-gray-200">
+                        <!-- Row 1 -->
+                        <% data.forEach((c,i)=>{ %>
+                            <div class="table-row grid grid-cols-12 gap-5 px-6 py-4 items-center">
+    
+                                <!-- ID -->
+                                <div class="col-span-1">
+                                    <div class="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+                                        <span class="text-white font-semibold text-sm">#<%= i + 1 %></span>
+                                    </div>
+                                </div>
+
+                                <!-- Offer Name -->
+                                <div class="col-span-2">
+                                    <h3 class="font-semibold text-gray-900 mb-1"><%= c.name %></h3>
+                                    <p class="text-sm text-gray-500">234 uses</p>
+                                </div>
+
+                                <!-- Discount -->
+                                <div class="col-span-2">
+                                    <span class="font-semibold text-gray-900">
+                                        <%= c.discountType === 'PERCENTAGE'
+                                            ? `${c.discountValue}% OFF`
+                                            : `₹${c.discountValue} FLAT OFF` %>
+                                    </span>
+                                </div>
+
+                                <!-- Min Order -->
+                                <div class="col-span-2">
+                                    <span class="text-gray-600">
+                                        <%= c.maxDiscount ? `₹${c.maxDiscount}` : '—' %>
+                                    </span>
+                                </div>
+
+                                <!-- Ends On -->
+                                <div class="col-span-2">
+                                    <span class="text-gray-600">
+                                        <%= new Date(c.endDate).toDateString() %>
+                                    </span>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-span-1">
+                                    <span class="status-badge <%= c.isActive ? 'status-active' : 'status-inactive' %>">
+                                        <i class="fas fa-circle text-xs"></i>
+                                        <%= c.isActive ? 'Active' : 'Inactive' %>
+                                    </span>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="col-span-1 ">
+                                    <a href="/admin/offer-edit/<%= c._id %>">
+                                        <button class="btn-action px-4 py-2 bg-gradient-to-r from-gray-700 to-black text-white rounded-lg hover-lift font-medium text-sm flex items-center space-x-2" >
+                                            <i class="fas fa-edit mr-1"></i>
+                                            Edit
+                                        </button>
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        <% }) %>
+
+                        
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <%
+                    const currentPage = pagination.currentPage;
+                    const totalOrders = pagination.total;   // total count from DB
+                    const pageLimit = 3;                   // backend limit
+                    const currentCount = data.length;      // items in current page
+
+                    const start = totalOrders === 0 ? 0 : (currentPage - 1) * pageLimit + 1;
+                    const end = totalOrders === 0 ? 0 : start + currentCount - 1;
+                %>
+        
+                <div class="mt-6 flex items-center justify-between">
+        
+                    <!-- Showing text -->
+                    <p class="text-gray-600">
+                        Showing
+                        <span class="font-semibold"><%= start %></span>
+                        of
+                        <span class="font-semibold"><%= totalOrders %></span>
+                        orders
+                    </p>
+        
+                    <!-- Pagination buttons -->
+                    <div class="flex gap-2">
+        
+                        <!-- Prev -->
+                        <% if (currentPage > 1) { %>
+                        <a href="?page=<%= Number(currentPage) - 1 %>"
+                            class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                            ‹
+                        </a>
+                        <% } else { %>
+                        <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                            ‹
+                        </span>
+                        <% } %>
+        
+                        <!-- Current -->
+                        <span class="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold">
+                        <%= currentPage %>
+                        </span>
+        
+                        <!-- Next -->
+                        <% if (currentPage < totalOrders) { %>
+                        <a href="?page=<%= Number(currentPage) + 1 %>"
+                            class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                            ›
+                        </a>
+                        <% } else { %>
+                        <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                            ›
+                        </span>
+                        <% } %>
+        
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let timer;
+        function handleSearch(value) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("search", value);
+                params.set("page", 1);
+                window.location.search = params.toString();
+            }, 400);
+        }
+
+        function handleStatus(value) {
+            const params = new URLSearchParams(window.location.search);
+
+            if (value) {
+                params.set("status", value);
+            } else {
+                params.delete("status");
+            }
+
+            params.set("page", 1);
+            window.location.search = params.toString();
+        }
+    </script>
+</body>
+</html>

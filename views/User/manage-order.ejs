@@ -31,6 +31,19 @@
         .profile-avatar {
             background: linear-gradient(135deg, #6b7280 0%, #1f2937 100%);
         }
+        .cancelled-overlay {
+            position: relative;
+        }
+        .cancelled-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+        }
 </style>
 <body class="bg-gray-50">
      <%- include('../Partials/nav-bar') %>
@@ -82,33 +95,86 @@
                     <!-- Classic Trench Coat -->
                     <% order.forEach(or=> {%>
                         <% or.orderItems.forEach(o=>{ %>
-                            <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                <div class="aspect-[3/4] bg-gray-100">
+                            <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow <%= o.orderStatus === 'Cancelled' ? 'opacity-90' : '' %>">
+                                <div class="aspect-[3/4] bg-gray-100 relative <%= or.orderStatus === 'cancelled' ? 'cancelled-overlay' : '' %>">
                                     <img src="/<%= o.variantId.image[0] %>" 
-                                        alt="Classic Trench Coat" 
+                                        alt="<%= o.productName %>" 
                                         class="w-full h-full object-cover">
+                                    
+                                    <% if (or.orderStatus === 'cancelled') { %>
+                                        <div class="absolute inset-0 flex items-center justify-center z-10">
+                                            <div class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg transform -rotate-12">
+                                                CANCELLED
+                                            </div>
+                                        </div>
+                                    <% } %>
                                 </div>
                                 <div class="p-4">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-1"><%= o.productName %>(<%= o.variantId.size %>)</h3>
+                                    <div class="flex items-start justify-between mb-2">
+                                        <h3 class="text-lg font-semibold text-gray-900 flex-1"><%= o.productName %> (<%= o.variantId.size %>)</h3>
+                                        <% if (or.orderStatus === 'cancelled') { %>
+                                            <span class="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">
+                                                Cancelled
+                                            </span>
+                                        <% } else { %>
+                                            <span class="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                                <%= or.orderStatus || 'Active' %>
+                                            </span>
+                                        <% } %>
+                                    </div>
                                     <p class="text-xl font-medium text-gray-900 mb-4">₹<%= o.totalPrice %></p>
                                     <div class="flex items-center gap-2">
-                                        <a href="order/details/<%= or._id %>">
-                                            <button class="flex-1 bg-black text-white py-3 px-6 rounded hover:bg-gray-800 transition-colors font-medium">
-                                                Track
+                                        <a href="order/details/<%= or._id %>" class="flex-1">
+                                            <button class="w-full bg-black text-white py-3 px-6 rounded hover:bg-gray-800 transition-colors font-medium <%= or.orderStatus === 'cancelled' ? 'opacity-60' : '' %>">
+                                                <%= or.orderStatus === 'cancelled' ? 'View Details' : 'Track' %>
                                             </button>
                                         </a>
-                                        
                                     </div>
                                 </div>
                             </div>
                         <% }) %>
                     <% }) %>
-        
+                            
                     
                 </div>
             </main>
         </div>
+        <% if (pagination.totalPages > 1) { %>
+            <div class="flex justify-center items-center gap-4 mt-10">
+    
+                <!-- Previous -->
+                <% if (pagination.currentPage > 1) { %>
+                <a href="?page=<%= pagination.currentPage - 1 %>"
+                    class="px-5 py-2 bg-white border rounded-lg hover:bg-gray-100">
+                    ← Prev
+                </a>
+                <% } else { %>
+                <span class="px-5 py-2 border rounded-lg opacity-50 cursor-not-allowed">
+                    ← Prev
+                </span>
+                <% } %>
+    
+                <!-- Page info -->
+                <span class="text-sm text-gray-600 font-medium">
+                Page <%= pagination.currentPage %> of <%= pagination.totalPages %>
+                </span>
+    
+                <!-- Next -->
+                <% if (pagination.currentPage < pagination.totalPages) { %>
+                <a href="?page=<%= parseInt(pagination.currentPage) + 1 %>"
+                    class="px-5 py-2 bg-white border rounded-lg hover:bg-gray-100">
+                    Next →
+                </a>
+                <% } else { %>
+                <span class="px-5 py-2 border rounded-lg opacity-50 cursor-not-allowed">
+                    Next →
+                </span>
+                <% } %>
+    
+            </div>
+        <% } %>
      </div>
+
       <script>
         const menuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');

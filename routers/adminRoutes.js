@@ -1,10 +1,13 @@
 import express from "express"
 import { adminCategoryAdd, adminCategoryAddLoad, adminCategoryEdit, adminCategoryEditLoad, adminCategoryLoad } from "../controller/categoryController.js"
-import { adminProductEdit, adminProductEditLoad, adminProductsAdd, adminProductsAddLoad, adminProductsLoad } from "../controller/productController.js"
+import { adminProductEdit, adminProductEditLoad, adminProductsAdd, adminProductsAddLoad, adminProductsLoad, offerAddProduct } from "../controller/productController.js"
 import { adminHomeLoad, adminLogin, adminLoginLoad, adminLogout, adminUserEdit, adminUsersLoad } from "../controller/adminController.js"
 import { isAdminAuthenticated } from "../middleware/adminMiddleware.js"
 import {upload} from "../config/multerConfig.js"
 import { adminOrdersDetailsLoad, adminOrdersLoad, adminOrdersUpdate } from "../controller/Admin/orderController.js"
+import { offerAdd, offerAddLoad, offerEdit, offerEditLoad, offerLoad } from "../controller/Admin/offerController.js"
+import { couponEditLoad, couponFormCreate, couponFormEdit, couponFormLoad, couponLoad } from "../controller/Admin/couponController.js"
+import { analyticsLoad } from "../controller/Admin/salesReportController.js"
 let router = express.Router()
 
 router.get('/',adminLoginLoad)
@@ -20,6 +23,10 @@ router.get('/product-add',isAdminAuthenticated,adminProductsAddLoad)
 router.get('/products/:id',adminProductEditLoad)
 router.get('/logout',adminLogout)
 
+router.get('/coupons',couponLoad)
+router.get('/coupons-add',couponFormLoad)
+router.get('/coupon-edit/:id',couponEditLoad)
+
 router.post('/login',adminLogin)
 router.post('/users/edit',adminUserEdit)
 
@@ -31,8 +38,23 @@ router.post('/orders/update',adminOrdersUpdate)
 router.post('/category-add',upload.none(),adminCategoryAdd)
 router.post('/category-edit/:id',upload.none(),isAdminAuthenticated,adminCategoryEdit)
 
+router.get('/offer',offerLoad)
+router.get('/offer-add',offerAddLoad)
+router.get('/offer-edit/:id',offerEditLoad)
+
+router.get('/analytics',isAdminAuthenticated,analyticsLoad)
+
+router.post('/offer-add',offerAdd)
+router.post('/offer-edit',offerEdit)
+
+router.post('/coupons-add',couponFormCreate)
+router.post('/coupons-edit',couponFormEdit)
+
 router.post('/product-add',upload.any(),adminProductsAdd)
 router.post('/products/:id',upload.any(),adminProductEdit)
+router.post('/product-offer-add',offerAddProduct)
+
+
 
 
 export default router

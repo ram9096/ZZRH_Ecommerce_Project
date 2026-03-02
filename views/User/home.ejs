@@ -4,19 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>#ZRI1 - Fashion Store</title>
-     <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="/css/output.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 JS -->
+    <link rel="preload" href="/BLOVERLY.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/ClashDisplay-Regular.woff" as="font" type="font/woff" crossorigin>
 
-<!-- SweetAlert2 JS -->
- <link rel="preload" href="/BLOVERLY.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/ClashDisplay-Regular.woff" as="font" type="font/woff" crossorigin>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
         
       
-        
+        :root {
+            --cream:#faf9f7;
+            --card-bg:#f3f1ee;
+            --accent:#c8102e;
+            --accent-light:#f5e0e4;
+            --accent-mid:#e8a0ad;
+            --text-primary:#1a1a1a;
+            --text-muted:#7a7a7a;
+            --text-light:#a8a8a8;
+            --shadow-sm:0 2px 12px rgba(0,0,0,.06);
+            --shadow-md:0 6px 24px rgba(0,0,0,.1);
+            --radius:18px;
+        }
         .serif-font {
             font-family: 'Playfair Display', serif;
         }
@@ -27,9 +40,106 @@
         .font-clash {
           font-family: "Clash-display", system-ui, sans-serif;
         }
+
+        .hero {
+            position:relative;
+            background:#1a1a1a;
+            color:#fff;
+            padding:56px 24px 52px;
+            text-align:center;
+            overflow:hidden;
+        }
+        .hero::before {
+            content:'';
+            position:absolute;
+            inset:0;
+            background:
+            radial-gradient(ellipse 70% 60% at 20% 50%, rgba(200,16,46,.18) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 80% at 80% 40%, rgba(200,16,46,.12) 0%, transparent 70%);
+            pointer-events:none;
+        }
+        .hero-badge {
+            display:inline-block;
+            background:var(--accent);
+            color:#fff;
+            font-size:.72rem;
+            font-weight:600;
+            letter-spacing:.18em;
+            text-transform:uppercase;
+            padding:6px 18px;
+            border-radius:50px;
+            margin-bottom:18px;
+            position:relative;
+            animation:pulse-badge 2.4s ease-in-out infinite;
+        }
+        @keyframes pulse-badge {
+            0%,100%{ box-shadow:0 0 0 0 rgba(200,16,46,.45); }
+            50%   { box-shadow:0 0 0 8px rgba(200,16,46,0); }
+        }
+        .hero h1 {
+            font-family:'Playfair Display',serif;
+            font-weight:300;
+            font-size:clamp(2.4rem,6vw,3.8rem);
+            letter-spacing:-.02em;
+            line-height:1.1;
+            position:relative;
+        }
+        .hero h1 em {
+            font-style:italic;
+            color:var(--accent-mid);
+        }
+        .hero-sub {
+            margin-top:14px;
+            color:#9a9a9a;
+            font-size:.88rem;
+            font-weight:400;
+            position:relative;
+        }
+
+        .countdown-strip {
+            background:var(--accent);
+            color:#fff;
+            text-align:center;
+            padding:10px 16px;
+            font-size:.78rem;
+            font-weight:500;
+            letter-spacing:.06em;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+        }
+        .countdown-strip .timer {
+            font-family:'Playfair Display',serif;
+            font-size:.95rem;
+            font-weight:600;
+            letter-spacing:.04em;
+        }
+        .badge-discount {
+            position:absolute;
+            top:14px;
+            left:14px;
+            background:var(--accent);
+            color:#fff;
+            font-size:.72rem;
+            font-weight:600;
+            padding:5px 11px;
+            border-radius:50px;
+            z-index:2;
+            letter-spacing:.02em;
+        }
+        .price-save {
+            font-size:.72rem;
+            color:var(--accent);
+            font-weight:600;
+            background:var(--accent-light);
+            padding:2px 8px;
+            border-radius:50px;
+        }
     </style>
 </head>
 <body class="bg-white">
+
     <!-- Header/Navigation -->
      <% if (error) { %>
         <script>
@@ -72,16 +182,20 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
             </button>
-            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                </svg>
-            </button>
-            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-            </button>
+            <a href="/profile/wishlist">
+                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                    </svg>
+                </button>
+            </a>
+            <a href="/profile">
+                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </button>
+            </a>
             
         </div>
     
@@ -89,16 +203,13 @@
 
     <!-- Hero Section -->
     <section class="container mx-auto px-4 ">
-        <div class="bg-gray-100 rounded-3xl overflow-hidden relative" style="height: 500px;">
-            <img src="" 
+        <div class="bg-gray-100 rounded-3xl overflow-hidden relative" style="height: 510px;">
+            <img src="/banner.png" 
                  alt="Hero" 
                  class="w-full h-full object-cover">
             <div class="absolute bottom-8 left-0 right-0 flex justify-center space-x-2">
                 <button class="w-2 h-2 rounded-full bg-gray-400"></button>
-                <button class="w-2 h-2 rounded-full bg-gray-800"></button>
-                <button class="w-2 h-2 rounded-full bg-gray-400"></button>
-                <button class="w-2 h-2 rounded-full bg-gray-400"></button>
-                <button class="w-2 h-2 rounded-full bg-gray-400"></button>
+                
             </div>
         </div>
     </section>
@@ -111,35 +222,171 @@
 
         <!-- Product Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
-            <!-- Product 1 -->
+            <!-- Product Cards -->
             <% product.forEach(product=>{ %>
-                <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
-                    <div class="product-card">
-                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                <% const isWishlist = wishlist.some(e => e.variantId._id.toString() === product._id.toString() ) %>
+                <div class="product-card">
+                    <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                        <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
                             <img src="/<%= product.image[0] %>" 
-                                alt="Brown Jacket" 
+                                alt="<%= product.products[0].name %>" 
                                 loading="lazy"
                                 class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
                             <% if (product.stock <= 0) { %>
-                                <div class="absolute inset-0 flex items-center justify-center  bg-opacity-40">
+                                <div class="absolute inset-0 flex items-center justify-center bg-opacity-40">
+                                    <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                        Out of Stock
+                                    </span>
+                                </div>
+                            <% } %>
+                        </a>
+
+                        <!-- Wishlist Button (Top Right) — now outside <a>, still inside the relative container -->
+                        <% if(product.stock>0) {%>
+                            <button 
+                                data-variant="<%= product._id %>"
+                                
+                                class="heartBtn absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors z-10"
+                                <%= product.stock <= 0 ? 'disabled' : '' %>
+                                aria-label="Add to wishlist">
+                                <i class="change <%= isWishlist==true ? 'fa-solid fa-heart':'fa-regular fa-heart'  %>   transition-transform duration-200 "></i>
+                            </button>
+                        <% } %>
+                    </div>
+                    
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-medium text-sm mb-1"><%= product.products[0].name %></h3>
+                            <p class="text-lg font-semibold">₹<%= product.price %></p>
+                            <% if (product.stock <= 0) { %>
+                                <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <!-- Add to Cart Button -->
+                    <button 
+                        id="addToCartBtn"
+                        onclick="addToCart('<%= product._id %>')"
+                        class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all <%= product.stock <= 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800' %>"
+                        <%= product.stock <= 0 ? 'disabled' : '' %>>
+                        <%= product.stock <= 0 ? 'Out of Stock' : 'Add to Cart' %>
+                    </button>
+                </div>
+            <% }) %>
+        </div>
+
+        <div class="flex justify-end">
+            <a  class="mr-10" href="/products">Shop more →</a>
+        </div>
+        
+    </section>
+
+
+    <div class="countdown-strip">
+    ⏳ &nbsp; Offers end in &nbsp; <span class="timer" id="countdown">02:14:38</span> &nbsp; — Don't miss out!
+    </div>
+    <header class="hero">
+        <div class="hero-badge">🔥 Limited Time</div>
+        <h1>Offers <em>you can't</em><br>afford to skip</h1>
+        <p class="hero-sub">Curated deals on our most-loved pieces — up to 60% off</p>
+    </header>
+    <section class="container mx-auto px-4 py-12">
+
+        <h2 class="text-4xl serif-font font-light mb-8 font-bloverly"></h2>
+        
+       
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
+            <% offer.forEach(product=>{ %>
+                <% const isWishlist = wishlist.some(e => e.variantId._id.toString() === product._id.toString() ) %>
+                <div class="product-card relative">
+
+                    <!-- Discount Badge -->
+                    <% if(product.appliedOffer?.discountType == 'PERCENTAGE') { %>
+                        <span class="badge-discount"><%= product.appliedOffer?.discountValue %>% OFF</span>
+                    <% } else { %>
+                        <span class="badge-discount"><%= product.appliedOffer?.discountValue %> FLAT OFF</span>
+                    <% } %>
+
+                    <!-- Product Image with Wishlist Button -->
+                    <% if(product.status==true){%>
+                        <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                            <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                                <img src="/<%= product.image[0] %>" 
+                                    alt="<%= product.productId.name %>" 
+                                    loading="lazy"
+                                    class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                                <% if (product.stock <= 0) { %>
+                                    <div class="absolute inset-0 flex items-center justify-center bg-opacity-40">
+                                        <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                            Out of Stock
+                                        </span>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </a>
+                    <% }else{%>
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                            <img src="/<%= product.image[0] %>" 
+                                alt="<%= product.productId.name %>" 
+                                loading="lazy"
+                                class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                            <% if (product.stock <= 0) { %>
+                                <div class="absolute inset-0 flex items-center justify-center bg-opacity-40">
                                     <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
                                         Out of Stock
                                     </span>
                                 </div>
                             <% } %>
                         </div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="font-medium text-sm mb-1"> <%= product.products[0].name %> </h3>
-                                <p class="text-lg font-semibold"> ₹<%= product.price %> </p>
-                                <% if (product.stock <= 0) { %>
-                                    <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
-                                <% } %>
-                            </div>
+                    <% } %>
+                    <% if(product.stock>0&& product.status == true) {%>
+                        <button 
+                            data-variant="<%= product._id %>"
                             
+                            class="heartBtn absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors z-10"
+                            aria-label="Add to wishlist">
+                            <i class="change <%= isWishlist==true ? 'fa-solid fa-heart' : 'fa-regular fa-heart'  %>  transition-transform duration-200"></i>
+                        </button>
+                    <% } %>
+                    <!-- Product Info -->
+                    <div class="flex justify-between items-start mb-3">
+                        <% const save = product.basePrice - product.price %>
+                        <div>
+                            <h3 class="font-medium text-sm mb-1"><%= product.productId.name %></h3>
+                            <p class="text-lg font-semibold">
+                                <span class="text-gray-500 line-through">₹<%= product.discount %></span> ₹<%= product.price %>
+                            </p>
+                            <% if(save <= 0) { %>
+                                <span class="price-save">Offer expired or getting started</span>
+                            <% } else { %>
+                                <span class="price-save">Save ₹<%= save %></span>
+                                <span class="price-save"><%= product.appliedOffer.name ? product.appliedOffer.name:'Offer Inactive' %></span>
+                            <% } %>
+                            <% if (product.stock <= 0||!product.status) { %>
+                                <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
+                            <% } %>
                         </div>
                     </div>
-                </a>
+
+                    <!-- Add to Cart Button -->
+                     
+                    <button 
+                        onclick="addToCart('<%= product._id %>')"
+                        class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all 
+                        <%= (product.stock <= 0 || product.status === false) 
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                            : 'bg-black text-white hover:bg-gray-800' %>"
+                        <%= (product.stock <= 0 || product.status === false) ? 'disabled' : '' %>>
+                        
+                        <%= (product.stock <= 0 || product.status === false) 
+                            ? 'Out of Stock' 
+                            : 'Add to Cart' %>
+                    </button>
+
+                </div>
             <% }) %>
         </div>
 
@@ -224,12 +471,118 @@
     </footer>
 
     <script>
-      const menuButton = document.getElementById('mobileMenuButton');
-      const mobileMenu = document.getElementById('mobileMenu');
 
-      menuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
+        const menuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const cartbtn = document.getElementById('addToCartBtn')
+        const change = document.querySelectorAll('.change')
+    
+        change.forEach(btn=>{
+            btn.addEventListener("click", function () {
+                btn.classList.toggle("fa-regular");
+                btn.classList.toggle("fa-solid");
+                btn.classList.add("animate-heart");
+
+                // Remove animation after it finishes
+                setTimeout(() => {
+                    btn.classList.remove("animate-heart");
+                }, 300);
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.8 }
+                });
+            });
+        })
+        let heaerbtn = document.querySelectorAll('.heartBtn') 
+        heaerbtn.forEach(btn=>{
+            btn.addEventListener('click',async (e)=>{
+                const id = btn.dataset.variant
+                const icon = btn.querySelector('.change');
+
+                const isFilled = icon.classList.contains("fa-solid");
+                
+
+                try{
+
+                    const request = await fetch('/profile/wishlist/update',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type" : "application/json"
+                        },
+                        body:JSON.stringify({
+                            productId:id,
+                            action:isFilled ? "ADD":"REMOVE"
+                        })
+                    })
+                    const result = await request.json()
+                    if(!result.success){
+                        return Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+
+                    return Swal.fire({
+                        toast: true,
+                        icon: 'success',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
+                }catch(e){
+
+                }
+            })
+        })
+            
+        async function addToCart(variantId){
+
+            try{
+                const request = await fetch('/cart/add-cart',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        id:variantId,
+                        userId:"<%= isLogged.id %>",
+                        qty:1
+                    })
+                })
+                const result = await request.json()
+                if(!result.success){
+                    return Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+                return Swal.fire({
+                        toast: true,
+                        icon: 'success',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }catch(e){
+    
+                }
+        }
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
     </script>
 
     <style>

@@ -1,6 +1,10 @@
 import cartModel from "../model/cartModel.js"
+import couponModel from "../model/couponModel.js"
 import orderSchema from "../model/orderModel.js"
+import userModel from "../model/userModel.js"
 import variantModel from "../model/variantModel.js"
+import walletModel from "../model/walletModel.js"
+import { couponApplyLogic } from "./admin/couponService.js"
 import { cartData } from "./cartService.js"
 
 export const orderDetailsLoad = async (_id)=>{
@@ -35,7 +39,7 @@ export const orderDetailsLoad = async (_id)=>{
 
     }
 }
-export const OrderLogic = async (userDetails,method)=>{
+export const OrderLogic = async (userDetails,method,coupon)=>{
     try{
 
         if(!userDetails||!method){
@@ -44,7 +48,7 @@ export const OrderLogic = async (userDetails,method)=>{
                 message:"Try again!!"
             }
         }
-        let cartItems = await cartData()
+        let cartItems = await cartData({userId:userDetails.id})
         const activeCartItems = cartItems.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         if(!cartItems.success){
             return {
@@ -69,9 +73,32 @@ export const OrderLogic = async (userDetails,method)=>{
             });
 
         }
+        let CouponAmount = 0
+        if(coupon){
+
+            let discount = await couponApplyLogic(coupon,subTotal)
+            CouponAmount = discount.discount
+            subTotal = subTotal-discount.discount
+
+        }
+
         const taxAmount = subTotal * 0.05; 
         const totalAmount = subTotal + taxAmount;
-        console.log(userDetails.addressId)
+
+        if(method == "WALLET"){
+            
+            let user = await userModel.findOne({_id:userDetails.id})
+            if(user.wallet < totalAmount){
+                return {
+                    success:false,
+                    message:"Limited balance in wallet"
+                }
+            }
+            user.wallet-=totalAmount
+            await user.save()
+
+        }
+        
         let newOrder = new orderSchema({
 
             userId:userDetails.id,
@@ -82,8 +109,8 @@ export const OrderLogic = async (userDetails,method)=>{
             totalAmount,
             orderMethod:method,
             orderStatus: "placed",
-            deliveryStatus: "pending"
-
+            deliveryStatus: "pending",
+            couponApllied:CouponAmount
         })
 
         await newOrder.save()
@@ -99,6 +126,18 @@ export const OrderLogic = async (userDetails,method)=>{
         const Order_id = await orderSchema
         .findOne({ userId:userDetails.id })
         .sort({ createdAt: -1 });
+
+        if(method == "WALLET"){
+
+            let transaction = new walletModel({
+                userId:userDetails.id,
+                type:"debit",
+                amount:totalAmount,
+                reason:"Order Transfer",
+                orderId:Order_id._id
+            })
+            await transaction.save()
+        }
         return {
             success:true,
             message:"Ordered successfully",

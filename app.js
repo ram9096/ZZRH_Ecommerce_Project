@@ -9,6 +9,8 @@ import passport from "passport"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import userModel from "./model/userModel.js"
 import flash from 'connect-flash'
+import referalModel from "./model/referalModel.js"
+import walletModel from "./model/walletModel.js"
 dotenv.config()
 
 
@@ -69,9 +71,10 @@ passport.use(
     new GoogleStrategy({ 
         clientID:process.env.CLIENT_ID,
         clientSecret:process.env.CLIENT_SECRET,
-        callbackURL:"/auth/google/callback"
+        callbackURL:"/auth/google/callback",
+        passReqToCallback: true
     },
-    async (accessToken,refreshToken,profile,done)=>{
+    async (req,accessToken,refreshToken,profile,done)=>{
         try{
             let user = await userModel.findOne({googleId:profile.id})
             if(user && !user.isActive){
@@ -79,6 +82,37 @@ passport.use(
                     message: "User access is denied"
                 });
             }
+            
+            let ref = req.session.ref
+            if(ref){
+                
+
+                let referalToken = await referalModel.findOne({token:ref,used:false})
+                
+                if(!referalToken){
+    
+                    return {
+                        success:false,
+                        message:"Link already used"
+                    }
+                }
+    
+                let user = await userModel.findOne({_id:referalToken.referrer})
+                
+                user.wallet+=50
+                referalToken.used = true
+                let transacton = new walletModel({
+                    userId:user._id,
+                    type:"credit",
+                    amount:50,
+                    reason:"Referal Bonous"
+                })
+                await user.save()
+                await referalToken.save()
+                await transacton.save()
+
+            }
+            
             if(!user){
                 user = await userModel.create({
                     googleId: profile.id,

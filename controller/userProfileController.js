@@ -1,7 +1,8 @@
 
 //Page renderings
 
-import { AddressAddLogic, addressDelete, AddressEditLogic, addressFetcher, emailEditLogic, PasswordEditLogic, usernameEditLogic } from "../service/userProfileService.js"
+import { cartCount } from "../service/cartService.js"
+import { AddressAddLogic, addressDelete, AddressEditLogic, addressFetcher, emailEditLogic, generateReferalLink, PasswordEditLogic, referalLinkFetch, usernameEditLogic } from "../service/userProfileService.js"
 import { findUserByEmail, generateOtp } from "../service/userService.js"
 
 export const userProfileLoad = async (req,res)=>{
@@ -12,7 +13,7 @@ export const userProfileLoad = async (req,res)=>{
         }
 
         let userDetails = await findUserByEmail(req.session.user.email)
-
+        let cart = await cartCount(req.session.user.id)
         if(!userDetails){
             return res.redirect('/login')
         }
@@ -21,7 +22,9 @@ export const userProfileLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             name:userDetails.username,
             email:userDetails.email,
-            mobile:userDetails.mobileNo
+            mobile:userDetails.mobileNo,
+            pageActive:'PROFILE',
+            cart:cart.count||0
         })
     }catch(e){
         console.log("Data sharing error :\n",e)
@@ -37,7 +40,7 @@ export const userNameEditLoad = async (req,res)=>{
         }
 
         let userDetails = await findUserByEmail(req.session.user.email)
-
+        let cart = await cartCount(req.session.user.id)
         if(!userDetails){
             return res.redirect('/login')
         }
@@ -46,7 +49,9 @@ export const userNameEditLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             name:userDetails.username,
             email:userDetails.email,
-            mobile:userDetails.mobileNo
+            mobile:userDetails.mobileNo,
+            pageActive:'PROFILE',
+            cart:cart.count||0
         })
     }catch(e){
         console.log("Data sharing error :\n",e)
@@ -62,7 +67,7 @@ export const userEmailEditLoad = async(req,res)=>{
         }
 
         let userDetails = await findUserByEmail(req.session.user.email)
-
+        let cart = await cartCount(req.session.user.id)
         if(!userDetails){
             return res.redirect('/login')
         }
@@ -73,7 +78,9 @@ export const userEmailEditLoad = async(req,res)=>{
             name:userDetails.username,
             email:userDetails.email,
             mobile:userDetails.mobileNo,
-            otpVerified: req.session.otpContext == "EMAIL_VERIFIED" || false
+            pageActive:'PROFILE',
+            otpVerified: req.session.otpContext == "EMAIL_VERIFIED" || false,
+            cart:cart.count||0
 
         })
     }catch(e){
@@ -87,13 +94,15 @@ export const userPasswordEditLoad = async (req,res)=>{
     try{
 
         let userDetails = await findUserByEmail(req.session.user.email)
-        
+        let cart = await cartCount(req.session.user.id)
         return res.render('User/user-password-edit',{
             isLogged:req.session.user||'',
             name:userDetails.username,
             email:userDetails.email,
             mobile:userDetails.mobileNo,
-            otpVerified: req.session.otpContext == "PASSWORD_VERIFIED" || false
+            pageActive:'PROFILE',
+            otpVerified: req.session.otpContext == "PASSWORD_VERIFIED" || false,
+            cart:cart.count||0
         })
     }catch(e){
         console.log("Data sharing error :",e)
@@ -107,17 +116,41 @@ export const userAddressLoad = async (req,res)=>{
 
         let userDetails = await findUserByEmail(req.session.user.email)
         let address = await addressFetcher(userDetails._id)
-        
+        let cart = await cartCount(req.session.user.id)
         return res.render('User/user-address-page',{
             isLogged:req.session.user||'',
             name:userDetails.username,
             email:userDetails.email,
             mobile:userDetails.mobileNo,
-            address:address
+            address:address,
+            pageActive:'ADDRESS',
+            cart:cart.count||0
         })
         
     }catch(e){
        console.log("Data sharing error :",e)
+        return res.status(500).redirect('/login') 
+    }
+}
+
+export const referalLinkGeneratorLoad = async (req,res)=>{
+    try{
+        let referaLink = await referalLinkFetch(req.session.user.id)
+        let user = await findUserByEmail(req.session.user.email)
+        let cart = await cartCount(req.session.user.id)
+
+        return res.render('User/referal-page',{
+            isLogged:req.session.user||'',
+            name:"usern",
+            email:"email",       
+            mobile:"mobil",
+            pageActive:"LINK",
+            link:referaLink ? referaLink.token : null,
+            balance:user.wallet?user.wallet.toFixed(2):0,
+            cart:cart.count||0
+        })
+    }catch(e){
+        console.log(e)
         return res.status(500).redirect('/login') 
     }
 }
@@ -411,6 +444,42 @@ export const userAddressDelete = async (req,res)=>{
         res.status(500).json({
             success:false,
             message:"Data sharing error try again!!!"
+        })
+    }
+}
+
+export const referalLingGenerator = async (req,res)=>{
+    try{
+
+        const {userId} = req.body
+
+        if(!userId){
+
+            return res.status(401).json({
+                success:false,
+                message:"Try again!!!"
+            })
+        }
+        const token = await generateReferalLink(userId)
+
+        if(!token.success){
+
+            return res.status(400).json({
+                success:false,
+                message:"Try again!!!"
+            })
+        }
+        
+        return res.status(200).json({
+            success:true,
+            token:token.token
+        })
+
+    }catch(e){
+        console.log("Data sharing error :",e)
+        res.status(500).json({
+            success:false,
+            message:"Server error try again"
         })
     }
 }

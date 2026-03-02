@@ -130,6 +130,12 @@
                                 </th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold">
                                     <div class="flex items-center space-x-2">
+                                        <i class="fas fa-gift"></i>
+                                        <span>Offer</span>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">
+                                    <div class="flex items-center space-x-2">
                                         <i class="fas fa-cog"></i>
                                         <span>Actions</span>
                                     </div>
@@ -152,6 +158,28 @@
                                             <i class="fas fa-folder text-xs"></i>
                                             <span><%= user.categoryId.categoryName %></span>
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        
+                                        <select
+                                            id="offerId"
+                                            name="offerId"
+                                            data-product="<%= user._id %>"
+                                            class="px-4 py-2 rounded-lg border-2 border-gray-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-600"
+                                        >
+                                            <option value="NO">No Offer</option>
+
+                                            <% offer.forEach(offer => { %>
+                                                <option
+                                                    value="<%= offer._id %>"
+                                                    
+                                                    <%= user.offer && user.offer.toString() === offer._id.toString() ? 'selected' : '' %>
+                                                >
+                                                    <%= offer.name %>
+                                                </option>
+                                            <% }) %>
+                                        </select>
+                                       
                                     </td>
                                     <td class="px-6 py-5">
                                         <a href="/admin/products/<%= user._id %>">
@@ -217,6 +245,67 @@
                 window.location.search = params.toString();
             }, 500);
         }
+        let offer = document.querySelectorAll('#offerId')
+        offer.forEach(offerBtn => {
+            
+            offerBtn.addEventListener('change',async ()=>{
+                console.log(offerBtn.value,offerBtn.value=="")
+                
+                let productId = offerBtn.dataset.product
+                
+                try{
+    
+                    const request = await fetch('/admin/product-offer-add',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            productId:productId,
+                            offerId: offerBtn.value
+                        })
+                    })
+    
+                    const result = await request.json();
+    
+                    if (result.success) {
+    
+                        await Swal.fire({
+                            toast:true,
+                            icon: 'success',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+    
+                        
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: result.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+    
+    
+                }catch(e){
+                    console.warn(e)
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: "Server error try again!!",
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+            })
+        });
+
     </script>
 </body>
 </html>

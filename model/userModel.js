@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 let schema  = mongoose.Schema
 
 const userSchema = new schema({
@@ -37,14 +38,11 @@ const userSchema = new schema({
     },
     otpExpires:{
         type:Date
+    },
+    wallet:{
+        type:Number,
+        default:0
     }
-    // referralCode:{
-    //     type:String
-    // },
-    // referredBy:{
-    //     type:mongoose.Schema.Types.ObjectId,
-
-    // }
 },
 {
     timestamps: true

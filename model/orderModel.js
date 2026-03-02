@@ -130,6 +130,41 @@ const orderSchema = new mongoose.Schema({
       }
     ],
     default: null
+  },
+  returnedAt: {
+    type: [
+      {
+        reason: {
+          type: String,
+          required: true
+        },
+        requestedAt: {
+          type: Date,
+          default: Date.now
+        },
+        remark: {
+          type: String,
+          default: null
+        },
+        resolution: {
+          type: String,
+          default: null
+        },
+        variant:{
+          type:String,
+          defalt:null
+        },
+        returnRequestStatus: {
+          type: String,
+          default: "Pending" 
+        }
+      }
+    ],
+    default: null
+  },
+  couponApllied:{
+    type:Number,
+    default:0
   }
 
 }, { timestamps: true });

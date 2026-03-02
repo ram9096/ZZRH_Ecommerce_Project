@@ -1,20 +1,34 @@
-import { addToCart, cartData, cartDelete, cartEdit } from "../service/cartService.js"
+import { addToCart, cartCount, cartData, cartDelete, cartEdit } from "../service/cartService.js"
 
 export const cartLoad = async (req,res)=>{
     try{
-        const Cartdata  = await cartData()
-
-        const price = Cartdata.data.reduce((val,arr)=>{
-            val+=arr.variantId.price
+        let id = req.session.user.id
+        const Cartdata  = await cartData({userId:id})
+        let cart = await cartCount(req.session.user.id)
+        let offer = Cartdata.data.reduce((val,arr)=>{
+            if(arr.variantId.status){
+                if(arr.variantId.appliedOffer){
+                    val += arr.variantId.basePrice-arr.variantId.price
+                }
+            }
             return val
         },0)
-
+        
+        const price = Cartdata.data.reduce((val,arr)=>{
+            if(arr.variantId.status){
+                val+=arr.variantId.price
+            }
+            return val
+        },0)
+        
         if(!Cartdata.success){
             return res.status(500).render('User/cart-page',{ 
                 isLogged:req.session.user||'',
                 email:'',
                 data:[],
-                price:0
+                price:0,
+                cart:cart.count||0,
+                offerPrice:offer.toFixed(2)||0
             })
         }
 
@@ -22,7 +36,9 @@ export const cartLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             email:'',
             data:Cartdata.data,
-            price:price
+            price:price,
+            cart:cart.count||0,
+            offerPrice:offer.toFixed(2)||0
         })
     }catch(e){
         console.error('Error loading cart:', e)
@@ -30,7 +46,8 @@ export const cartLoad = async (req,res)=>{
             isLogged:req.session.user||'',
             email:'',
             data:[],
-            price:0
+            price:0,
+            cart:0
         })
     }
 }
@@ -131,3 +148,4 @@ export const quantityUpdate = async (req,res)=>{
         return res.redirect('/login')
     }
 }
+

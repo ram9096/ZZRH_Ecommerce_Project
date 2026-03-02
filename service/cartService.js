@@ -1,16 +1,21 @@
 import cartModel from "../model/cartModel.js"
 import variantModel from "../model/variantModel.js";
+import whilistModel from "../model/whilistModel.js";
 
-export const cartData = async()=>{
+export const cartData = async(filter={})=>{
     try{
-        const data = await cartModel.find({}).populate({
+        const data = await cartModel.find(filter).populate({
             path: "variantId",
-            match:{status:true},
             populate: {
-                path: "productId"    
+                path: "productId",
+                populate: {
+                    path: "offer"   
+                }    
             }
         });
 
+        
+    
         for (const item of data) {
             if (!item.variantId) continue;
 
@@ -21,7 +26,8 @@ export const cartData = async()=>{
                 await item.save(); 
             }
         }
-       
+
+        
         
         if(!data){
             return {
@@ -50,14 +56,8 @@ export const addToCart = async (id,userId,qty)=>{
                 message:"Error while adding to cart try again!!!"
             }
         }
-        let variantExists = await cartModel.findOne({variantId:id})
-        if(variantExists){
-            return {
-                success:false,
-                message:"Product already in cart go to cart!!"
-            }
-        }
-        let variantStatus = await variantModel.find({_id:id,status:true,stock:{$gte:1}})
+
+        let variantStatus = await variantModel.findOne({_id:id,status:true,stock:{$gte:1}})
             .populate({
                 path:"productId",
                 populate:{
@@ -73,6 +73,29 @@ export const addToCart = async (id,userId,qty)=>{
             }
 
         }
+
+        
+        let variantExists = await cartModel.findOne({variantId:id,userId})
+        
+        let wishlist = await whilistModel.findOne({
+            userId,
+            variantId:id
+        })
+
+        if(wishlist){
+            await whilistModel.deleteOne({
+                userId,
+                variantId:id
+            })
+        }
+        
+        if(variantExists){
+            return {
+                success:false,
+                message:"Product already in cart go to cart!!"
+            }
+        }
+        
         let Item = new cartModel({
             userId:userId,
             quantity:qty,
@@ -152,4 +175,24 @@ export const cartEdit = async(_id,variantId,quantity)=>{
             message:"Server error"
         }
     }   
+}
+
+
+export const cartCount = async (_id)=>{
+    try{
+        let total = 0
+        let cart = await cartData({userId:_id})
+        
+        cart.data.forEach(v=>{
+            if(v.variantId.status&&v.variantId.stock>=v.quantity){
+                total+=v.quantity
+            }
+        })
+        return {
+            success:true,
+            count:total
+        }
+    }catch(e){
+
+    }
 }

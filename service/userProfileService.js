@@ -1,8 +1,10 @@
 import { addressSchemaValidate } from "../Joi Validation/validation.js";
 import addressModel from "../model/addressModel.js";
+import referalModel from "../model/referalModel.js";
 import userModel from "../model/userModel.js";
 import { findUserByEmail } from "./userService.js";
 import bcrypt from "bcrypt"
+import crypto from "crypto"
 
 
 export const addressFetcher = (userId=>addressModel.find({userId}))
@@ -290,4 +292,40 @@ export const addressDelete = async ( id )=>{
             message:"Server error"
         }
     }
+}
+
+export const referalLinkFetch = (userId)=> referalModel.findOne({referrer:userId,used:false})
+
+export const generateReferalLink  = async (userId)=>{
+    try{
+
+        const token = crypto.randomBytes(16).toString("hex")
+        let tokenExist = await referalModel.findOne({referrer:userId,token:token})
+        if(tokenExist){
+
+            return {
+                success:false,
+                message:"Token exist error try again"
+            }
+        }
+
+        await referalModel.create({
+            token,
+            referrer:userId
+        })
+
+        return {
+            success:true,
+            token:token
+        }
+
+    }catch(e){
+
+        console.log("Server error",e)
+        return {
+            success:false,
+            message:"Server error"
+        }
+    }
+    
 }

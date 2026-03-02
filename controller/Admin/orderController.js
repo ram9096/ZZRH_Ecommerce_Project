@@ -1,28 +1,52 @@
 import { adminOrdersUpdateLogic } from "../../service/adminOrderService.js"
+import { productModelLoad, variantLoad } from "../../service/adminService.js"
 import { getOrders } from "../../service/orderService.js"
 
 
 export const adminOrdersLoad = async (req,res)=>{
     try{
+        let filter = {}
+        const page = req.query.page || 1
+        let search = req.query.search || ''
+        let status = req.query.status || ''
+        if(search){
+            filter.orderItems = {
+                    $elemMatch: {
+                        productName: { $regex: search, $options: 'i' }
+                    }
+            }
+        }
+        if(status&&status!="ALL"){
+            filter.orderStatus = status
+        }
 
-        let order = await getOrders({})
+        let order = await getOrders(filter,page,3)
 
         if(!order.success){
 
             return res.status(500).render('Admin/order-page',{
                 activePage:'order',
-                order:[]
+                order:[],
+                pagination:order.pagination,
+                search:search||'',
+                status:status||''
             })
         }
         return res.status(200).render('Admin/order-page',{
             activePage:'order',
-            order:order.data
+            order:order.data,
+            pagination:order.pagination,
+            search:search||'',
+            status:status||''
         })
     }catch(e){
         console.log("Error ",e)
         return res.status(500).render('Admin/order-page',{
             activePage:'order',
-            order:[]
+            order:[],
+            pagination:order.pagination,
+            search:'',
+            status:''
         })
     }
 }

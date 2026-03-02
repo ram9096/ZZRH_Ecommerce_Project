@@ -278,6 +278,42 @@
                         </div>
 
                         <!-- Cancellation Details (if any) -->
+
+                        <% if(order[0].returnedAt != null) {%>
+                            
+                            <div class="card p-6 border-l-4 <%= order[0].returnedAt[0].returnRequestStatus == "Pending" ? 'border-red-500':'border-green-500' %>">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="<%= order[0].returnedAt[0].returnRequestStatus == 'Pending' ? 'fas fa-exclamation-circle text-red-600 mr-2' :'' %>"></i>
+                                    Return Request
+                                </h3>
+                                
+                                <div class="bg-red-50 p-4 rounded-lg">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <p class="font-semibold text-gray-800">Requested for <%= order[0].returnedAt[0].resolution %></p>
+                                            <p class="text-sm text-gray-600 mt-1">Return by: User</p>
+                                        </div>
+                                        <span class="status-badge status-pending"><%= order[0].returnedAt[0].returnRequestStatus %> Approval</span>
+                                    </div>
+                                    
+                                    <div class="border-t border-red-200 pt-3 mt-3">
+                                        <p class="text-sm font-semibold text-gray-700 mb-1">Reason: <%= order[0].returnedAt[0].reason %></p>
+                                        <p class="text-sm text-gray-600"><%= order[0].returnedAt[0].remark %></p>
+                                        <p class="text-xs text-gray-500 mt-2">Requested on: <%= order[0].returnedAt[0].requestedAt %></p>
+                                    </div>
+
+                                    <div class="flex gap-3 mt-4 <%= order[0].returnedAt[0].returnRequestStatus == 'Pending'? '':'hidden' %>">
+                                        <button onclick="ReturnRequestApproval('<%= order[0]._id %>','<%= order[0].userId._id %>')" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition">
+                                            Approve Request
+                                        </button>
+                                        <button onclick="ReturnRequestReject('<%= order[0]._id %>','<%= order[0].userId._id %>')" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300 transition">
+                                            Reject Request
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        <% } %>
                         
                     </div>
 
@@ -512,9 +548,13 @@
 
             }
         })
-        async function CancellRequestApproval(orderId,reasonId){
+        async function ReturnRequestApproval(orderId,reasonId){
             
             try{
+                const resolutionType = 
+                    "<%= order[0]?.returnedAt?.[0]?.resolution === 'refund' ? 'REFUND_REQUEST' : 'OTHER_REQUEST' %>"
+                
+
                 const request = await fetch('/admin/orders/update',{
                     method:"POST",
                     headers:{
@@ -522,7 +562,63 @@
                     },
                     body:JSON.stringify({
                         orderId:orderId,
-                        reasonId:reasonId
+                        reasonId:reasonId,
+                        purpose:resolutionType
+                    })
+                }) 
+                
+                const result = await request.json();
+                
+                if (!result.success) {
+                    Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: result.message || "Something went wrong",
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: result.message,
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 2000);
+
+            }catch(e){
+                console.warn(e)
+                return Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: e || "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+            }
+        }
+
+        async function ReturnRequestReject(orderId,reasonId){
+            
+            try{
+                
+                
+
+                const request = await fetch('/admin/orders/update',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        orderId:orderId,
+                        reasonId:reasonId,
+                        purpose:"REJECT_REQUEST"
                     })
                 }) 
                 

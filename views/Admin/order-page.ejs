@@ -74,19 +74,32 @@
                                 <circle cx="11" cy="11" r="8" stroke-width="2"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35"/>
                             </svg>
-                            <input type="text" placeholder="Search orders..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+                            <input type="text" id="search-box" value="<%= search || '' %>" placeholder="Search orders..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent">
                         </div>
+                        <button
+                            type="button"
+                            id="search-btn"
+                            class="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800">
+                            Search
+                        </button>
                         <div class="relative">
-                            <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
-                                <option>Latest</option>
-                                <option>Oldest</option>
-                                <option>Highest Value</option>
-                                <option>Lowest Value</option>
+                            <select id="status" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
+                                <option value="ALL" <%= status == "ALL"?'selected':'' %>>All</option>
+                                <option value="completed" <%= status == "completed"?'selected':'' %>>completed</option>
+                                <option value="placed" <%= status == "placed"?'selected':'' %>>placed</option>
+                                <option value="cancelled" <%= status == "cancelled"?'selected':'' %>>cancelled</option>
                             </select>
                             <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
+                        <a href="/admin/orders">
+                            <button
+                                type="button"
+                                class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
+                                Reset
+                            </button>
+                        </a>
                     </div>
                 </div>
 
@@ -179,18 +192,90 @@
                     </div>
                 </div>
 
+                <%
+                    const currentPage = pagination.currentPage;
+                    const totalOrders = pagination.totalOrders;
+                    const limit = order.length || 0;
+
+                    const start = (currentPage - 1) * 3+1 ;
+                    const end = Math.min(start + limit - 1, totalOrders);
+                %>
+
                 <!-- Pagination -->
-                <div class="mt-6 flex items-center justify-between">
-                    <p class="text-gray-600">Showing <span class="font-semibold">1</span> to <span class="font-semibold">4</span> of <span class="font-semibold">4</span> orders</p>
+               <div class="mt-6 flex items-center justify-between">
+
+                    <!-- Showing text -->
+                    <p class="text-gray-600">
+                        Showing
+                        <span class="font-semibold"><%= start %></span>
+                        to
+                        <span class="font-semibold"><%= end %></span>
+                        of
+                        <span class="font-semibold"><%= pagination.totalOrders %></span>
+                        orders
+                    </p>
+
+                    <!-- Pagination buttons -->
                     <div class="flex gap-2">
-                        <button class="w-10 h-10 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center justify-center font-semibold">
-                            1
-                        </button>
+
+                        <!-- Prev -->
+                        <% if (pagination.currentPage > 1) { %>
+                            <a href="?page=<%= pagination.currentPage - 1 %><% if (search) { %>&search=<%= search %><% } %><% if (status) { %>&status=<%= status %><% } %>"
+                                class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                                ‹
+                            </a>
+                        <% } else { %>
+                            <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                                ‹
+                            </span>
+                        <% } %>
+
+                        <!-- Current page -->
+                        <span class="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold">
+                        <%= pagination.currentPage %>
+                        </span>
+
+                        <!-- Next -->
+                        <% if (pagination.currentPage < pagination.totalPages) { %>
+                        <a href="?page=<%= parseInt(pagination.currentPage) + 1 %><% if (search) { %>&search=<%= search %><% } %><% if (status) { %>&status=<%= status %><% } %>"
+                            class="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-gray-100">
+                            ›
+                        </a>
+                        <% } else { %>
+                        <span class="w-10 h-10 border rounded-lg flex items-center justify-center opacity-40">
+                            ›
+                        </span>
+                        <% } %>
+
                     </div>
                 </div>
+
+
+
             </div>
         </div>
-    </div>   
+    </div> 
+    
+    
+    <script>
+        const searchBox = document.getElementById('search-box');
+        const searchBtn = document.getElementById('search-btn');
+        const status = document.getElementById('status')
+        status.addEventListener("change",()=>{
+            const value = searchBox.value.trim();
+            if(!value){
+                window.location.href = `?page=1&status=${status.value}`;    
+            }else{
+                window.location.href = `?page=1&search=${encodeURIComponent(value)}&status=${status.value}`;
+            }
+        })
+        searchBtn.addEventListener('click', () => {
+            
+            const value = searchBox.value.trim();
+            window.location.href = `?page=1&search=${encodeURIComponent(value)}`;
+        });
+
+    </script>
 
 </body>
 </html>

@@ -16,7 +16,14 @@ const productSchema = new schema({
     categoryId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Category"
+    },
+    offer: {
+        
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Offer",
+        default: null
     }
+
 },{timestamps:true})
 
 export default mongoose.model("Product",productSchema)

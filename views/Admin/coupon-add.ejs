@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management - Raftaara</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .form-input:focus {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Top Navigation -->
+    <nav class="glass-effect border-b border-white/20 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold">
+                        Z
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#ZZRH</h1>
+                </div>
+                <button class="relative p-3 hover:bg-white/50 rounded-xl transition-all">
+                    <i class="far fa-bell text-xl text-gray-700"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <%- include('../Partials/sidebar') %>
+        
+      
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <!-- Back Link -->
+            <a href="/admin/coupons" class="inline-flex items-center gap-2 text-gray-700 hover:text-black mb-8 font-medium transition-all group">
+                <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span>Back to Coupon Management</span>
+            </a>
+
+            <!-- Page Header -->
+            <div class="mb-10">
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">Create new coupon</h1>
+                <p class="text-gray-600 text-lg">Create a new coupon</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="max-w-3xl">
+                <div class="glass-effect rounded-2xl shadow-xl p-8 border border-white/20">
+                    <form id="couponForm">
+                        <!-- Category Name -->
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fas fa-tag text-gray-600"></i>
+                                <span>Coupon Code</span>
+                            </label>
+                            <input 
+                                id="coupon_code"
+                                name="coupon_code"
+                                type="text" 
+                                placeholder="e.g. , SAVE50 / SAVE!100 / OFF100" 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                            >
+                            <span id="coupon_code-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fas fa-tags text-gray-600"></i>
+                                <span>Discount Type</span>
+                            </label>
+
+                            <select 
+                                name="discount_type"
+                                id="discount_type"
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                            >
+                                <option value="" disabled selected>Select discount type</option>
+                                <option value="FLAT">Flat Discount</option>
+                                <option value="PERCENTAGE">Percentage Discount</option>
+                            </select>
+
+                            <span id="discount_type-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fa-solid fa-percent"></i>
+                                <span>Discount value</span>
+                            </label>
+                            <input 
+                                id="discount_value"
+                                name="discount_value"
+                                type="text" 
+                                placeholder="e.g. , 50% OFF/ FLAT ₹100 OFF " 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                            >
+                            <span id="discount_value-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+                        <div class="mb-8" id="max_discount">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fa-solid fa-percent"></i>
+                                <span>Max Discount value</span>
+                            </label>
+                            <input 
+                                id="max_discount_value"
+                                name="max_discount_value"
+                                type="text" 
+                                placeholder="e.g. , 50% OFF/ FLAT ₹100 OFF " 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                            >
+                            <span id="max_discount_value-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fas fa-calendar-alt text-gray-600"></i>
+                                <span>Offer Validity</span>
+                            </label>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Start Date -->
+                                
+
+                                <!-- End Date -->
+                                <div>
+                                    <input
+                                        id="end-date"
+                                        name="endDate"
+                                        type="date"
+                                        class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                                    />
+                                    <span id="end-date-error" class="text-xs text-red-500 mt-2 block"></span>
+                                </div>
+
+                                 <div>
+                                    <input
+                                        id="usage_limit"
+                                        name="usage_limit"
+                                        type="number"
+                                        placeholder="Usage limit"
+                                        class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                                    />
+                                    <span id="usage_limit-error" class="text-xs text-red-500 mt-2 block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                
+                        
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                            <a href="/admin/category">
+                                <button 
+                                    type="button" 
+                                    class="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all font-medium"
+                                >
+                                    Cancel
+                                </button>
+                            </a>
+                            <button 
+                                type="submit" 
+                                class="px-8 py-3 gradient-bg text-white rounded-xl hover-lift font-medium shadow-lg flex items-center gap-2"
+                            >
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Create Coupon</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Toggle status buttons
+        
+        (function (){
+            const Categoryform  = document.getElementById('couponForm')
+            let max_discount = document.getElementById('max_discount')
+            const fields = {
+                code:document.getElementById('coupon_code'),
+                type:document.getElementById('discount_type'),
+                value:document.getElementById('discount_value'),
+                validity:document.getElementById('end-date'),
+                limit:document.getElementById('usage_limit'),
+                max:document.getElementById('max_discount_value')
+            }
+            const errors = {
+                code:document.getElementById('coupon_code-error'),
+                type:document.getElementById('discount_type-error'),
+                value:document.getElementById('discount_value-error'),
+                validity:document.getElementById('end-date-error'),
+                limit:document.getElementById('usage_limit-error'),
+                max:document.getElementById('max_discount_value-error')
+            }
+            fields.type.addEventListener("change", () => {
+                max_discount.classList.toggle(
+                    "hidden",
+                    fields.type.value !== "PERCENTAGE"
+                );
+
+                if (fields.type.value !== "PERCENTAGE") {
+                    fields.max.value = "";
+                    errors.max.textContent = "";
+                }
+            });
+            function validateField(field){
+                const value = fields[field].value.trim()
+                switch (field){
+                    case "code":
+                        if (value == '') {
+                            errors.code.textContent = "Enter valid code"
+                            return false
+                        }
+                        if(!/^[A-Z0-9]{5,10}$/.test(value)){
+                            errors.code.textContent = "Coupon codes must contain only uppercase letters (A–Z) and numbers (0–9), be 5–10 characters long, and must not include spaces or special symbols."
+                            return false
+                        }
+                        if(value.length>10){
+                            errors.code.textContent = "Code is too long keep it maximum 10"
+                            return false
+                        }
+                        errors.code.textContent = ""
+                        return true
+                    case "type":
+                        if(value==''){
+                            errors.type.textContent = "Enter a valid type"
+                            return false
+                        }
+    
+                        errors.type.textContent = ""
+                        return true
+                    case "value":
+                        if(value<=0){
+                            errors.value.textContent = "Enter a valid value"
+                            return false
+                        }
+                        errors.value.textContent = ""
+                        return true
+                    case "validity":
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        if (new Date(value) < today) {
+                            errors.validity.textContent = "date cannot be in the past";
+                            return false;
+                        }
+                        errors.validity.textContent = ""
+                        return true
+                    case "limit":
+                        if(value<=0){
+                            errors.limit.textContent = "Enter a valid limit"
+                            return false
+                        }
+                        errors.limit.textContent = ""
+                        return true   
+                    case "max":
+                        if(fields.type.value == "PERCENTAGE"){
+                            
+                            if(value<=0){
+                                errors.max.textContent = "Enter a valid limit"
+                                return false
+                            } 
+                        }
+                        errors.max.textContent = ""
+                        return true
+                }
+            }
+
+             Object.keys(fields).forEach(field => {
+                fields[field].addEventListener("input", () => validateField(field))
+                fields[field].addEventListener("blur", () => validateField(field))
+            })
+            Categoryform.addEventListener("submit", async (e)=> {
+                e.preventDefault()
+
+                let valid = true
+                Object.keys(fields).forEach(field => {
+                    if (!validateField(field)) valid = false
+                })
+                if (!valid) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: 'Please fix all validation errors',
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
+                try{
+                    
+                    
+                    const formData = new FormData(Categoryform);
+                   console.log(fields.max.value)
+                    const res = await fetch('/admin/coupons-add',{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            code:fields.code.value,
+                            type:fields.type.value,
+                            value:fields.value.value,
+                            validity:fields.validity.value,                           
+                            limit:fields.limit.value,
+                            max:fields.max.value?fields.max.value:0
+                        })
+                    })
+
+                    const data  = await res.json()
+                    
+                    if(data.success){
+                        await Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: data.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        window.location.href = data.redirect;
+                    }else {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: data.message,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+
+                }catch(e){
+                    console.log("Front-end error :\n",e)
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: e,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+
+            })
+        })()
+        function set_status(msg){
+            const active = document.getElementById('active')
+            const inactive = document.getElementById('inactive')
+            const status_Input = document.getElementById("status_Input")
+            active.classList.remove('gradient-bg','text-white','border-gray-500','shadow-lg');
+            inactive.classList.remove('gradient-bg', 'text-white','border-gray-500','shadow-lg');
+            if(msg){
+                active.classList.add('gradient-bg','text-white','border-gray-500','shadow-lg');
+            }else{
+                inactive.classList.add('gradient-bg', 'text-white','border-gray-500','shadow-lg');
+            }
+            status_Input.value = msg
+        }
+        
+    </script>
+</body>
+</html>

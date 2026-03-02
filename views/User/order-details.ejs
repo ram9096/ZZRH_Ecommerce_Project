@@ -19,7 +19,8 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
             animation: fadeIn 0.3s;
         }
         .modal.active {
@@ -29,9 +30,10 @@
         }
         .modal-content {
             background-color: white;
-            border-radius: 0.5rem;
-            max-width: 500px;
+            border-radius: 1rem;
+            max-width: 550px;
             width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             animation: slideUp 0.3s;
         }
         @keyframes fadeIn {
@@ -39,194 +41,344 @@
             to { opacity: 1; }
         }
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
+            from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .status-pending {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+        .status-completed {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: white;
+        }
+        .status-cancelled {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            color: white;
+        }
+        .product-card {
+            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            background: white;
+        }
+        .product-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+        .info-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
     <%- include('../Partials/nav-bar') %>
     
-    <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-sm p-8 mt-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         <!-- Back Button -->
         <div class="mb-6">
-            <a href="/order" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="/order" class="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-all duration-300 group">
+                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                Back to Orders
+                <span class="font-medium">Back to Orders</span>
             </a>
         </div>
 
-        <!-- Header -->
-        <div class="flex justify-between items-start mb-8">
-            <div>
-                <h1 class="text-4xl font-bold mb-2">Order #<%= order[0].orderCode %></h1>
-                <p class="text-gray-500">Order Placed: <%= new Date(order[0].orderDate).toDateString() %>  | Status:  <span class="font-bold text-gray-900 bg-amber-500 rounded-2xl p-1.5"> <%= order[0].orderStatus.toUpperCase() %></span></p>
-                <% if(order[0].expectedDeliveryDate!=null) {%>
-                    <p class="text-gray-500">Expected Date: <%= new Date(order[0].expectedDeliveryDate).toDateString() %>  </span></p>
-                <% } %>
-
-                <% if (order[0].cancelledAt && order[0].cancelledAt.length > 0) { %>
-                   <%   const cancel = order[0].cancelledAt[order[0].cancelledAt.length - 1]; %>
-                
-                <p class="text-gray-500 mt-3">
-                    Cancel request date:
-                    <%= new Date(cancel.requestedAt).toLocaleString("en-IN") %>
-                    |
-                    Status:
-                    <span class="font-bold text-gray-900 bg-amber-500 rounded-2xl p-1.5">
-                    <%= cancel.cancelRequestStatus %>
-                    </span>
-                </p>
-                <% } %>
-
-            </div>
-            <div class="flex gap-4">
-                <a href="/checkout/invoice/<%= order[0]._id %>">
-                    <button class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-                        </svg>
-                        Print Receipt
-                    </button>
-                </a>
-                <% if(order[0].orderStatus.toUpperCase() == "COMPLETED"){ %>
-                    <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
-                        Return to Orders
-                    </button>
-                <% } %>
-            </div>
-        </div>
-
-        <!-- Table Header -->
-        <div class="mb-4">
-            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 uppercase tracking-wide pb-4 border-b">
-                <div class="col-span-4">Product</div>
-                <div class="col-span-2">Quantity</div>
-                <div class="col-span-2">Price</div>
-                <div class="col-span-2">Total</div>
-                <div class="col-span-2">Action</div>
-            </div>
-        </div>
-
-        <!-- Product Items -->
-        <% order[0].orderItems.forEach((o,i) => { %>
-            <%
-                const isCancelled =
-                    order[0].cancelledAt &&
-                    order[0].cancelledAt.some(ca =>
-                        ca.cancelledProducts.some(
-                            cp => cp._id.toString() === o.variantId._id.toString()
-                        )
-                );
-
-                
-            %>
-
-
-            <div class="grid grid-cols-12 gap-4 items-center py-6 border-b">
-                <div class="col-span-4 flex items-center gap-4">
-                <div class="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
-                    <img src="/<%= o.variantId.image[0] %>" alt="">
-                </div>
-                <span class="font-medium"><%= o.productName %></span>
-                </div>
-
-                <div class="col-span-2"><%= o.quantity %></div>
-                <div class="col-span-2">₹<%= o.price %></div>
-                <div class="col-span-2 font-medium">₹<%= o.totalPrice %></div>
-
-                <div class="col-span-2">
-                <% if (isCancelled) { %>
-                   <%
-                    const cancelObj =
-                        Array.isArray(order[0].cancelledAt)
-                        ? order[0].cancelledAt[i] || order[0].cancelledAt[0]
-                        : null;
-
-                        const status = cancelObj?.cancelRequestStatus ?? 'Canceled';
-                    %>
-
-                    <span class="text-orange-600 font-medium"><%= status %></span>
-
-                <% } else { %>
-                    <% if(order[0].orderItems.length!=1) {%>
-                        <button onclick="openCancelModal('<%= o.variantId._id %>','<%= order[0]._id %>')" 
-                        class="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium">
-                        Cancel
-                        </button>
-                    <% } %>
-                <% } %>
-                </div>
-            </div>
-            <% }) %>
-            <% if(order[0].expectedDeliveryDate!=null ){%>
-                <div class="flex justify-end mt-5">
-                    <button onclick="openCancelALLModal('ALL','<%= order[0]._id %>')" id="cancelAll" class="flex items-center gap-2 px-6 py-2 border border-gray-300 bg-white rounded hover:bg-gray-50">
-                    <i class="fa-solid fa-trash-can"></i>
-                        Cancel all
-                    </button>
-                </div>
-            <% } %>
-
+        <!-- Main Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
             
+            <!-- Header Section with Gradient -->
+            <div class="bg-gradient-to-r gradient-bg p-8 text-white">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-3">
+                            <i class="fas fa-receipt text-3xl"></i>
+                            <h1 class="text-4xl font-bold">Order #<%= order[0].orderCode %></h1>
+                        </div>
+                        <div class="space-y-2 text-blue-100">
+                            <p class="flex items-center gap-2">
+                                <i class="far fa-calendar"></i>
+                                <span>Order Placed: <strong class="text-white"><%= new Date(order[0].orderDate).toDateString() %></strong></span>
+                            </p>
+                            <% if(order[0].expectedDeliveryDate!=null) {%>
+                                <p class="flex items-center gap-2">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    <span>Expected Delivery: <strong class="text-white"><%= new Date(order[0].expectedDeliveryDate).toDateString() %></strong></span>
+                                </p>
+                            <% } %>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <span class="status-badge <%= order[0].orderStatus.toUpperCase() === 'COMPLETED' ? 'status-completed' : order[0].orderStatus.toUpperCase() === 'CANCELLED' ? 'status-cancelled' : 'status-pending' %>">
+                                <i class="fas fa-circle text-xs"></i>
+                                <%= order[0].orderStatus.toUpperCase() %>
+                            </span>
+                        </div>
 
-
-        <!-- Return Section -->
-        <% if(order[0].orderStatus.toUpperCase() == "COMPLETED"){ %>
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8 flex justify-between items-center">
-                <div>
-                    <h3 class="font-semibold text-lg mb-1">Need to return an item?</h3>
-                    <p class="text-gray-600">You can start a return for eligible items.</p>
+                        <% if (order[0].cancelledAt && order[0].cancelledAt.length > 0) { %>
+                            <% const cancel = order[0].cancelledAt[order[0].cancelledAt.length - 1]; %>
+                            <div class="mt-4 bg-white/10 backdrop-blur rounded-lg p-4">
+                                <p class="text-sm">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    Cancel request: <%= new Date(cancel.requestedAt).toLocaleString("en-IN") %>
+                                    <span class="ml-2 px-2 py-1 bg-white/20 rounded text-xs"><%= cancel.cancelRequestStatus %></span>
+                                </p>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/checkout/invoice/<%= order[0]._id %>">
+                            <button class="flex items-center gap-2 px-5 py-3 bg-white text-black rounded-lg hover:bg-blue-50 font-medium transition-all shadow-lg hover:shadow-xl">
+                                <i class="fas fa-print"></i>
+                                Print Receipt
+                            </button>
+                        </a>
+                        <% if(order[0].orderStatus.toUpperCase() == "COMPLETED"){ %>
+                            <button class="px-5 py-3 bg-white/10 backdrop-blur border border-white/30 text-white rounded-lg hover:bg-white/20 font-medium transition-all">
+                                Return to Orders
+                            </button>
+                        <% } %>
+                    </div>
                 </div>
-                <button class="flex items-center gap-2 px-6 py-2 border border-gray-300 bg-white rounded hover:bg-gray-50">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                    Return Order
-                </button>
             </div>
-        <% } %>
 
-        <!-- Bottom Section -->
-        <div class="grid grid-cols-3 gap-8 mt-5">
-            <!-- Shipping Address -->
-            <div>
-                <h3 class="font-semibold text-lg mb-4">Shipping Address</h3>
-                <div class="text-gray-700">
-                    <p><%= order[0].shippingAddressId.username %></p>
-                    <p><%= order[0].shippingAddressId.street_address %></p>
-                    <p><%= order[0].shippingAddressId.city %>, <%= order[0].shippingAddressId.state %>, <%= order[0].shippingAddressId.country %></p>
+            <!-- Products Section -->
+            <div class="p-8">
+                <h2 class="text-2xl font-bold mb-6 gradient-text flex items-center gap-2">
+                    <i class="fas fa-box"></i>
+                    Order Items
+                </h2>
+
+                <div class="space-y-4">
+                    <% order[0].orderItems.forEach((o,i) => { %>
+                        <%
+                            const isCancelled =
+                                order[0].cancelledAt &&
+                                order[0].cancelledAt.some(ca =>
+                                    ca.cancelledProducts.some(
+                                        cp => cp._id.toString() === o.variantId._id.toString()
+                                    )
+                            );
+                        %>
+
+                        <div class="product-card p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                                <!-- Product Image & Name -->
+                                <div class="md:col-span-5 flex items-center gap-4">
+                                    <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center overflow-hidden shadow-md">
+                                        <img src="/<%= o.variantId.image[0] %>" alt="<%= o.productName %>" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-lg text-gray-900"><%= o.productName %></h3>
+                                        <p class="text-sm text-gray-500 mt-1">SKU: <%= o.variantId._id.toString().slice(-8) %></p>
+                                    </div>
+                                </div>
+
+                                <!-- Quantity -->
+                                <div class="md:col-span-2 text-center">
+                                    <p class="text-sm text-gray-500 mb-1">Quantity</p>
+                                    <p class="text-lg font-bold text-gray-900">×<%= o.quantity %></p>
+                                </div>
+
+                                <!-- Price -->
+                                <div class="md:col-span-2 text-center">
+                                    <p class="text-sm text-gray-500 mb-1">Unit Price</p>
+                                    <p class="text-lg font-semibold text-gray-900">₹<%= o.price %></p>
+                                </div>
+
+                                <!-- Total -->
+                                <div class="md:col-span-2 text-center">
+                                    <p class="text-sm text-gray-500 mb-1">Total</p>
+                                    <p class="text-xl font-bold text-blue-600">₹<%= o.totalPrice %></p>
+                                </div>
+
+                                <!-- Action -->
+                                <div class="md:col-span-1 flex justify-end">
+                                    <% if (isCancelled) { %>
+                                        <%
+                                            const cancelObj =
+                                                Array.isArray(order[0].cancelledAt)
+                                                ? order[0].cancelledAt[i] || order[0].cancelledAt[0]
+                                                : null;
+                                            const status = cancelObj?.cancelRequestStatus ?? 'Canceled';
+                                        %>
+                                        <span class="px-3 py-2 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium">
+                                            <i class="fas fa-ban mr-1"></i><%= status %>
+                                        </span>
+                                    <% } else { %>
+                                        <% if(order[0].orderItems.length!=1&&order[0].orderStatus !="completed") {%>
+                                            <button onclick="openCancelModal('<%= o.variantId._id %>','<%= order[0]._id %>')" 
+                                            class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-all flex items-center gap-2 border border-red-200 hover:border-red-300">
+                                                <i class="fas fa-times-circle"></i>
+                                                Cancel
+                                            </button>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
                 </div>
+
+                <!-- Cancel All Button -->
+                <% if(order[0].expectedDeliveryDate!=null && order[0].orderStatus.toUpperCase() != "COMPLETED"){%>
+                    <div class="flex justify-end mt-6">
+                        <button onclick="openCancelALLModal('ALL','<%= order[0]._id %>')" id="cancelAll" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
+                            <i class="fas fa-trash-alt"></i>
+                            Cancel All Items
+                        </button>
+                    </div>
+                <% } %>
+
+                <!-- Return Section -->
+                <% if(order[0].orderStatus.toUpperCase() == "COMPLETED" && order[0].returnedAt==null){ %>
+                    <div class="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-undo-alt text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-900">Need to return an item?</h3>
+                                <p class="text-gray-600 mt-1">You can start a return request for eligible items within 30 days.</p>
+                            </div>
+                        </div>
+                        <button onclick="openReturnModal('<%= order[0]._id %>')" class="px-6 py-3 btn-primary rounded-lg font-medium shadow-lg flex items-center gap-2 whitespace-nowrap">
+                            <i class="fas fa-box-open"></i>
+                            Return Order
+                        </button>
+                    </div>
+                <% } %>
+
+                <!-- Return Status -->
+                <% if(order[0].returnedAt!=null) {%>
+                    <div class="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 <%= order[0].returnedAt[0].returnRequestStatus == "Approved" ? 'bg-green-600' : 'bg-purple-600' %>  rounded-full flex items-center justify-center">
+                                <% if(order[0].returnedAt[0].returnRequestStatus == "Approved"||order[0].returnedAt[0].returnRequestStatus == "Pending"){ %>
+                                    <i class="fas fa-check text-white text-xl"></i>
+                                <% }else{ %>
+                                    <i class="fa-solid fa-x text-white text-xl"></i>
+                                <% } %>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-900">Return Request Submitted</h3>
+                                <p class="text-gray-600 mt-1">Status: <span class="font-semibold text-purple-700"><%= order[0].returnedAt[0].returnRequestStatus %></span></p>
+                                <% if( order[0].returnedAt[0].returnRequestStatus == "Approved") {%>
+                                    <p class="text-gray-600">Return request is Approved requested resolution is applied</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
             </div>
 
-            <!-- Payment Method -->
-            <div>
-                <h3 class="font-semibold text-lg mb-4">Payment Method</h3>
-                <p class="text-gray-700"><%= order[0].orderMethod %></p>
-            </div>
+            <!-- Bottom Information Section -->
+            <div class="bg-gray-50 p-8 border-t-2 border-gray-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Shipping Address -->
+                    <div class="info-card">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-blue-600"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-gray-900">Shipping Address</h3>
+                        </div>
+                        <div class="text-gray-700 space-y-1 pl-13">
+                            <p class="font-semibold"><%= order[0].shippingAddressId.username %></p>
+                            <p class="text-sm"><%= order[0].shippingAddressId.street_address %></p>
+                            <p class="text-sm"><%= order[0].shippingAddressId.city %>, <%= order[0].shippingAddressId.state %></p>
+                            <p class="text-sm"><%= order[0].shippingAddressId.country %></p>
+                        </div>
+                    </div>
 
-            <!-- Order Summary -->
-            <div>
-                <h3 class="font-semibold text-lg mb-4">Order Summary</h3>
-                <div class="space-y-2 text-gray-700">
-                    <div class="flex justify-between">
-                        <span>Subtotal</span>
-                        <span>₹<%= order[0].subTotal %></span>
+                    <!-- Payment Method -->
+                    <div class="info-card">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-credit-card text-green-600"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-gray-900">Payment Method</h3>
+                        </div>
+                        <p class="text-gray-700 font-medium pl-13"><%= order[0].orderMethod %></p>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Shipping</span>
-                        <span>free </span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Taxes</span>
-                        <span>₹<%= order[0].taxAmount.toFixed(2) %></span>
-                    </div>
-                    <div class="flex justify-between font-semibold text-lg pt-2 border-t">
-                        <span>Grand Total</span>
-                        <span>₹<%= order[0].totalAmount.toFixed(2) %></span>
+
+                    <!-- Order Summary -->
+                    <div class="info-card">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-invoice-dollar text-purple-600"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-gray-900">Order Summary</h3>
+                        </div>
+                        <div class="space-y-3 pl-13">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Subtotal</span>
+                                <span class="font-semibold text-gray-900">₹<%= order[0].subTotal %></span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Shipping</span>
+                                <span class="font-semibold text-green-600">Free</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Taxes</span>
+                                <span class="font-semibold text-gray-900">₹<%= order[0].taxAmount.toFixed(2) %></span>
+                            </div>
+                            <div class="pt-3 border-t-2 border-gray-300">
+                                <div class="flex justify-between">
+                                    <span class="font-bold text-gray-900">Grand Total</span>
+                                    <span class="font-bold text-xl text-blue-600">₹<%= order[0].totalAmount.toFixed(2) %></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -240,8 +392,13 @@
             <div class="p-6">
                 <!-- Modal Header -->
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Cancel Order</h2>
-                    <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Cancel Order</h2>
+                    </div>
+                    <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
@@ -252,11 +409,9 @@
                 <div class="mb-6">
                     <p class="text-gray-600 mb-4">Are you sure you want to cancel this order? This action cannot be undone.</p>
                     
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4 mb-4">
                         <div class="flex gap-3">
-                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
+                            <i class="fas fa-info-circle text-yellow-600 text-lg mt-0.5"></i>
                             <div>
                                 <p class="text-sm font-medium text-yellow-800">Please note:</p>
                                 <p class="text-sm text-yellow-700 mt-1">If payment was made, refund will be processed within 5-7 business days.</p>
@@ -264,12 +419,12 @@
                         </div>
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <input type="hidden" id="variantId" >
                         <input type="hidden" id="orderId" >
                         <label class="block">
-                            <span class="text-gray-700 font-medium mb-2 block">Reason for cancellation</span>
-                            <select id="reason" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                            <span class="text-gray-700 font-medium mb-2 block">Reason for cancellation *</span>
+                            <select id="reason" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all">
                                 <option value="">Select a reason</option>
                                 <option value="changed_mind">Changed my mind</option>
                                 <option value="wrong_item">Ordered wrong item</option>
@@ -280,34 +435,38 @@
                         </label>
 
                         <label class="block">
-                            <span class="text-gray-700 font-medium mb-2 block">Additional comments</span>
-                            <textarea id="remark" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Tell us more..."></textarea>
+                            <span class="text-gray-700 font-medium mb-2 block">Additional comments *</span>
+                            <textarea id="remark" rows="3" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all" placeholder="Tell us more..."></textarea>
                         </label>
                     </div>
                 </div>
                 
                 <!-- Modal Footer -->
                 <div class="flex gap-3 justify-end">
-                    <button onclick="closeCancelModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors">
+                    <button onclick="closeCancelModal()" class="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-all">
                         Keep Order
                     </button>
-                    <button id="cancelbtn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors">
-                        Cancel Order
+                    <button id="cancelbtn" class="px-6 py-3 btn-danger rounded-lg font-medium">
+                        <i class="fas fa-times-circle mr-2"></i>Cancel Order
                     </button>
                 </div>
-
-                
             </div>
         </div>
     </div>
 
+    <!-- Cancel All Modal -->
     <div id="cancelAllModal" class="modal">
         <div class="modal-content">
             <div class="p-6">
                 <!-- Modal Header -->
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Cancel Order</h2>
-                    <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Cancel All Items</h2>
+                    </div>
+                    <button onclick="closeCancelALLModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
@@ -316,13 +475,11 @@
 
                 <!-- Modal Body -->
                 <div class="mb-6">
-                    <p class="text-gray-600 mb-4">Are you sure you want to cancel this order? This action cannot be undone.</p>
+                    <p class="text-gray-600 mb-4">Are you sure you want to cancel this entire order? This action cannot be undone.</p>
                     
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4 mb-4">
                         <div class="flex gap-3">
-                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
+                            <i class="fas fa-info-circle text-yellow-600 text-lg mt-0.5"></i>
                             <div>
                                 <p class="text-sm font-medium text-yellow-800">Please note:</p>
                                 <p class="text-sm text-yellow-700 mt-1">If payment was made, refund will be processed within 5-7 business days.</p>
@@ -330,12 +487,12 @@
                         </div>
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <input type="hidden" id="variantIdAll" >
                         <input type="hidden" id="orderIdAll" >
                         <label class="block">
-                            <span class="text-gray-700 font-medium mb-2 block">Reason for cancellation</span>
-                            <select id="reasonAll" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                            <span class="text-gray-700 font-medium mb-2 block">Reason for cancellation *</span>
+                            <select id="reasonAll" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all">
                                 <option value="">Select a reason</option>
                                 <option value="changed_mind">Changed my mind</option>
                                 <option value="wrong_item">Ordered wrong item</option>
@@ -346,23 +503,121 @@
                         </label>
 
                         <label class="block">
-                            <span class="text-gray-700 font-medium mb-2 block">Additional comments</span>
-                            <textarea id="remarkAll" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Tell us more..."></textarea>
+                            <span class="text-gray-700 font-medium mb-2 block">Additional comments *</span>
+                            <textarea id="remarkAll" rows="3" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all" placeholder="Tell us more..."></textarea>
                         </label>
                     </div>
                 </div>
                 
                 <!-- Modal Footer -->
                 <div class="flex gap-3 justify-end">
-                    <button onclick="closeCancelALLModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors">
+                    <button onclick="closeCancelALLModal()" class="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-all">
                         Keep Order
                     </button>
-                    <button id="cancelALLbtn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors">
-                        Cancel Order
+                    <button id="cancelALLbtn" class="px-6 py-3 btn-danger rounded-lg font-medium">
+                        <i class="fas fa-times-circle mr-2"></i>Cancel All Items
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Return Request Modal -->
+    <div id="returnModal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-undo-alt text-blue-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Return Request</h2>
+                    </div>
+                    <button onclick="closeReturnModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
                     </button>
                 </div>
 
+                <!-- Modal Body -->
+                <div class="mb-6">
+                    <p class="text-gray-600 mb-4">Please provide details for your return request.</p>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-400 rounded-lg p-4 mb-4">
+                        <div class="flex gap-3">
+                            <i class="fas fa-info-circle text-blue-600 text-lg mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-medium text-blue-800">Return Policy:</p>
+                                <p class="text-sm text-blue-700 mt-1">Items must be unused and in original packaging. Refund will be processed within 7-10 business days after inspection.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <input type="hidden" id="returnOrderId">
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Return product *</span>
+                            <select id="returnProduct" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                <option value="">Select a Product</option>
+                                <% order[0].orderItems.forEach((e)=>{ %>
+                                    <% if(order[0].cancelledAt) {%>
+                                        <% order[0].cancelledAt.forEach(c=>{ %>
+                                            <% c.cancelledProducts.forEach(v=>{ %>
+                                                
+                                                <% if(v._id.toString()!=e.variantId._id.toString()) {%>
+                                                    <option value="<%= e.variantId._id %>"><%= e.productName %> (<%= e.variantName %>)</option>
+                                                <% } %>
+                                            <% }) %>
+                                        <% }) %>
+                                    <% }else{ %>
+                                        <option value="<%= e.variantId._id %>"><%= e.productName %> (<%= e.variantName %>)</option>
+                                    <% } %>
+                                <% }) %>
+                                <option value="ALL">All</option>
+                            </select>
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Reason for return *</span>
+                            <select id="returnReason" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                <option value="">Select a reason</option>
+                                <option value="defective">Defective or damaged product</option>
+                                <option value="wrong_item">Received wrong item</option>
+                                <option value="not_as_described">Not as described</option>
+                                <option value="quality_issues">Quality issues</option>
+                                <option value="size_fit">Size/fit issues</option>
+                                <option value="changed_mind">Changed my mind</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </label>
+
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Additional details *</span>
+                            <textarea id="returnRemark" rows="4" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Please describe the issue in detail..."></textarea>
+                        </label>
+
+                        <label class="block">
+                            <span class="text-gray-700 font-medium mb-2 block">Preferred resolution *</span>
+                            <select id="returnResolution" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                <option value="">Select preferred resolution</option>
+                                <option value="refund">Refund</option>
+                                <option value="replacement">Replacement</option>
+                                <option value="exchange">Exchange for different item</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
                 
+                <!-- Modal Footer -->
+                <div class="flex gap-3 justify-end">
+                    <button onclick="closeReturnModal()" class="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-all">
+                        Cancel
+                    </button>
+                    <button id="returnSubmitBtn" class="px-6 py-3 btn-primary rounded-lg font-medium">
+                        <i class="fas fa-paper-plane mr-2"></i>Submit Return Request
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -370,6 +625,133 @@
     
 
     <script>
+        // Return Modal Functions
+        function openReturnModal(orderId) {
+            document.getElementById('returnOrderId').value = orderId;
+            document.getElementById('returnModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReturnModal() {
+            document.getElementById('returnModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // Clear form
+            document.getElementById('returnReason').value = '';
+            document.getElementById('returnRemark').value = '';
+            document.getElementById('returnResolution').value = '';
+        }
+
+        // Close return modal when clicking outside
+        document.getElementById('returnModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReturnModal();
+            }
+        });
+
+        // Return Request Submit
+        document.getElementById('returnSubmitBtn').addEventListener('click', async(e) => {
+            const reason = document.getElementById('returnReason');
+            const remark = document.getElementById('returnRemark');
+            const resolution = document.getElementById('returnResolution');
+            const orderId = document.getElementById('returnOrderId');
+            const product = document.getElementById('returnProduct')
+            if(product.value == ""){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Please select a product to return",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            if(reason.value == ''){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Please select a reason for return",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            if(remark.value == ''){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Please provide additional details",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            if(resolution.value == ''){
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Please select preferred resolution",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                return;
+            }
+            
+            try{
+                const request = await fetch('/order/return-request', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        orderId: orderId.value,
+                        reason: reason.value,
+                        remark: remark.value,
+                        resolution: resolution.value,
+                        variant:product.value
+                    })
+                });
+                const result = await request.json();
+                
+                if (!result.success) {
+                    Swal.fire({
+                        toast: true,
+                        icon: "error",
+                        title: result.message || "Something went wrong",
+                        position: "top-right",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: result.message || "Return request submitted successfully",
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+                closeReturnModal();
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 2000);
+            } catch(e) {
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    title: "Something went wrong",
+                    position: "top-right",
+                    showConfirmButton: false,
+                    timer: 3000,
+                });
+                console.warn(e);
+            }
+        });
+
+        // Cancel All Modal Functions
         document.getElementById('cancelALLbtn').addEventListener('click',async(e)=>{
             const reason = document.getElementById('reasonAll')
             const remark = document.getElementById('remarkAll')
@@ -447,6 +829,8 @@
                 console.warn(e)
             }
         })
+
+        // Cancel Single Item Modal Functions
         document.getElementById('cancelbtn').addEventListener('click', async(e)=>{
             const reason = document.getElementById('reason')
             const remark = document.getElementById('remark')

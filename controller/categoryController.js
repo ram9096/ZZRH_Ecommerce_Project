@@ -1,3 +1,4 @@
+import { offerDataLoad } from "../service/admin/offerService.js";
 import {   categoryModelLoad, dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
 import { adminCategoryAddLogic, adminCategoryEditLogic } from "../service/categoryService.js";
 
@@ -28,6 +29,7 @@ export const adminCategoryLoad = async (req,res)=>{
         sortOption = { createdAt: 1 };
     }
     let data = await categoryModelLoad(filter,sortOption,req.query.page)
+    let offer = await offerDataLoad()
     return res.render('Admin/categories-page',{
 
         data:data.data,
@@ -38,7 +40,8 @@ export const adminCategoryLoad = async (req,res)=>{
         currentPage:data.currentPage,
         totalUser:data.totalUser,
         totalPage:data.totalPages,
-        activePage:'category'
+        activePage:'category',
+        offer:offer.data
     })
 }
 export const adminCategoryAddLoad = (req,res)=>{

@@ -43,6 +43,7 @@
              
             <div class="lg:col-span-2 space-y-4">
                 <% data.forEach((item, index) => { %>
+                    
                     <div class="cart-item bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 <%= item.variantId.stock === 0 ? 'opacity-60' : '' %>">
                         <div class="flex gap-6 p-6">
                             <div class="w-32 h-40 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
@@ -58,6 +59,7 @@
                                     <h2 class="title-font text-2xl mb-2 text-gray-900"><%= item.variantId.productId.name %></h2>
                                     <p class="text-2xl font-bold text-gray-900 mb-4">₹<%= item.variantId.price %></p>
                                     <div class="space-y-2 mb-4">
+
                                         <div class="flex items-center gap-2">
                                             <span class="text-xs font-semibold text-gray-500 uppercase">Size</span>
                                             <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium"><%= item.variantId.size %></span>
@@ -74,10 +76,10 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <% if (item.variantId.stock > 0 ) { %>
+                                    <% if (item.variantId && item.variantId.stock > 0 && item.variantId.status ) { %>
                                         <div class="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
                                             <button class="w-9 h-9 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors font-semibold decreser" data-index="<%= index %>"  data-max="<%= item.variantId.stock %>">−</button>
-                                            <span id="qty<%= index %>" data-cart="<%= item._id %>" data-variant="<%= item.variantId._id %>" data-price="<%= item.variantId.price %>" class="w-8 text-center font-semibold"><%= item.quantity || 1 %></span>
+                                            <span id="qty<%= index %>" data-status="<%= item.variantId.status %>"  data-cart="<%= item._id %>" data-variant="<%= item.variantId._id %>" data-price="<%= item.variantId.price %>" class="w-8 text-center font-semibold"><%= item.quantity || 1 %></span>
                                             <button class="w-9 h-9 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors font-semibold increser" data-index="<%= index %>"  data-max="<%= item.variantId.stock %>">+</button>
                                         </div>
                                     <% } else { %>
@@ -117,6 +119,10 @@
                             <span class="text-gray-600 font-medium">Postage</span>
                             <span class="text-green-600 font-semibold">Free</span>
                         </div>
+                        <div class="flex justify-between pb-4 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">Offer deduction</span>
+                            <span class="text-green-600 font-semibold"><%= offerPrice %></span>
+                        </div>
                         
                         <div class="flex justify-between pt-4 text-xl">
                             <span class="font-bold text-gray-900">Total</span>
@@ -149,11 +155,16 @@
             document.querySelectorAll('[id^="qty"]').forEach(qtyEl => {
                 const qty = Number(qtyEl.textContent);
                 const price = Number(qtyEl.dataset.price);
-                subtotal += qty * price;
+                const status = qtyEl.dataset.status
+                
+                if(status=='true'){
+                    subtotal += qty * price;
+                }
             });
 
             document.getElementById('subtotal').textContent = '₹' + subtotal;
             document.getElementById('total').textContent = '₹' + subtotal;
+            
         }
         async function quantityUpdateDb(index) {
             let qty = document.getElementById(`qty${index}`) 
