@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#ZRI1 - Fashion Store</title>
+    <title>#Raftaara - Fashion Store</title>
     <link rel="stylesheet" href="/css/output.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -228,7 +228,7 @@
                 <div class="product-card">
                     <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
                         <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
-                            <img src="/<%= product.image[0] %>" 
+                            <img src="<%= product.image[0] %>" 
                                 alt="<%= product.products[0].name %>" 
                                 loading="lazy"
                                 class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
@@ -314,7 +314,7 @@
                     <% if(product.status==true){%>
                         <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
                             <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
-                                <img src="/<%= product.image[0] %>" 
+                                <img src="<%= product.image[0] %>" 
                                     alt="<%= product.productId.name %>" 
                                     loading="lazy"
                                     class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
@@ -329,7 +329,7 @@
                         </a>
                     <% }else{%>
                         <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
-                            <img src="/<%= product.image[0] %>" 
+                            <img src="<%= product.image[0] %>" 
                                 alt="<%= product.productId.name %>" 
                                 loading="lazy"
                                 class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">

@@ -318,6 +318,7 @@
                                 text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
                       <div class="flex flex-col items-center justify-center h-full">
                         <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
+                        <img class="preview-image hidden w-full h-full object-cover rounded-lg mb-2 " style="height: 100px;" />
                         <p class="text-xs text-gray-700 font-semibold">Upload Image 1</p>
                         <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
                         <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
@@ -330,6 +331,7 @@
                                 text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
                       <div class="flex flex-col items-center justify-center h-full">
                         <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
+                        <img class="preview-image hidden w-full h-full object-cover rounded-lg mb-2" style="height: 100px;" />
                         <p class="text-xs text-gray-700 font-semibold">Upload Image 2</p>
                         <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
                         <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
@@ -342,6 +344,7 @@
                                 text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
                       <div class="flex flex-col items-center justify-center h-full">
                         <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
+                        <img class="preview-image hidden w-full h-full object-cover rounded-lg mb-2" style="height: 100px;" />
                         <p class="text-xs text-gray-700 font-semibold">Upload Image 3</p>
                         <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
                         <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
@@ -461,13 +464,23 @@
     }
 
     function handleFileSelect(e) {
-      const files = e.target.files;
-      const display = e.target.parentElement.querySelector('.file-names');
-      if (files.length > 0) {
-        const names = Array.from(files).map(f => f.name).join(', ');
-        display.textContent = names.length > 20 ? names.substring(0, 20) + '...' : names;
-      } else {
-        display.textContent = '';
+      const file = e.target.files[0];
+      const container = e.target.closest('.image-upload-area');
+      const preview = container.querySelector('.preview-image');
+      const uploadText = container.querySelector('.upload-text');
+      const display = container.querySelector('.file-names');
+
+      if (file) {
+        const imageURL = URL.createObjectURL(file);
+
+        preview.src = imageURL;
+        preview.classList.remove('hidden');
+
+        uploadText.classList.add('hidden');
+
+        display.textContent = file.name.length > 20
+          ? file.name.substring(0, 20) + '...'
+          : file.name;
       }
     }
     document.querySelectorAll('.image-upload-area').forEach(area => {

@@ -122,6 +122,12 @@ passport.use(
                     mobileNo: 0 
                 })
             }
+            req.session.user = {
+                id:user._id,
+                email:user.email,
+                isActive:user.isActive
+            }
+            
             return done(null,user)
         }catch(e){
             return done(e,null)

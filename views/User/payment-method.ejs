@@ -149,7 +149,7 @@
                     <% cart.forEach((p,index)=>{ %>
                         <div class="flex gap-4 mb-6 pb-6 border-b border-gray-200">
                             <div class="relative">
-                                <img src="/<%= p.variantId.image[0] %>" alt="Patchwork Quilt" class="w-20 h-20 rounded-lg object-cover">
+                                <img src="<%= p.variantId.image[0] %>" alt="Patchwork Quilt" class="w-20 h-20 rounded-lg object-cover">
                                 <span id="qty<%= index %>" data-price="<%= p.variantId.price %>" class="absolute -top-2 -right-2 bg-gray-800 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"><%= p.quantity %></span>
                             </div>
                             <div class="flex-1">

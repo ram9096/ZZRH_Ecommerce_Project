@@ -339,7 +339,7 @@
                       <div class="border-2 border-dashed border-purple-300 rounded-xl p-3 h-32 text-center bg-gradient-to-br from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 cursor-pointer image-upload-area relative overflow-hidden group">
                         <% if (variant[i].image && variant[i].image[imgIdx]) { %>
                           <img
-                            src="/<%= variant[i].image[imgIdx] %>"
+                            src="<%= variant[i].image[imgIdx] %>"
                             class="w-full h-full object-cover rounded-lg"
                           />
                         <% } else { %>
@@ -580,7 +580,7 @@
               errors.name.textContent = "Enter valid name"
               return false
             }
-            if (!/^[A-Za-z]+( [A-Za-z]+)*$/.test(value)){
+            if (!/^[A-Za-z]+([ '-][A-Za-z]+)*$/.test(value)){
               errors.name.textContent = "Only characters accepted"
               return false
             }
@@ -602,7 +602,7 @@
               errors.description.textContent = "Please enter atleast 5 characters"
               return false
             }
-            if(value.length>100){
+            if(value.length>400){
               errors.description.textContent = "Sorry it cannot be too long...."
               return false
             }

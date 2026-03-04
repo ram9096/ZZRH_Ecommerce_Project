@@ -196,18 +196,18 @@
             <div class="space-y-4">
                 <div class="bg-gray-200 rounded-lg aspect-square">
                     <div id="zoomContainer" class="bg-gray-200 rounded-lg aspect-square overflow-hidden relative">
-                        <img id="img1" src="/<%= selectedVariant?.image[0] %>" class="w-full h-full object-cover transition-transform duration-200" alt="">
+                        <img id="img1" src="<%= selectedVariant?.image[0] %>" class="w-full h-full object-cover transition-transform duration-200" alt="">
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-black transition-all duration-200" id="thumb1">
-                        <img id="img2" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[0] %>" alt="">
+                        <img id="img2" class="cursor-pointer w-full h-full object-cover" src="<%= selectedVariant?.image[0] %>" alt="">
                     </div>
                     <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-transparent transition-all duration-200" id="thumb2">
-                        <img id="img3" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[1] %>" alt="">
+                        <img id="img3" class="cursor-pointer w-full h-full object-cover" src="<%= selectedVariant?.image[1] %>" alt="">
                     </div>
                     <div class="bg-gray-200 rounded-lg aspect-square relative overflow-hidden border-2 border-transparent transition-all duration-200" id="thumb3">
-                        <img id="img4" class="cursor-pointer w-full h-full object-cover" src="/<%= selectedVariant?.image[2] %>" alt="">
+                        <img id="img4" class="cursor-pointer w-full h-full object-cover" src="<%= selectedVariant?.image[2] %>" alt="">
                     </div>
                 </div>
             </div>
@@ -246,7 +246,7 @@
                     <h3 class="font-semibold mb-3">Color</h3>
                     <select class="border rounded px-3 py-2" id="color">
                         <% color.forEach(c => { %>
-                            <option value="<%= c %>"><%= c %></option>
+                            <option value="<%= c %>"<%= c==selectedVariant.color?'selected':'' %>><%= c %></option>
                         <% }) %>
                     </select>
                 </div>
@@ -256,7 +256,7 @@
                     <h3 class="font-semibold mb-3">Size</h3>
                     <select class="border rounded px-3 py-2" id="size">
                         <% size.forEach(s => { %>
-                            <option value="<%= s %>"><%= s %></option>
+                            <option value="<%= s %>" <%= s==selectedVariant.size?'selected':'' %>><%= s %></option>
                         <% }) %>
                     </select>
                 </div>
@@ -345,7 +345,7 @@
                     <a href="/home/product-details/<%= product.products[0]._id %>?size=<%= product.size %>&color=<%= product.color %>">
                         <div class="product-card">
                             <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3" style="height: 350px;">
-                                <img src="/<%= product.image[0] %>" alt="Product" class="w-full h-full object-cover">
+                                <img src="<%= product.image[0] %>" alt="Product" class="w-full h-full object-cover">
                             </div>
                             <div class="flex justify-between items-start">
                                 <div>
@@ -592,10 +592,10 @@
                 const data = await res.json();
                 if (!data.success) return;
                 
-                img1.src = `/${data.product.image[0]}`;
-                img2.src = `/${data.product.image[0]}`;
-                img3.src = `/${data.product.image[1]}`;
-                img4.src = `/${data.product.image[2]}`;
+                img1.src = `${data.product.image[0]}`;
+                img2.src = `${data.product.image[0]}`;
+                img3.src = `${data.product.image[1]}`;
+                img4.src = `${data.product.image[2]}`;
                 sizeSelect.innerHTML = '';
 
                 data.product.sizes.forEach((s, i) => {
