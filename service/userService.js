@@ -271,7 +271,7 @@ export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
 export const variantFilterLogic = async(filter)=>{
     try {
     const data = await variantModel.find(filter);
-
+        console.log(data)
     if (!data.length) {
       return { success: false, message: "No variants exist" };
     }
@@ -279,6 +279,7 @@ export const variantFilterLogic = async(filter)=>{
     return {
       success: true,
       data: {
+        _id:data[0]._id,
         image: data[0].image,
         sizes: data.map(v => ({
           size: v.size,

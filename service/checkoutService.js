@@ -73,6 +73,12 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
             });
 
         }
+        if(method=='COD'&&subTotal>1000){
+            return {
+                success:false,
+                message:"COD is not available for orders above ₹1000."
+            }
+        }
         let CouponAmount = 0
         if(coupon){
 

@@ -66,18 +66,18 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-xl border border-gray-200">
                     <h3 class="text-sm font-medium text-gray-500 mb-2">Total Orders</h3>
-                    <p class="text-2xl font-bold mb-1">1,240</p>
-                    <p class="text-green-500 text-sm">+10%</p>
+                    <p class="text-2xl font-bold mb-1"><%= total %></p>
+                    <p class="text-green-500 text-sm"></p>
                 </div>
                 <div class="bg-white p-6 rounded-xl border border-gray-200">
                     <h3 class="text-sm font-medium text-gray-500 mb-2">Customers</h3>
                     <p class="text-2xl font-bold mb-1">680</p>
-                    <p class="text-green-500 text-sm">+5%</p>
+                    <p class="text-green-500 text-sm"></p>
                 </div>
                 <div class="bg-white p-6 rounded-xl border border-gray-200">
                     <h3 class="text-sm font-medium text-gray-500 mb-2">Revenue</h3>
-                    <p class="text-2xl font-bold mb-1">$45,300</p>
-                    <p class="text-green-500 text-sm">+8%</p>
+                    <p class="text-2xl font-bold mb-1">₹<%= revenue %></p>
+                    <p class="text-green-500 text-sm"></p>
                 </div>
             </div>
 
@@ -97,10 +97,10 @@
                         </div>
                         <!-- Time Filter -->
                         <div class="flex rounded-lg border border-gray-200 p-1 gap-1">
-                            <button onclick="setRange('7d')" id="range-7d" class="chart-filter-btn text-xs font-medium px-3 py-1.5 rounded-md text-gray-500">7D</button>
-                            <button onclick="setRange('30d')" id="range-30d" class="chart-filter-btn active text-xs font-medium px-3 py-1.5 rounded-md">30D</button>
-                            <button onclick="setRange('90d')" id="range-90d" class="chart-filter-btn text-xs font-medium px-3 py-1.5 rounded-md text-gray-500">90D</button>
-                            <button onclick="setRange('1y')" id="range-1y" class="chart-filter-btn text-xs font-medium px-3 py-1.5 rounded-md text-gray-500">1Y</button>
+                            <button onclick="setRange('7D')" id="range-7D" class="chart-filter-btn active text-xs font-medium px-3 py-1.5 rounded-md text-gray-500">7D</button>
+                            <button onclick="setRange('30D')" id="range-30D" class="chart-filter-btn text-xs font-medium px-3 py-1.5 rounded-md">30D</button>
+                            <!-- <button onclick="setRange('90D')" id="range-90D" class="chart-filter-btn text-xs font-medium px-3 py-1.5 rounded-md text-gray-500">90D</button> -->
+                            <button onclick="setRange('1Y')" id="range-1Y" class="chart-filter-btn text-xs font-medium px-3 py-1.5 rounded-md text-gray-500">1Y</button>
                         </div>
                     </div>
                 </div>
@@ -112,99 +112,63 @@
             <!-- Recent Orders -->
             <div class="bg-white rounded-xl border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-xl font-bold">Recent Orders</h2>
+                    <h2 class="text-xl font-bold">Top selling products</h2>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
                             <tr class="border-b border-gray-200">
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Customer Name</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Order ID</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Date</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Status</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Action</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Product Name</th>
+                                <!-- <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Category</th> -->
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Unit sold</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="px-6 py-4">Sophia Carter</td>
-                                <td class="px-6 py-4 text-gray-500">ORD12345</td>
-                                <td class="px-6 py-4 text-gray-500">2024-07-26</td>
-                                <td class="px-6 py-4 text-gray-500">$120</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">Paid</span></td>
-                                <td class="px-6 py-4"><button class="text-purple-600 hover:text-purple-800 font-medium">View</button></td>
+                                <td class="px-6 py-3 text-left text-sm font-medium text-gray-500">PRODUCTS</td>
                             </tr>
+                            <% for(i in product){ %>
+                                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                    <td class="px-6 py-4"><%= i %></td>
+                                    <!-- <td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">Paid</span></td> -->
+                                    <td class="px-6 py-4 text-gray-500"><%= product[i] %></td>
+                                    
+                                </tr>
+                            <% } %>
                             <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="px-6 py-4">Liam Harper</td>
-                                <td class="px-6 py-4 text-gray-500">ORD67890</td>
-                                <td class="px-6 py-4 text-gray-500">2024-07-25</td>
-                                <td class="px-6 py-4 text-gray-500">$85</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">Pending</span></td>
-                                <td class="px-6 py-4"><button class="text-purple-600 hover:text-purple-800 font-medium">View</button></td>
+                                <td class="px-6 py-3 text-left text-sm font-medium text-gray-500">CATEGORY</td>
                             </tr>
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="px-6 py-4">Olivia Bennett</td>
-                                <td class="px-6 py-4 text-gray-500">ORD11223</td>
-                                <td class="px-6 py-4 text-gray-500">2024-07-24</td>
-                                <td class="px-6 py-4 text-gray-500">$250</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">Shipped</span></td>
-                                <td class="px-6 py-4"><button class="text-purple-600 hover:text-purple-800 font-medium">View</button></td>
-                            </tr>
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="px-6 py-4">Noah Foster</td>
-                                <td class="px-6 py-4 text-gray-500">ORD44556</td>
-                                <td class="px-6 py-4 text-gray-500">2024-07-23</td>
-                                <td class="px-6 py-4 text-gray-500">$150</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">Paid</span></td>
-                                <td class="px-6 py-4"><button class="text-purple-600 hover:text-purple-800 font-medium">View</button></td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">Ava Mitchell</td>
-                                <td class="px-6 py-4 text-gray-500">ORD77889</td>
-                                <td class="px-6 py-4 text-gray-500">2024-07-22</td>
-                                <td class="px-6 py-4 text-gray-500">$95</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">Shipped</span></td>
-                                <td class="px-6 py-4"><button class="text-purple-600 hover:text-purple-800 font-medium">View</button></td>
-                            </tr>
+                            <% for(i in category){ %>
+                                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                    <td class="px-6 py-4"><%= i %></td>
+                                    <!-- <td class="px-6 py-4"><span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">Paid</span></td> -->
+                                    <td class="px-6 py-4 text-gray-500"><%= category[i] %></td>
+                                    
+                                </tr>
+                            <% } %>
+
+                            
                         </tbody>
                     </table>
                 </div>
             </div>
         </main>
     </div>
-
     <script>
+        const data = <%- JSON.stringify(order) %>;
+        
+        
         // --- Data ---
-        const data = {
-            revenue: {
-                '7d':  { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], values: [1200,980,1450,1100,1700,2100,1850] },
-                '30d': { labels: ['Jul 1','Jul 5','Jul 10','Jul 15','Jul 20','Jul 25','Jul 30'], values: [3200,4100,3800,5200,4700,6100,5800] },
-                '90d': { labels: ['May','Jun','Jul'], values: [32000, 41000, 45300] },
-                '1y':  { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], values: [21000,24000,19000,27000,30000,32000,45300,41000,38000,43000,47000,52000] },
-            },
-            orders: {
-                '7d':  { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], values: [42,35,61,48,73,89,77] },
-                '30d': { labels: ['Jul 1','Jul 5','Jul 10','Jul 15','Jul 20','Jul 25','Jul 30'], values: [110,145,130,180,165,210,200] },
-                '90d': { labels: ['May','Jun','Jul'], values: [980, 1120, 1240] },
-                '1y':  { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], values: [720,810,690,940,1050,1100,1240,1180,1090,1310,1420,1560] },
-            },
-            customers: {
-                '7d':  { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], values: [18,12,24,19,31,42,38] },
-                '30d': { labels: ['Jul 1','Jul 5','Jul 10','Jul 15','Jul 20','Jul 25','Jul 30'], values: [55,72,65,90,82,105,98] },
-                '90d': { labels: ['May','Jun','Jul'], values: [480, 580, 680] },
-                '1y':  { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], values: [320,370,310,420,480,530,680,640,590,710,760,840] },
-            }
-        };
+        
 
         const metaConfig = {
-            revenue:   { label: 'Revenue ($)', color: '#111827', prefix: '$' },
+            revenue:   { label: 'Revenue ($)', color: '#111827', prefix: '₹' },
             orders:    { label: 'Orders',      color: '#6366f1', prefix: ''  },
             customers: { label: 'Customers',   color: '#10b981', prefix: ''  },
         };
 
         let currentMetric = 'revenue';
-        let currentRange  = '30d';
+        let currentRange  = '7D';
 
         // --- Chart ---
         const ctx = document.getElementById('lineChart').getContext('2d');
@@ -249,10 +213,12 @@
             }
         });
 
+        
         function updateChart() {
-            const { labels, values } = data[currentMetric][currentRange];
+            console.log(currentMetric,currentRange)
+            const { labels, values } = data[currentMetric][currentRange];;
             const { label, color } = metaConfig[currentMetric];
-
+            
             chart.data.labels = labels;
             chart.data.datasets[0].data = values;
             chart.data.datasets[0].label = label;

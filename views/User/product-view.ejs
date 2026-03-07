@@ -362,7 +362,7 @@
 
     <script>
         let currentStock = Number('<%= selectedVariant?.stock || 0 %>');
-        
+        let currentVariantId = "<%= selectedVariant._id %>"
         const menuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
         const price = document.getElementById('price');
@@ -413,7 +413,6 @@
                 updateQuantityButtons();
             } else {
                 badgeHTML = '';
-                buyNowBtn.disabled = false;
                 addToCartBtn.disabled = false;
                 updateQuantityButtons();
             }
@@ -474,7 +473,7 @@
                         "Content-Type":"application/json"
                     },
                     body:JSON.stringify({
-                        id:"<%= selectedVariant._id %>",
+                        id:currentVariantId,
                         userId:"<%= isLogged.id %>",
                         qty:quantityInput.value
                     })
@@ -597,7 +596,7 @@
                 img3.src = `${data.product.image[1]}`;
                 img4.src = `${data.product.image[2]}`;
                 sizeSelect.innerHTML = '';
-
+                currentVariantId = data.product._id
                 data.product.sizes.forEach((s, i) => {
                     const option = document.createElement('option');
                     option.value = s.size;
