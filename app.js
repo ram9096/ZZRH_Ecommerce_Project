@@ -76,6 +76,7 @@ passport.use(
     },
     async (req,accessToken,refreshToken,profile,done)=>{
         try{
+            
             let user = await userModel.findOne({googleId:profile.id})
             if(user && !user.isActive){
                 return done(null, false, {
@@ -114,6 +115,12 @@ passport.use(
             }
             
             if(!user){
+                let existUser = userModel.findOne({email:profile.emails[0].value})
+                if(existUser){
+                    return done(null, false, {
+                        message: "User already exist"
+                    });
+                }
                 user = await userModel.create({
                     googleId: profile.id,
                     username: profile.displayName,

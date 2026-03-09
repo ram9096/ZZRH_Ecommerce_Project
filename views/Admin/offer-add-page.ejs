@@ -286,8 +286,10 @@
                         }
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
-                        
-                        if (new Date(value) < today) {
+                        const [year, month, day] = value.split("-");
+                        const selectedDate = new Date(year, month - 1, day);
+                        selectedDate.setHours(0,0,0,0);
+                        if (selectedDate  < today) {
                             errors.startDate.textContent = "Start date cannot be in the past";
                             return false;
                         }

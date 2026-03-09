@@ -401,7 +401,19 @@ export const applyOffer = async (_id,action)=>{
                 let categoryDiscountValue = 0;
 
                 const basePrice = item.basePrice || item.price;
-
+                
+                if(!item.basePrice){
+            
+                    await variantModel.updateOne(
+                        { _id: item._id },
+                        {
+                            $set: {
+                                basePrice:item.price
+                            }
+                        }
+                    );
+                    item.basePrice = item.price
+                }
               
                 if (validateOffer(data.offer)) {
                     categoryDiscountValue = calculateDiscount(basePrice, data.offer);
@@ -426,7 +438,7 @@ export const applyOffer = async (_id,action)=>{
                     appliedOfferId = item.product.offer?._id;
                 }
 
-                const finalPrice = basePrice - bestDiscount;
+                const finalPrice = Math.max(basePrice - bestDiscount, 0);
 
                 await variantModel.updateOne(
                     { _id: item._id },

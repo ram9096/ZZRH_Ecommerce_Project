@@ -10,11 +10,12 @@ export const adminOrdersLoad = async (req,res)=>{
         let search = req.query.search || ''
         let status = req.query.status || ''
         if(search){
-            filter.orderItems = {
-                    $elemMatch: {
-                        productName: { $regex: search, $options: 'i' }
-                    }
-            }
+            filter.$or = [
+                { orderCode: { $regex: search, $options: "i" } },
+                { orderStatus: { $regex: search, $options: "i" } },
+                { deliveryStatus: { $regex: search, $options: "i" } },
+                { orderMethod: { $regex: search, $options: "i" } }
+            ];
         }
         if(status&&status!="ALL"){
             filter.orderStatus = status

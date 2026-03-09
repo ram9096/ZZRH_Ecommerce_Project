@@ -52,6 +52,7 @@ export const homePageLoad = async (req, res) => {
         let offer = await offeredProducts()
         let wishlist = await whishlistData({userId:req.session.user.id})
         let cart = await cartCount(req.session.user.id)
+        
         if(!req.session.user){
             return res.redirect('/login')
         }
