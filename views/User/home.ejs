@@ -362,7 +362,7 @@
                             <% if(save <= 0) { %>
                                 <span class="price-save">Offer expired or getting started</span>
                             <% } else { %>
-                                <span class="price-save">Save ₹<%= save %></span>
+                                <span class="price-save">Save ₹<%= save.toFixed(2) %></span>
                                 <span class="price-save"><%= product.appliedOffer.name ? product.appliedOffer.name:'Offer Inactive' %></span>
                             <% } %>
                             <% if (product.stock <= 0||!product.status) { %>
