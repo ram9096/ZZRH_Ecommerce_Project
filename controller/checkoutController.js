@@ -7,11 +7,11 @@ import { couponLoad } from "./Admin/couponController.js"
 
 export const checkoutLoad = async (req,res)=>{
     try{
-        let user = req.session.user.id
+        let user = req.session.user.id ? req.session.user.id:req.session.user._id
         const cartDetails = await cartData({userId:user})
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         
-        const address = await addressFetcher(req.session.user.id)
+        const address = await addressFetcher(req.session.user.id ? req.session.user.id:req.session.user._id)
         if(activeCartItems.length == 0){
             return res.redirect('/cart')
         }
@@ -39,7 +39,7 @@ export const checkoutLoad = async (req,res)=>{
 
 export const paymentMethodLoad = async (req,res)=>{
     try{
-        let user = req.session.user.id
+        let user = req.session.user.id ? req.session.user.id:req.session.user._id
         const cartDetails = await cartData({userId:user})
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         let offer = activeCartItems.reduce((val,arr)=>{
@@ -106,10 +106,10 @@ export const checkoutFetcher = async (req,res)=>{
     try{
 
         const { id,purpose } = req.body
-        let user = req.session.user.id
+        let user = req.session.user.id ? req.session.user.id:req.session.user._id 
         const cartDetails = await cartData({userId:user})
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
-
+        
         if(activeCartItems.length == 0){
             return res.status(400).json({
                 success:false,
@@ -153,10 +153,10 @@ export const orderController = async (req,res)=>{
     try{
 
         const { method,coupon } = req.body
-        let user = req.session.user.id
+        let user = req.session.user.id ? req.session.user.id:req.session.user._id
         const cartDetails = await cartData({userId:user})
         const activeCartItems = cartDetails.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
-
+        
         if(activeCartItems.length == 0){
             return res.status(400).json({
                 success:false,

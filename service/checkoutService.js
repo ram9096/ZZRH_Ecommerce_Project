@@ -41,14 +41,14 @@ export const orderDetailsLoad = async (_id)=>{
 }
 export const OrderLogic = async (userDetails,method,coupon)=>{
     try{
-
+        
         if(!userDetails||!method){
             return {
                 success:false,
                 message:"Try again!!"
             }
         }
-        let cartItems = await cartData({userId:userDetails.id})
+        let cartItems = await cartData({userId:userDetails.id?userDetails.id:userDetails._id})
         const activeCartItems = cartItems.data.filter((item)=>item.variantId.status===true&&item.variantId.stock>0&&item.quantity<=item.variantId.stock);
         if(!cartItems.success){
             return {
@@ -93,7 +93,7 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
 
         if(method == "WALLET"){
             
-            let user = await userModel.findOne({_id:userDetails.id})
+            let user = await userModel.findOne({_id:userDetails.id?userDetails.id:userDetails._id})
             if(user.wallet < totalAmount){
                 return {
                     success:false,
@@ -107,7 +107,7 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
         
         let newOrder = new orderSchema({
 
-            userId:userDetails.id,
+            userId:userDetails.id?userDetails.id:userDetails._id,
             shippingAddressId:userDetails.addressId,
             orderItems,
             subTotal,
