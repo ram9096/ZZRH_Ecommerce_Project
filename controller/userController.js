@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { offeredProducts } from "../service/admin/offerService.js";
 import { cartCount } from "../service/cartService.js";
 import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails, variantFilterLogic } from "../service/userService.js";
@@ -96,7 +97,20 @@ export const productViewLoad = async(req,res)=>{
         let color = req.query.color
         let size = req.query.size
         let products = await ProductvariantDetails(productId,color,size)
-        let Relatedproducts = await ProductsLoad({$or:[{color:color},{size:size}]})
+        let cart = await cartCount(req.session?.user?.id)
+        let Relatedproducts = await ProductsLoad({
+            $or: [
+                { color: color },
+                { size: size }
+            ],
+            $nor: [
+                {
+                    productId: new mongoose.Types.ObjectId(productId),
+                    color: color,
+                    size: size
+                }
+            ]
+        })
         if(!products.success){
             return res.render('User/product-view',{
                 product:[],
@@ -106,7 +120,8 @@ export const productViewLoad = async(req,res)=>{
                 variant:[],
                 RelatedProducts:[],
                 error:products.message,
-                isLogged:false
+                isLogged:false,
+                cart:cart.count?cart.count:0
             })
         }
         return res.render('User/product-view',{
@@ -116,7 +131,8 @@ export const productViewLoad = async(req,res)=>{
             variant:products.variant,
             Relatedproducts:Relatedproducts.data,
             error:'',
-            isLogged:req.session.user||''
+            isLogged:req.session.user||'',
+            cart:cart.count?cart.count:0
         })
     }catch(e){
         console.log("Error: ",e)

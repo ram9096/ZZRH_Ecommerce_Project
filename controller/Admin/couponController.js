@@ -76,9 +76,9 @@ export const couponFormLoad = (req,res)=>{
 export const couponFormCreate = async (req,res)=>{
     try{
 
-        const { code,type,value,validity,limit,max } = req.body
+        const { code,type,value,validity,limit,max,purchase } = req.body
         
-        const couponProgress = await couponFormCreateLogic(code,type,value,validity,limit,max)
+        const couponProgress = await couponFormCreateLogic(code,type,value,validity,limit,max,purchase)
 
         if(!couponProgress.success){
 
@@ -107,9 +107,9 @@ export const couponFormCreate = async (req,res)=>{
 export const couponFormEdit = async (req,res)=>{
     try{
 
-        const { _id,code,type,value,validity,limit,max } = req.body
+        const { _id,code,type,value,validity,limit,max,purchase } = req.body
     
-        const couponProgress = await couponFormEditLogic(_id,code,type,value,validity,limit,max)
+        const couponProgress = await couponFormEditLogic(_id,code,type,value,validity,limit,max,purchase)
 
         if(!couponProgress.success){
 

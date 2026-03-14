@@ -17,7 +17,12 @@ export const adminOrdersUpdateLogic = async (orderId,reasonId,purpose = null)=>{
         }
 
         if(purpose == "DELIVERY_UPDATE"){
-
+            if(updateData.deliveryStatus == "delivered"){
+                return {
+                    success:false,
+                    message:"Product is already delivered"
+                }
+            }
             updateData.deliveryStatus = reasonId
             await updateData.save()
             return {
@@ -27,7 +32,18 @@ export const adminOrdersUpdateLogic = async (orderId,reasonId,purpose = null)=>{
         }
 
         if(purpose == "ORDER_UPDATE"){
-
+            if(updateData.orderStatus == "cancelled" && reasonId == "placed"){
+                return {
+                    success:false,
+                    message:"Order already cancelled"
+                }
+            }
+            if(updateData.orderStatus == "completed" && reasonId == "placed"||reasonId == "cancelled"){
+                return {
+                    success:false,
+                    message:"Order already completed"
+                }
+            }
             updateData.orderStatus = reasonId
             await updateData.save()
             return {

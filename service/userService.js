@@ -191,6 +191,15 @@ export const ProductsLoad = async (filter,limit = null)=>{
                 as:"category"
             }
         },
+         {
+            $lookup: {
+                from: "offers",
+                localField: "appliedOffer",
+                foreignField: "_id",
+                as: "offer"
+            }
+        },
+
         {$match:filter},
         
         

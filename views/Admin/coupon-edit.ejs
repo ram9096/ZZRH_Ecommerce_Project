@@ -139,6 +139,21 @@
                             >
                             <span id="discount_value-error" class="text-xs text-red-500 mt-2 block"></span>
                         </div>
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fa-solid fa-percent"></i>
+                                <span>Minimum purchase value</span>
+                            </label>
+                            <input 
+                                id="purchase_value"
+                                name="purchase_value"
+                                type="text" 
+                                value="<%= data[0].minOrderValue?data[0].minOrderValue:0 %>"
+                                placeholder="e.g. , 500 " 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                            >
+                            <span id="purchase_value-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
                         <div class="mb-8" id="max_discount">
                             <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
                                 <i class="fa-solid fa-percent"></i>
@@ -229,7 +244,8 @@
                 value:document.getElementById('discount_value'),
                 validity:document.getElementById('end-date'),
                 limit:document.getElementById('usage_limit'),
-                max:document.getElementById('max_discount_value')
+                max:document.getElementById('max_discount_value'),
+                purchase:document.getElementById('purchase_value')
             }
             const errors = {
                 code:document.getElementById('coupon_code-error'),
@@ -237,7 +253,8 @@
                 value:document.getElementById('discount_value-error'),
                 validity:document.getElementById('end-date-error'),
                 limit:document.getElementById('usage_limit-error'),
-                max:document.getElementById('max_discount_value-error')
+                max:document.getElementById('max_discount_value-error'),
+                purchase:document.getElementById('purchase_value-error')
             }
             fields.type.addEventListener("change", () => {
                 max_discount.classList.toggle(
@@ -276,6 +293,10 @@
     
                         errors.type.textContent = ""
                         return true
+                    case "purchase":
+                        if(value<0){
+                            errors.purchase.textContent = "Enter a valid value"
+                        }  
                     case "value":
                         if(value<=0){
                             errors.value.textContent = "Enter a valid value"
@@ -339,7 +360,7 @@
                     
                     
                     const formData = new FormData(Categoryform);
-                   console.log(fields.max.value)
+                   
                     const res = await fetch('/admin/coupons-edit',{
                         method:"POST",
                         headers:{
@@ -352,7 +373,8 @@
                             value:fields.value.value,
                             validity:fields.validity.value,                           
                             limit:fields.limit.value,
-                            max:fields.max.value?fields.max.value:0
+                            max:fields.max.value?fields.max.value:0,
+                            purchase:fields.purchase.value
                         })
                     })
 

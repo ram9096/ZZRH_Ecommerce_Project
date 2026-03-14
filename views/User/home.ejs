@@ -136,6 +136,80 @@
             padding:2px 8px;
             border-radius:50px;
         }
+
+        /* ── RESPONSIVE ADDITIONS ONLY ── */
+
+        /* Hero banner image height */
+        .hero-banner {
+            height: 510px;
+        }
+        @media (max-width: 768px) {
+            .hero-banner {
+                height: 260px;
+            }
+        }
+
+        /* Product card image height */
+        .product-img-wrap {
+            height: 350px;
+        }
+        @media (max-width: 480px) {
+            .product-img-wrap {
+                height: 260px;
+            }
+        }
+
+        /* CTA section */
+        .cta-section-wrap {
+            height: 800px;
+        }
+        @media (max-width: 768px) {
+            .cta-section-wrap {
+                height: auto;
+                min-height: 420px;
+            }
+            .cta-section-wrap img {
+                position: relative !important;
+                height: 420px;
+                object-position: center top;
+            }
+            .cta-overlay {
+                padding: 24px 20px !important;
+            }
+            .cta-heading {
+                font-size: 36px !important;
+                line-height: 1.15 !important;
+            }
+            .cta-sub {
+                font-size: 14px !important;
+            }
+            .cta-btn {
+                font-size: 18px !important;
+                padding: 10px 24px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .cta-heading {
+                font-size: 26px !important;
+            }
+        }
+
+        /* Footer brand heading */
+        .footer-brand {
+            font-size: clamp(48px, 14vw, 125px);
+        }
+
+        /* Marquee font size */
+        .marquee-track {
+            font-size: clamp(28px, 8vw, 60px);
+        }
+
+        /* Hero section padding */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 36px 16px 32px;
+            }
+        }
     </style>
 </head>
 <body class="bg-white">
@@ -157,9 +231,9 @@
      <%- include('../Partials/nav-bar') %>
 
     <!-- Mobile Menu Button -->
-    <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
+    <!-- <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
       Menu
-    </button>
+    </button> -->
 
     <!-- Login/Sign-up Button (Hidden on mobile until we toggle menu) -->
     
@@ -167,9 +241,7 @@
 
   <!-- Mobile Menu (initially hidden) -->
   <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 space-y-4 font-clash">
-    <a href="#" class="block hover:underline">New Arrival</a>
-    <a href="#" class="block hover:underline">Men's collection</a>
-    <a href="#" class="block hover:underline">About Us</a>
+    
     
     <div class="flex items-center gap-4">
             <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
@@ -203,7 +275,7 @@
 
     <!-- Hero Section -->
     <section class="container mx-auto px-4 ">
-        <div class="bg-gray-100 rounded-3xl overflow-hidden relative" style="height: 510px;">
+        <div class="hero-banner bg-gray-100 rounded-3xl overflow-hidden relative">
             <img src="/banner.png" 
                  alt="Hero" 
                  class="w-full h-full object-cover">
@@ -224,9 +296,10 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
             <!-- Product Cards -->
             <% product.forEach(product=>{ %>
+                <% const save = product.basePrice - product.price %>
                 <% const isWishlist = wishlist.some(e => e.variantId._id.toString() === product._id.toString() ) %>
                 <div class="product-card">
-                    <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                    <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
                         <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
                             <img src="<%= product.image[0] %>" 
                                 alt="<%= product.products[0].name %>" 
@@ -258,6 +331,12 @@
                         <div>
                             <h3 class="font-medium text-sm mb-1"><%= product.products[0].name %></h3>
                             <p class="text-lg font-semibold">₹<%= product.price %></p>
+                            <% if(save <= 0) { %>
+                                
+                            <% } else { %>
+                                <span class="price-save">Save ₹<%= save.toFixed(2) %></span>
+                                
+                            <% } %>
                             <% if (product.stock <= 0) { %>
                                 <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
                             <% } %>
@@ -313,7 +392,7 @@
                     <!-- Product Image with Wishlist Button -->
                     <% if(product.status==true){%>
                         <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
-                            <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                            <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
                                 <img src="<%= product.image[0] %>" 
                                     alt="<%= product.productId.name %>" 
                                     loading="lazy"
@@ -328,7 +407,7 @@
                             </div>
                         </a>
                     <% }else{%>
-                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                        <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
                             <img src="<%= product.image[0] %>" 
                                 alt="<%= product.productId.name %>" 
                                 loading="lazy"
@@ -400,20 +479,20 @@
 
     <!-- CTA Section -->
     <section class="container mx-auto px-4 py-12 font-bloverly">
-        <div class=" rounded-3xl overflow-hidden relative" style="height: 800px;">
+        <div class="cta-section-wrap rounded-3xl overflow-hidden relative">
             <img src="/Background-image.jpg" 
             loading="lazy"
                  alt="Fashion" 
                  class="w-full h-full object-cover ">
-            <div class="absolute inset-0 items-left justify-center text-white p-8">
-                <h2 class="text-[90px] font-light  text-left">
+            <div class="cta-overlay absolute inset-0 items-left justify-center text-white p-8">
+                <h2 class="cta-heading font-light text-left" style="font-size:clamp(28px,6vw,90px); line-height:1.1;">
                     Feel more retromantic - feel<br>free to step into timeless<br>fashion with a twist.
                 </h2>
-                <p class="text-[20px] mb-8 text-left max-w-xl opacity-90 font-clash">
+                <p class="cta-sub mb-8 text-left max-w-xl opacity-90 font-clash" style="font-size:clamp(13px,2vw,20px);">
                     Sign up today to receive exclusive deals and unlock fashion<br>
                     collections that define your unique style every season
                 </p>
-                <button class="text-[40px] border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash">
+                <button class="cta-btn border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash" style="font-size:clamp(16px,3vw,40px);">
                     Thank you for clicking
                 </button>
             </div>
@@ -422,7 +501,7 @@
 
     <!-- Marquee -->
     <div class="bg-black text-white py-4 overflow-hidden marquee font-clash text-bold">
-        <div class="whitespace-nowrap marquee-track text-6xl font-bold">
+        <div class="whitespace-nowrap marquee-track font-bold">
             WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE * WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE *
         </div>
     </div>
@@ -431,7 +510,7 @@
     <footer class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-                <h3 class="text-[60px] md:text-[125px] font-light mb-4 font-bloverly">#ZZRH</h3>
+                <h3 class="footer-brand font-light mb-4 font-bloverly">#ZZRH</h3>
             </div>
             
             <div>
@@ -461,7 +540,7 @@
                 </ul>
             </div>
         </div>
-        <div class="border-t border-gray-200 pt-8 flex justify-between text-xs text-gray-600">
+        <div class="border-t border-gray-200 pt-8 flex flex-wrap gap-4 justify-between text-xs text-gray-600">
             <p>Copyright@2025</p>
             <div class="space-x-6">
                 <a href="#" class="hover:text-gray-900">Terms and conditions</a>
@@ -552,7 +631,7 @@
                     },
                     body:JSON.stringify({
                         id:variantId,
-                        userId:"<%= isLogged.id %>",
+                        userId:"<%= isLogged.id?isLogged.id:isLogged._id %>",
                         qty:1
                     })
                 })

@@ -323,6 +323,85 @@
                     </div>
                 </div>
 
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+                        <i class="fa-solid fa-box-open mr-2 text-blue-600"></i>
+                        Sales report
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="productSalesTable">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Product Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">No of items ordered</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Total amount</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Customer name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Return orders</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Cancelled</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                
+                                <% order.forEach(item => { %>
+                                    <% const returnAt = (item.returnedAt && item.returnedAt[0].variant=="ALL") ? item.orderItems.length:1 %>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                                                    <i class="fa-solid fa-box text-gray-500"></i>
+                                                </div>
+                                                <span class="font-medium text-gray-800">#<%= item.orderCode %></span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-gray-600"><%= item.orderItems.length %></td>
+                                        <td class="px-4 py-4 text-gray-800 font-medium">₹<%= item.totalAmount.toFixed(2) %></td>
+                                        <td class="px-4 py-4 text-orange-600"><%= item.userId.username %></td>
+                                        <td class="px-4 py-4 text-green-600 font-semibold"><%= item.returnedAt ? returnAt:0 %></td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                                                <%= item.orderStatus === 'completed' ? 'bg-green-100 text-green-700' :
+                                                    item.orderStatus === 'placed' ? 'bg-yellow-100 text-yellow-700' :
+                                                    item.orderStatus === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                                    'bg-gray-100 text-gray-700' %>">
+                                                <%= item.orderStatus %>
+                                            </span>
+                                        </td>
+                                        
+                                    </tr>
+                                    
+                                <% }) %>
+                                
+                            </tbody>
+                        </table>
+                        <!-- <div class="flex items-center justify-between flex-wrap gap-3 px-4 py-4 border-t border-gray-200 mt-0">
+
+                            !-- Showing X–Y of Z --
+                            <p class="text-sm text-gray-500">
+                                Showing <span id="rangeStart" class="font-medium text-gray-800">1</span>–<span id="rangeEnd" class="font-medium text-gray-800">10</span>
+                                of <span id="totalCount" class="font-medium text-gray-800">68</span> orders
+                            </p>
+
+                            !-- Page buttons --
+                            <div class="flex items-center gap-1" id="pageButtons"></div>
+
+                            !-- Rows per page --
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                Rows per page
+                                <select id="rowsPerPage" onchange="changePerPage(this.value)"
+                                class="h-8 px-2 rounded-lg border border-gray-300 bg-white text-gray-800 text-sm cursor-pointer focus:outline-none">
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                </select>
+                            </div>
+
+                        </div> -->
+                    </div>
+                </div>
+
+
+
                 <!-- Product Sales Breakdown -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
                     <h2 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">

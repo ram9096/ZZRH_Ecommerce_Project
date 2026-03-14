@@ -120,7 +120,7 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
         })
 
         await newOrder.save()
-        await cartModel.deleteMany({ userId: userDetails.id });
+        await cartModel.deleteMany({ userId: userDetails.id?userDetails.id:userDetails._id });
 
         for(let i of orderItems){
 
@@ -130,7 +130,7 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
             )
         }
         const Order_id = await orderSchema
-        .findOne({ userId:userDetails.id })
+        .findOne({ userId:userDetails.id?userDetails.id:userDetails._id })
         .sort({ createdAt: -1 });
 
         if(method == "WALLET"){

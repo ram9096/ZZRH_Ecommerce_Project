@@ -4,6 +4,7 @@ export const walletTransactionLoad = async(userId)=>{
     try{
 
         let transaction =  await walletModel.find({userId})
+            .sort({createdAt:-1})
         if(!transaction){
             return {
                 success:false,
