@@ -26,9 +26,57 @@
         .cart-item:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
+        .animate-fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #ef4444;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100  ">
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="text-white text-xl font-semibold">Cart updating</p>
+        <p class="text-gray-300 text-sm mt-2">Please wait while we process your request</p>
+        </div>
+    </div>
     <%- include('../Partials/nav-bar') %>
     
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -192,7 +240,7 @@
             let cartId = qty.dataset.cart
             let variantId = qty.dataset.variant
             let quantity = qty.textContent
-            
+            document.getElementById('loadingOverlay').classList.add('active');
             try{
                 const request = await fetch('/cart/update-quantity',{
                     method:"POST",
@@ -201,7 +249,7 @@
                     },
                     body:JSON.stringify({cartId,variantId,quantity})
                 })
-
+                document.getElementById('loadingOverlay').classList.remove('active');
                 const result = await request.json()
                 console.log(result)
                 if (!result.success) {
@@ -304,6 +352,7 @@
     
                 const id = btn.dataset.id;
                 const userId = btn.dataset.userId
+                document.getElementById('loadingOverlay').classList.add('active');
                 try{
                     const request = await fetch(`/cart/delete-item`,{
                         method:"POST",
@@ -312,6 +361,7 @@
                         },
                         body:JSON.stringify({id,userId})
                     })
+                    document.getElementById('loadingOverlay').classList.remove('active');
                     const result = await request.json()
                     if (!result.success) {
                         Swal.fire({

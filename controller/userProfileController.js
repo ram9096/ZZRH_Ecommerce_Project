@@ -13,7 +13,7 @@ export const userProfileLoad = async (req,res)=>{
         }
 
         let userDetails = await findUserByEmail(req.session.user.email)
-        let cart = await cartCount(req.session.user.id)
+        let cart = await cartCount(req.session.user.id||req.session.user._id)
         if(!userDetails){
             return res.redirect('/login')
         }

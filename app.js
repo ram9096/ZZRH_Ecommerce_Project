@@ -11,14 +11,19 @@ import userModel from "./model/userModel.js"
 import flash from 'connect-flash'
 import referalModel from "./model/referalModel.js"
 import walletModel from "./model/walletModel.js"
+import rateLimit from "express-rate-limit"
 dotenv.config()
 
 
 let app = express()
 let port = process.env.PORT
-
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100, 
+    message: "Too many requests from this IP, please try again later."
+});
 // middlewares
-
+app.use(limiter);
 app.use(express.static('public'))
 app.use(express.static("uploads"))
 
@@ -115,7 +120,7 @@ passport.use(
             }
             
             if(!user){
-                let existUser = userModel.findOne({email:profile.emails[0].value})
+                let existUser = await userModel.findOne({email:profile.emails[0].value})
                 if(existUser){
                     return done(null, false, {
                         message: "User already exist"

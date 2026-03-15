@@ -210,9 +210,57 @@
                 padding: 36px 16px 32px;
             }
         }
+        .animate-fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #ef4444;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body class="bg-white">
+    <div id="loadingOverlay" class="loading-overlay">
+    <div class="text-center">
+      <div class="spinner mx-auto mb-4"></div>
+      <p class="text-white text-xl font-semibold">Uploading product...</p>
+      <p class="text-gray-300 text-sm mt-2">Please wait while we process your request</p>
+    </div>
+  </div>
 
     <!-- Header/Navigation -->
      <% if (error) { %>
@@ -513,39 +561,11 @@
                 <h3 class="footer-brand font-light mb-4 font-bloverly">#ZZRH</h3>
             </div>
             
-            <div>
-                <h4 class="font-medium mt-10 mb-3 font-clash">Navigation</h4>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="#" class="hover:text-gray-900">About Us</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Collection</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Contact</a></li>
-                </ul>
-            </div>
             
-            <div>
-                <h4 class="font-medium mb-3 mt-10 font-clash">Collection</h4>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="#" class="hover:text-gray-900">New Arrival</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Men's</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Women's</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Collection</a></li>
-                </ul>
-            </div>
-            
-            <div>
-                <h4 class="font-medium mb-3 mt-10 font-clash">Contact Us</h4>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li>###@gmail.com</li>
-                    <li>##91-000000</li>
-                </ul>
-            </div>
         </div>
         <div class="border-t border-gray-200 pt-8 flex flex-wrap gap-4 justify-between text-xs text-gray-600">
             <p>Copyright@2025</p>
-            <div class="space-x-6">
-                <a href="#" class="hover:text-gray-900">Terms and conditions</a>
-                <a href="#" class="hover:text-gray-900">Privacy Policy</a>
-            </div>
+            
         </div>
     </footer>
 
@@ -581,7 +601,7 @@
 
                 const isFilled = icon.classList.contains("fa-solid");
                 
-
+                document.getElementById('loadingOverlay').classList.add('active');
                 try{
 
                     const request = await fetch('/profile/wishlist/update',{
@@ -594,6 +614,7 @@
                             action:isFilled ? "ADD":"REMOVE"
                         })
                     })
+                    document.getElementById('loadingOverlay').classList.remove('active');
                     const result = await request.json()
                     if(!result.success){
                         return Swal.fire({
@@ -622,7 +643,7 @@
         })
             
         async function addToCart(variantId){
-
+            document.getElementById('loadingOverlay').classList.add('active');
             try{
                 const request = await fetch('/cart/add-cart',{
                     method:"POST",
@@ -635,6 +656,7 @@
                         qty:1
                     })
                 })
+                document.getElementById('loadingOverlay').classList.remove('active');
                 const result = await request.json()
                 if(!result.success){
                     return Swal.fire({

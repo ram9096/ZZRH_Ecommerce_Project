@@ -51,8 +51,9 @@ export const homePageLoad = async (req, res) => {
        
         let products = await ProductsLoad({},5)
         let offer = await offeredProducts()
-        let wishlist = await whishlistData({userId:req.session.user.id})
-        let cart = await cartCount(req.session.user.id)
+        let userId = req.session.user.id ||req.session.user._id
+        let wishlist = await whishlistData({userId:userId})
+        let cart = await cartCount(userId)
         
         if(!req.session.user){
             return res.redirect('/login')
@@ -96,8 +97,9 @@ export const productViewLoad = async(req,res)=>{
         let productId = req.params.id
         let color = req.query.color
         let size = req.query.size
+        let userId = req.session.user.id ||req.session.user._id
         let products = await ProductvariantDetails(productId,color,size)
-        let cart = await cartCount(req.session?.user?.id)
+        let cart = await cartCount(userId)
         let Relatedproducts = await ProductsLoad({
             $or: [
                 { color: color },
@@ -174,9 +176,9 @@ export const VariantFilter = async(req,res)=>{
 export const productShowcaseLoad = async (req,res)=>{
     try{
         let products = await ProductsLoad({})
-        
-        let wishlist = await whishlistData({userId:req.session.user?.id})
-        let cart = await cartCount(req.session.user?.id)
+        let userId = req.session.user.id ||req.session.user._id
+        let wishlist = await whishlistData({userId:userId})
+        let cart = await cartCount(userId)
         
         return res.render('User/product-showcase',{
             product:products.data,
