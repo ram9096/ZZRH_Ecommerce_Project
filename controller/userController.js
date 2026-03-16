@@ -184,9 +184,14 @@ export const VariantFilter = async(req,res)=>{
 export const productShowcaseLoad = async (req,res)=>{
     try{
         let products = await ProductsLoad({})
-        let userId = req.session.user.id ||req.session.user._id
-        let wishlist = await whishlistData({userId:userId})
-        let cart = await cartCount(userId)
+        let userId = req.session?.user?.id ||req.session?.user?._id
+        let wishlist = []
+        let cart = 0
+        if(userId){
+
+            wishlist = await whishlistData({userId:userId})
+            cart = await cartCount(userId)
+        }
         
         return res.render('User/product-showcase',{
             product:products.data,

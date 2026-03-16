@@ -40,7 +40,7 @@ export const userNameEditLoad = async (req,res)=>{
         }
 
         let userDetails = await findUserByEmail(req.session.user.email)
-        let cart = await cartCount(req.session.user.id)
+        let cart = await cartCount(req.session.user.id? req.session.user.id:req.session.user._id)
         if(!userDetails){
             return res.redirect('/login')
         }
@@ -160,7 +160,7 @@ export const userNameEdit  = async (req,res)=>{
     try{
         const {username} = req.body
 
-        const id = req.session.user.id
+        const id = req.session.user.id ? req.session.user.id:req.session.user._id
         
         const progress = await usernameEditLogic(username,id)
         
@@ -209,7 +209,7 @@ export const userEmailEdit = async (req,res)=>{
             });
         
         }
-        const id = req.session.user.id
+        const id = req.session.user.id ? req.session.user.id:req.session.user._id
         if(!id){
             return res.status(401).json({
                 success:false,
@@ -253,7 +253,7 @@ export const userPasswordEdit = async (req,res)=>{
             })
         }
 
-        const id = req.session.user.id,email = req.session.user.email
+        const id = req.session.user.id ? req.session.user.id:req.session.user._id,email = req.session.user.email
         
         if(!id||!email){
 

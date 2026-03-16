@@ -25,7 +25,7 @@ export const checkoutLoad = async (req,res)=>{
         return res.render('User/checkout-page',{
             cart:activeCartItems,
             address:address,
-            id:req.session.user.id
+            id:req.session.user.id?req.session.user.id:req.session.user._id
         })
     }catch(e){
 

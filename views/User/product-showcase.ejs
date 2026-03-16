@@ -79,9 +79,57 @@
         .font-clash {
             font-family: "Clash-display", system-ui, sans-serif;
         }
+        .animate-fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #ef4444;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body class="bg-white">
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="text-white text-xl font-semibold">Seraching products...</p>
+        <p class="text-gray-300 text-sm mt-2">Please wait while we process your request</p>
+        </div>
+    </div>
     <% if (error) { %>
         <script>
             Swal.fire({
@@ -94,28 +142,28 @@
             });
         </script>
     <% } %>
-     
+     <% console.log(isLogged) %>
     <% if(isLogged) {%>
             <%- include('../Partials/nav-bar') %>
-        <% } %>
+    <% } %>
         
-        <% if(!isLogged){ %>
-            <div class="flex items-center justify-between">
+    <% if(!isLogged){ %>
+        <div class="flex items-center justify-between">
 
-                <a href="/">
-                    <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight" style="font-family: bloverly;font-weight: lighter;">
-                        #Raftaara
-                    </div>
-                </a>
+            <a href="/">
+                <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight" style="font-family: bloverly;font-weight: lighter;">
+                    #Raftaara
+                </div>
+            </a>
 
-                <a href="/login">
-                    <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
-                        Login / Sign-up
-                    </button>
-                </a>
+            <a href="/login">
+                <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
+                    Login / Sign-up
+                </button>
+            </a>
 
-            </div>
-        <% } %>
+        </div>
+    <% } %>
 
     <section class="container mx-auto px-4 p">
         <div class="flex flex-col lg:flex-row gap-5">
@@ -327,7 +375,7 @@
                 const icon = btn.querySelector('.change');
 
                 const isFilled = icon.classList.contains("fa-solid");
-                
+                document.getElementById('loadingOverlay').classList.add('active');
 
                 try{
 
@@ -341,6 +389,7 @@
                             action:isFilled ? "ADD":"REMOVE"
                         })
                     })
+                    document.getElementById('loadingOverlay').classList.remove('active');
                     const result = await request.json()
                     if(!result.success){
                         return Swal.fire({
@@ -369,7 +418,7 @@
         })
 
         async function addToCart(variantId){
-
+            document.getElementById('loadingOverlay').classList.add('active');
             try{
                 const request = await fetch('/cart/add-cart',{
                     method:"POST",
@@ -383,6 +432,7 @@
                     })
                 })
                 const result = await request.json()
+                document.getElementById('loadingOverlay').classList.remove('active');
                 if(!result.success){
                     return Swal.fire({
                         toast: true,
@@ -472,7 +522,7 @@
             const size = document.getElementById('size').value || null;
             const sort = document.getElementById('sort').value;
             const color = document.getElementById('color').value || null;
-
+            document.getElementById('loadingOverlay').classList.add('active');
             try {
                 const res = await fetch('/products/filter', {
                     method: "POST",
@@ -490,7 +540,7 @@
                 });
 
                 const data = await res.json();
-
+                document.getElementById('loadingOverlay').classList.remove('active');
                 if (!data.success) {
                     Swal.fire({
                         toast: true,
