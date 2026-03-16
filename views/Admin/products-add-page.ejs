@@ -187,7 +187,7 @@
                   name="productName"
                   placeholder="Enter product name..."
                   class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
-                  required
+                  
                 />
                 <span id="name-error" class="text-xs text-red-600 font-medium mt-1 block"></span>
               </div>
@@ -197,7 +197,7 @@
                   id="category"
                   name="category"
                   class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 appearance-none bg-white text-sm text-gray-700 validate"
-                  required
+                  
                 >
                   <option value="select category">Select Category</option>
                   <% category.forEach(cat => { %>
@@ -258,7 +258,7 @@
                     type="text"
                     placeholder="e.g. Red"
                     class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
-                    required
+                    
                   />
                   <span class="text-xs text-red-600 font-medium mt-1 block hidden">Color is required</span>
                 </div>
@@ -267,7 +267,7 @@
                   <select
                     name="variants[0].size"
                     class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 appearance-none bg-white text-sm text-gray-700 validate"
-                    required
+                    
                   >
                     <option value="">Select Size</option>
                     <option>Small</option>
@@ -284,7 +284,7 @@
                     name="variants[0].stock"
                     placeholder="e.g. 10"
                     class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
-                    required
+                    
                   />
                   <span class="text-xs text-red-600 font-medium mt-1 block hidden">Stock is required</span>
                 </div>
@@ -296,7 +296,7 @@
                     name="variants[0].discount"
                     placeholder="e.g. 100"
                     class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
-                    required
+                    
                   />
                   <span class="text-xs text-red-600 font-medium mt-1 block hidden">Price is required</span>
                 </div>
@@ -308,7 +308,7 @@
                     name="variants[0].price"
                     placeholder="e.g. 100"
                     class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-red-500 bg-white text-sm validate"
-                    required
+                    
                   />
                   <span class="text-xs text-red-600 font-medium mt-1 block hidden">Price is required</span>
                 </div>
@@ -322,7 +322,7 @@
                                 text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
                       <div class="flex flex-col items-center justify-center h-full">
                         <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
-                        <img class="preview-image hidden w-full h-full object-cover rounded-lg mb-2 " style="height: 100px;" />
+                        <img class="preview-image hidden w-full h-full object-cover rounded-lg mb-2 "  style="height: 100px;" />
                         <p class="text-xs text-gray-700 font-semibold">Upload Image 1</p>
                         <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
                         <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
@@ -348,7 +348,7 @@
                                 text-center bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 cursor-pointer image-upload-area transition-all">
                       <div class="flex flex-col items-center justify-center h-full">
                         <i class="fas fa-cloud-upload-alt text-red-500 text-2xl mb-2"></i>
-                        <img class="preview-image prev-image[0] hidden w-full h-full object-cover rounded-lg mb-2" style="height: 100px;"  />
+                        <img class="preview-image hidden w-full h-full object-cover rounded-lg mb-2" style="height: 100px;"  />
                         <p class="text-xs text-gray-700 font-semibold">Upload Image 3</p>
                         <input type="file" name="variants[0].images" accept="image/*" class="hidden image-input" />
                         <p class="text-[10px] text-gray-600 mt-2 file-names truncate max-w-full px-2"></p>
@@ -409,6 +409,15 @@
       });
 
       clone.querySelectorAll('.file-names').forEach(el => el.textContent = '');
+
+      clone.querySelectorAll('.preview-image').forEach(img => {
+        img.src = "";
+        img.classList.add("hidden");
+      });
+
+      clone.querySelectorAll('.image-input').forEach(input => {
+        input.value = "";
+      });
       clone.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
       clone.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
       clone.querySelector('.variant-title').innerHTML = `<span class="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center mr-3 text-sm">${variantIndex + 1}</span>Variant ${variantIndex + 1}`;
@@ -467,26 +476,25 @@
       });
     }
 
-    function handleFileSelect(e) {
-      const file = e.target.files[0];
-      const container = e.target.closest('.image-upload-area');
-      const preview = container.querySelector('.preview-image');
-      //const uploadText = container.querySelector('.upload-text');
-      const display = container.querySelector('.file-names');
-      
-      if (file) {
-        const imageURL = URL.createObjectURL(file);
+  function handleFileSelect(e) {
 
-        preview.src = imageURL;
-        preview.classList.remove('hidden');
+    const file = e.target.files[0];
+    if (!file) return;
 
-        //uploadText.classList.add('hidden');
+    const container = e.target.closest('.image-upload-area');
+    const preview = container.querySelector('.preview-image');
+    const display = container.querySelector('.file-names');
 
-        display.textContent = file.name.length > 20
-          ? file.name.substring(0, 20) + '...'
-          : file.name;
-      }
-    }
+    const imageURL = URL.createObjectURL(file);
+
+    preview.src = imageURL;
+    preview.classList.remove("hidden");
+
+    display.textContent =
+      file.name.length > 20
+        ? file.name.substring(0, 20) + "..."
+        : file.name;
+  }
     document.querySelectorAll('.image-upload-area').forEach(area => {
       area.addEventListener('click', () => {
         area.querySelector('.image-input').click();

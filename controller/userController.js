@@ -48,8 +48,15 @@ export const generateotpload = (req, res) => {
 };
 export const homePageLoad = async (req, res) => {
     try{
-       
-        let products = await ProductsLoad({},5)
+        let filter = {}
+        let search = req.query.search
+        if(search){
+            filter.$or = [
+                { "products.name": { $regex: search, $options: "i" } },
+                { "color": { $regex: search, $options: "i" } },
+            ];
+        }
+        let products = await ProductsLoad(filter,5)
         let offer = await offeredProducts()
         let userId = req.session.user.id ||req.session.user._id
         let wishlist = await whishlistData({userId:userId})
@@ -72,7 +79,8 @@ export const homePageLoad = async (req, res) => {
             offer:offer.data? offer.data : [],
             isLogged:req.session.user||'',
             wishlist:wishlist.data||[],
-            cart:cart.count||0
+            cart:cart.count||0,
+            search:search||''
         });
     }catch(e){
         console.log("Home page load Error: ",e)

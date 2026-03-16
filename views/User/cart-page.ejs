@@ -218,6 +218,8 @@
 
     <script>
         let price = Number(document.getElementById('subtotal').textContent.replace('₹',''))
+        const menuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
         function calculateSubtotal() {
             let subtotal = 0;
 
@@ -401,6 +403,9 @@
         })
 
         calculateSubtotal()
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
     </script>
 </body>
 </html>
