@@ -6,8 +6,9 @@ import { walletTransactionLoad } from "../service/walletService.js"
 export const walletLoad = async (req,res)=>{
     try{
         let user = await findUserByEmail(req.session.user.email)
-        let transaction = await walletTransactionLoad(req.session.user.id)
-        let cart = await cartCount(req.session.user.id)
+        let userId = req.session.user.id ||req.session.user._id
+        let transaction = await walletTransactionLoad(userId)
+        let cart = await cartCount(userId)
         if(!user || !transaction.success){
 
             return res.render('User/wallet',{

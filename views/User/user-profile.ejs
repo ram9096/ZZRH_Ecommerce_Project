@@ -53,14 +53,14 @@
                                 <h2 class="text-3xl font-bold text-white mb-2">Profile</h2>
                                 <p class="text-gray-300">Manage your account information</p>
                             </div>
-                            <div class="relative">
+                            <!-- <div class="relative">
                                 <div class="w-24 h-24 profile-avatar rounded-2xl flex items-center justify-center shadow-2xl hover-lift">
                                     <i class="fas fa-user text-4xl text-white"></i>
                                 </div>
                                 <button class="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-lg flex items-center justify-center hover-lift shadow-lg">
                                     <i class="fas fa-pen text-gray-700 text-xs"></i>
                                 </button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -153,18 +153,20 @@
                 <div class="glass-effect rounded-2xl shadow-xl border border-white/20 p-6 mt-6">
                     <h3 class="text-lg font-bold mb-4 text-gray-800">Quick Actions</h3>
                     <div class="grid grid-cols-3 gap-4">
-                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
-                            <i class="fas fa-box text-2xl text-gray-700 mb-2"></i>
-                            <p class="text-sm font-medium text-gray-700">Track Order</p>
-                        </button>
-                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
-                            <i class="fas fa-undo text-2xl text-gray-700 mb-2"></i>
-                            <p class="text-sm font-medium text-gray-700">Returns</p>
-                        </button>
-                        <button class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
-                            <i class="fas fa-headset text-2xl text-gray-700 mb-2"></i>
-                            <p class="text-sm font-medium text-gray-700">Help Center</p>
-                        </button>
+                        <a href="/order" class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <button >
+                                <i class="fas fa-box text-2xl text-gray-700 mb-2"></i>
+                                <p class="text-sm font-medium text-gray-700">Track Order</p>
+                            </button>
+                        </a>
+                        <a href="/profile/wallet" class="p-4 bg-white hover:bg-gray-50 rounded-xl transition-all text-center hover-lift border border-gray-200">
+                            <button >
+                                <i class="fa-brands fa-google-wallet text-gray-700 text-2xl"></i>
+                                <p class="text-sm font-medium text-gray-700">Track wallet</p>
+                            </button>
+                        </a>
+                        
+                        
                     </div>
                 </div>
             </main>

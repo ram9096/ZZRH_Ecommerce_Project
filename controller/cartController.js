@@ -2,9 +2,9 @@ import { addToCart, cartCount, cartData, cartDelete, cartEdit } from "../service
 
 export const cartLoad = async (req,res)=>{
     try{
-        let id = req.session.user.id
+        let id = req.session.user.id?req.session.user.id:req.session.user._id
         const Cartdata  = await cartData({userId:id})
-        let cart = await cartCount(req.session.user.id)
+        let cart = await cartCount(req.session.user.id?req.session.user.id:req.session.user._id)
         let offer = Cartdata.data.reduce((val,arr)=>{
             if(arr.variantId.status){
                 if(arr.variantId.appliedOffer){

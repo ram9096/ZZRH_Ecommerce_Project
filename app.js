@@ -11,14 +11,19 @@ import userModel from "./model/userModel.js"
 import flash from 'connect-flash'
 import referalModel from "./model/referalModel.js"
 import walletModel from "./model/walletModel.js"
+import rateLimit from "express-rate-limit"
 dotenv.config()
 
 
 let app = express()
 let port = process.env.PORT
-
+const limiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 1000, 
+    message: "Too many requests from this IP, please try again later."
+});
 // middlewares
-
+app.use(limiter);
 app.use(express.static('public'))
 app.use(express.static("uploads"))
 
@@ -76,6 +81,7 @@ passport.use(
     },
     async (req,accessToken,refreshToken,profile,done)=>{
         try{
+            
             let user = await userModel.findOne({googleId:profile.id})
             if(user && !user.isActive){
                 return done(null, false, {
@@ -114,6 +120,12 @@ passport.use(
             }
             
             if(!user){
+                let existUser = await userModel.findOne({email:profile.emails[0].value})
+                if(existUser){
+                    return done(null, false, {
+                        message: "User already exist"
+                    });
+                }
                 user = await userModel.create({
                     googleId: profile.id,
                     username: profile.displayName,
@@ -122,6 +134,12 @@ passport.use(
                     mobileNo: 0 
                 })
             }
+            req.session.user = {
+                id:user._id,
+                email:user.email,
+                isActive:user.isActive
+            }
+            
             return done(null,user)
         }catch(e){
             return done(e,null)

@@ -7,10 +7,10 @@ import { findUserByEmail } from "../service/userService.js"
 export const ordersLoad = async (req,res)=>{
     try{
 
-        let id = req.session.user.id
+        let id = req.session.user.id?req.session.user.id:req.session.user._id
         let user = await findUserByEmail(req.session.user.email)
         const page = req.query.page || 1
-        let cart = await cartCount(req.session.user.id)
+        let cart = await cartCount(req.session.user.id?req.session.user.id:req.session.user._id)
         if(!id){
             return res.redirect('/login')
         }
@@ -54,7 +54,7 @@ export const ordersLoad = async (req,res)=>{
 export const orderDetailsLoad = async (req,res)=>{
     try{
         let id = req.params.id
-        let cart = await cartCount(req.session.user.id)
+        let cart = await cartCount(req.session.user.id?req.session.user.id:req.session.user._id)
         if(!id){
             return res.redirect('/login')
         }

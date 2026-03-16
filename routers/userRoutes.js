@@ -31,7 +31,7 @@ router.get('/profile/address-management',isAuthenticated,userAddressLoad)
 router.get('/profile/referal-link',isAuthenticated,referalLinkGeneratorLoad)
 router.get('/profile/wishlist',whishlistLoad)
 router.use('/cart',isAuthenticated,CartRoutes)
-router.use('/checkout',isAuthenticated,checkOutRoutes)
+router.use('/checkout',checkOutRoutes)
 router.use('/order',isAuthenticated,OrderRoutes)
 router.get('/profile/wallet',isAuthenticated,walletLoad)
 

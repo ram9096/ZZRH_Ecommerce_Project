@@ -191,6 +191,15 @@ export const ProductsLoad = async (filter,limit = null)=>{
                 as:"category"
             }
         },
+         {
+            $lookup: {
+                from: "offers",
+                localField: "appliedOffer",
+                foreignField: "_id",
+                as: "offer"
+            }
+        },
+
         {$match:filter},
         
         
@@ -271,7 +280,7 @@ export const ProductvariantDetails = async(id,Variantcolor,Variantsize)=>{
 export const variantFilterLogic = async(filter)=>{
     try {
     const data = await variantModel.find(filter);
-
+        
     if (!data.length) {
       return { success: false, message: "No variants exist" };
     }
@@ -279,6 +288,7 @@ export const variantFilterLogic = async(filter)=>{
     return {
       success: true,
       data: {
+        _id:data[0]._id,
         image: data[0].image,
         sizes: data.map(v => ({
           size: v.size,

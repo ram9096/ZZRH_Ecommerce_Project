@@ -13,6 +13,13 @@
 </head>
 
 <body class="bg-gray-50 min-h-screen py-8 px-4">
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="text-white text-xl font-semibold">Uploading product...</p>
+        <p class="text-gray-300 text-sm mt-2">Please wait while we process your request</p>
+        </div>
+    </div>
     <!-- Cancel/Progress Bar -->
     <div class="max-w-6xl mx-auto mb-6">
         <div class="bg-white rounded-lg shadow-sm p-4">
@@ -149,7 +156,7 @@
                     <% cart.forEach((p,index)=>{ %>
                         <div class="flex gap-4 mb-6 pb-6 border-b border-gray-200">
                             <div class="relative">
-                                <img src="/<%= p.variantId.image[0] %>" alt="Patchwork Quilt" class="w-20 h-20 rounded-lg object-cover">
+                                <img src="<%= p.variantId.image[0] %>" alt="Patchwork Quilt" class="w-20 h-20 rounded-lg object-cover">
                                 <span id="qty<%= index %>" data-price="<%= p.variantId.price %>" class="absolute -top-2 -right-2 bg-gray-800 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"><%= p.quantity %></span>
                             </div>
                             <div class="flex-1">
@@ -283,6 +290,47 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .animate-fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #ef4444;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }    
     </style>
 
     <script>
@@ -306,6 +354,7 @@
                     timer: 3000
                 });
             }
+            document.getElementById('loadingOverlay').classList.add('active');
             try{
                 const request = await fetch('/coupon-apply',{
                     method:"POST",
@@ -318,7 +367,7 @@
                     })
                 })
                 const result  = await request.json()
-                
+                document.getElementById('loadingOverlay').classList.remove('active');
                 if(!result.success){
                     return Swal.fire({
                         toast: true,
@@ -356,11 +405,12 @@
         paypal.Buttons({
 
             createOrder: async () => {
+                document.getElementById('loadingOverlay').classList.add('active');
                 try {
                     const res = await fetch("/paypal/create-order", {
                         method: "POST"
                     });
-
+                    document.getElementById('loadingOverlay').classList.remove('active');
                     if (!res.ok) {
                         throw new Error("Create order API failed");
                     }
@@ -382,12 +432,13 @@
 
             onApprove: async (data) => {
                 try {
+                    document.getElementById('loadingOverlay').classList.add('active');
                     const res = await fetch("/paypal/capture-order", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ orderID: data.orderID })
                     });
-
+                    document.getElementById('loadingOverlay').classList.remove('active');
                     if (!res.ok) {
                         throw new Error("Capture API failed");
                     }
@@ -397,7 +448,7 @@
                     if (result.status !== "COMPLETED") {
                         throw new Error("Payment not completed");
                     }
-
+                    document.getElementById('loadingOverlay').classList.add('active');
                     const orderRes = await fetch("/checkout/method", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -408,7 +459,7 @@
                     });
 
                     const orderResult = await orderRes.json();
-
+                    document.getElementById('loadingOverlay').classList.remove('active');
                     if (!orderResult.success) {
                         throw new Error(orderResult.message || "Order creation failed");
                     }
@@ -477,6 +528,7 @@
                 Swal.fire("Error", "Please select a payment method", "error");
                 return;
             }
+            document.getElementById('loadingOverlay').classList.add('active');
             try{
                 console.log(code.value)
                 const request = await fetch('/checkout/method',{
@@ -489,6 +541,7 @@
                         coupon:code.value ? code.value:''
                     })
                 })
+                document.getElementById('loadingOverlay').classList.remove('active');
                 const result  = await request.json()
                 console.log(result)
                 if(!result.success){

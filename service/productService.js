@@ -401,7 +401,19 @@ export const applyOffer = async (_id,action)=>{
                 let categoryDiscountValue = 0;
 
                 const basePrice = item.basePrice || item.price;
-
+                
+                if(!item.basePrice){
+            
+                    await variantModel.updateOne(
+                        { _id: item._id },
+                        {
+                            $set: {
+                                basePrice:item.price
+                            }
+                        }
+                    );
+                    item.basePrice = item.price
+                }
               
                 if (validateOffer(data.offer)) {
                     categoryDiscountValue = calculateDiscount(basePrice, data.offer);
@@ -412,7 +424,7 @@ export const applyOffer = async (_id,action)=>{
                     productDiscountValue = calculateDiscount(basePrice, item.product.offer);
                 }
 
-                console.log("CATEGORY:", categoryDiscountValue, productDiscountValue);
+                
 
                 
                 const bestDiscount = Math.max(categoryDiscountValue, productDiscountValue);
@@ -426,7 +438,7 @@ export const applyOffer = async (_id,action)=>{
                     appliedOfferId = item.product.offer?._id;
                 }
 
-                const finalPrice = basePrice - bestDiscount;
+                const finalPrice = Math.max(basePrice - bestDiscount, 0);
 
                 await variantModel.updateOne(
                     { _id: item._id },
@@ -561,32 +573,27 @@ export const applyOffer = async (_id,action)=>{
 
                     categoryDiscountValue = calculateDiscount(item.basePrice,item.productId.categoryId.offer)
                 }
+                const bestDiscount = Math.max(categoryDiscountValue, productDiscountValue);
+                let appliedOfferId = null;
 
-                if(categoryDiscountValue>productDiscountValue){
-
-                    await variantModel.updateOne(
-                        { _id: item._id },
-                        {
-                            $set: {
-                                price: item.basePrice - categoryDiscountValue,
-                                appliedOffer: item.productId.categoryId.offer._id
-                            }
-                        }
-                    );
-
-                }else{
-
-                    await variantModel.updateOne(
-                        { _id: item._id },
-                        {
-                            $set: {
-                                price: item.basePrice - productDiscountValue,
-                                appliedOffer: item.productId.offer._id
-                            }
-                        }
-                    );
-
+                if (bestDiscount === categoryDiscountValue && categoryDiscountValue > 0) {
+                    appliedOfferId = item.productId.categoryId.offer?._id;
+                } 
+                else if (bestDiscount === productDiscountValue && productDiscountValue > 0) {
+                    appliedOfferId = item.productId.offer;
                 }
+
+                const finalPrice = Math.max(item.basePrice - bestDiscount, 0);
+
+                await variantModel.updateOne(
+                    { _id: item._id },
+                    {
+                        $set: {
+                            price: finalPrice,
+                            appliedOffer: appliedOfferId
+                        }
+                    }
+                );
             }
 
             return

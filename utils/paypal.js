@@ -4,33 +4,39 @@ import { calculateOrderTotal } from "./totalCalculate.js";
 import paymentSchema from "../model/paymentModel.js";
 
 export const createOrder = async (req, res) => {
+    try{
+      
+      const total = await calculateOrderTotal(req.session.user.id ? req.session.user.id:req.session.user._id)
+      if (!total.success) {
+          return res.status(400).json({ message: "Cart empty" })
+      }
+      const usdAmount = Math.round((total.totalAmount / 90.72) * 100) / 100;
+      
+      if (!usdAmount || usdAmount <= 0) {
+          return res.status(400).json({ message: "Invalid amount" });
+      }
+      req.session.paypalTotal = usdAmount
+      const request = new checkoutNodeJssdk.orders.OrdersCreateRequest();
   
-    const total = await calculateOrderTotal(req.session.user.id)
-    if (!total.success) {
-        return res.status(400).json({ message: "Cart empty" })
-    }
-    const usdAmount = Math.round((total.totalAmount / 90.72) * 100) / 100;
-    
-    if (!usdAmount || usdAmount <= 0) {
-        return res.status(400).json({ message: "Invalid amount" });
-    }
-    req.session.paypalTotal = usdAmount
-    const request = new checkoutNodeJssdk.orders.OrdersCreateRequest();
+      request.prefer("return=representation");
+      request.requestBody({
+          intent: "CAPTURE",
+          purchase_units: [{
+          amount: {
+              currency_code: "USD",
+              value: usdAmount.toString()
+          }
+          }]
+      });
+  
+      const order = await paypalClient.execute(request);
+      
+      res.json({ id: order.result.id });
 
-    request.prefer("return=representation");
-    request.requestBody({
-        intent: "CAPTURE",
-        purchase_units: [{
-        amount: {
-            currency_code: "USD",
-            value: usdAmount.toString()
-        }
-        }]
-    });
-
-    const order = await paypalClient.execute(request);
-    
-    res.json({ id: order.result.id });
+    }catch(e){
+      console.error("Create order  Error:", error);
+      res.status(500).json({ message: "Payment failed" });
+    }
 };
 
 export const captureOrder = async (req, res) => {

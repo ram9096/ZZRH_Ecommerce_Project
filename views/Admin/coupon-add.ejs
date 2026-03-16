@@ -40,9 +40,9 @@
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-4">
                     <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold">
-                        Z
+                        R
                     </div>
-                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#ZZRH</h1>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">#Raftaara</h1>
                 </div>
                 <button class="relative p-3 hover:bg-white/50 rounded-xl transition-all">
                     <i class="far fa-bell text-xl text-gray-700"></i>
@@ -127,6 +127,20 @@
                                 class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
                             >
                             <span id="discount_value-error" class="text-xs text-red-500 mt-2 block"></span>
+                        </div>
+                        <div class="mb-8">
+                            <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
+                                <i class="fa-solid fa-percent"></i>
+                                <span>Minimum purchase value</span>
+                            </label>
+                            <input 
+                                id="purchase_value"
+                                name="purchase_value"
+                                type="text" 
+                                placeholder="e.g. , 500 " 
+                                class="form-input w-full px-5 py-4 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all text-gray-900"
+                            >
+                            <span id="purchase_value-error" class="text-xs text-red-500 mt-2 block"></span>
                         </div>
                         <div class="mb-8" id="max_discount">
                             <label class="flex items-center gap-2 text-gray-900 font-semibold mb-3 text-lg">
@@ -215,7 +229,8 @@
                 value:document.getElementById('discount_value'),
                 validity:document.getElementById('end-date'),
                 limit:document.getElementById('usage_limit'),
-                max:document.getElementById('max_discount_value')
+                max:document.getElementById('max_discount_value'),
+                purchase:document.getElementById('purchase_value')
             }
             const errors = {
                 code:document.getElementById('coupon_code-error'),
@@ -223,7 +238,8 @@
                 value:document.getElementById('discount_value-error'),
                 validity:document.getElementById('end-date-error'),
                 limit:document.getElementById('usage_limit-error'),
-                max:document.getElementById('max_discount_value-error')
+                max:document.getElementById('max_discount_value-error'),
+                purchase:document.getElementById('purchase_value-error')
             }
             fields.type.addEventListener("change", () => {
                 max_discount.classList.toggle(
@@ -285,7 +301,11 @@
                             return false
                         }
                         errors.limit.textContent = ""
-                        return true   
+                        return true
+                    case "purchase":
+                        if(value<0){
+                            errors.purchase.textContent = "Enter a valid value"
+                        }   
                     case "max":
                         if(fields.type.value == "PERCENTAGE"){
                             
@@ -337,7 +357,8 @@
                             value:fields.value.value,
                             validity:fields.validity.value,                           
                             limit:fields.limit.value,
-                            max:fields.max.value?fields.max.value:0
+                            max:fields.max.value?fields.max.value:0,
+                            purchase:fields.purchase.value
                         })
                     })
 

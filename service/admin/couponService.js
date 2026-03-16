@@ -2,7 +2,7 @@ import { couponValidation } from "../../Joi Validation/validation.js";
 import couponModel from "../../model/couponModel.js";
 import orderModel from "../../model/orderModel.js";
 
-export const couponFormCreateLogic = async (code,type,value,validity,limit,max)=>{
+export const couponFormCreateLogic = async (code,type,value,validity,limit,max,purchase)=>{
     try{
 
         const { error, result } = couponValidation.validate({ code,discountType:type,discountValue:value,expiryDate:validity,usageLimit:limit,maxDiscount:max }, {
@@ -30,7 +30,8 @@ export const couponFormCreateLogic = async (code,type,value,validity,limit,max)=
             discountValue:value,
             expiryDate:validity,
             usageLimit:limit,
-            maxDiscount:max
+            maxDiscount:max,
+            minOrderValue:purchase
         })
 
         await newCoupon.save()
@@ -48,7 +49,7 @@ export const couponFormCreateLogic = async (code,type,value,validity,limit,max)=
     }
 }
 
-export const couponFormEditLogic = async (_id,code,type,value,validity,limit,max)=>{
+export const couponFormEditLogic = async (_id,code,type,value,validity,limit,max,purchase)=>{
     try{
 
         const { error, result } = couponValidation.validate({ code,discountType:type,discountValue:value,expiryDate:validity,usageLimit:limit,maxDiscount:max }, {
@@ -76,7 +77,8 @@ export const couponFormEditLogic = async (_id,code,type,value,validity,limit,max
         couponExist.expiryDate = validity
         couponExist.usageLimit = limit
         couponExist.maxDiscount = max
-
+        couponExist.minOrderValue = purchase
+        
         await couponExist.save()
 
         return {
@@ -100,6 +102,7 @@ export const couponFetcher = async(filter,page = 1 ,limit = 0)=>{
         const data = await couponModel.find(filter)
             .skip(skip)
             .limit(limit)
+            .sort({_id:-1})
         const total = await couponModel.countDocuments(filter)
 
         if(!data){
@@ -174,16 +177,22 @@ export const couponApplyLogic = async (code,total)=>{
                 message: "Coupon expired"
             };
         }
+        if(typeof total == "string"){
+            total = Number(total.replace('₹',''))
+        }
+        if(total<coupon.minOrderValue){
+            
+            return {
+                success: false,
+                message: `Minimum purchase amount is ${coupon.minOrderValue}`
+            };
+        }
         if(!coupon.baseLimit){
             coupon.baseLimit = coupon.usageLimit
         }
         coupon.usageLimit = coupon.usageLimit - 1
 
         await coupon.save()
-
-        if(typeof total == "string"){
-            total = Number(total.replace('₹',''))
-        }
         const discount = calculateDiscount(total,coupon)
         
         return {

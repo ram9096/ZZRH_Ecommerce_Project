@@ -7,8 +7,8 @@ export const whishlistLoad = async (req,res)=>{
     try{
 
         let user = await findUserByEmail(req.session.user.email)
-        let data = await whishlistData({userId:req.session.user.id})
-        let cart = await cartCount(req.session.user.id)
+        let data = await whishlistData({userId:req.session.user.id?req.session.user.id:req.session.user._id})
+        let cart = await cartCount(req.session.user.id?req.session.user.id:req.session.user._id)
 
         if(!data){
             return res.render('User/whishlist',{
@@ -39,7 +39,7 @@ export const wishlistUpdate = async (req,res)=>{
     try{
 
         const { productId,action } = req.body
-        const id = req.session.user.id
+        const id = req.session.user.id?req.session.user.id:req.session.user._id
 
         const progress = await wishlistUpdateLogic(productId,action,id)
         console.log(progress)

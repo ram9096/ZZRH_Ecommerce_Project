@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { offeredProducts } from "../service/admin/offerService.js";
 import { cartCount } from "../service/cartService.js";
 import { registerService, generateOtp, verifyOtpLogic, userLoginLogic, emailVerificationLogic, forgotPasswordLogic, findUserByEmail, ProductsLoad, ProductvariantDetails, variantFilterLogic } from "../service/userService.js";
@@ -47,11 +48,20 @@ export const generateotpload = (req, res) => {
 };
 export const homePageLoad = async (req, res) => {
     try{
-       
-        let products = await ProductsLoad({},5)
+        let filter = {}
+        let search = req.query.search
+        if(search){
+            filter.$or = [
+                { "products.name": { $regex: search, $options: "i" } },
+                { "color": { $regex: search, $options: "i" } },
+            ];
+        }
+        let products = await ProductsLoad(filter,5)
         let offer = await offeredProducts()
-        let wishlist = await whishlistData({userId:req.session.user.id})
-        let cart = await cartCount(req.session.user.id)
+        let userId = req.session.user.id ||req.session.user._id
+        let wishlist = await whishlistData({userId:userId})
+        let cart = await cartCount(userId)
+        
         if(!req.session.user){
             return res.redirect('/login')
         }
@@ -69,7 +79,8 @@ export const homePageLoad = async (req, res) => {
             offer:offer.data? offer.data : [],
             isLogged:req.session.user||'',
             wishlist:wishlist.data||[],
-            cart:cart.count||0
+            cart:cart.count||0,
+            search:search||''
         });
     }catch(e){
         console.log("Home page load Error: ",e)
@@ -94,8 +105,22 @@ export const productViewLoad = async(req,res)=>{
         let productId = req.params.id
         let color = req.query.color
         let size = req.query.size
+        let userId = req.session.user.id ||req.session.user._id
         let products = await ProductvariantDetails(productId,color,size)
-        let Relatedproducts = await ProductsLoad({$or:[{color:color},{size:size}]})
+        let cart = await cartCount(userId)
+        let Relatedproducts = await ProductsLoad({
+            $or: [
+                { color: color },
+                { size: size }
+            ],
+            $nor: [
+                {
+                    productId: new mongoose.Types.ObjectId(productId),
+                    color: color,
+                    size: size
+                }
+            ]
+        })
         if(!products.success){
             return res.render('User/product-view',{
                 product:[],
@@ -105,7 +130,8 @@ export const productViewLoad = async(req,res)=>{
                 variant:[],
                 RelatedProducts:[],
                 error:products.message,
-                isLogged:false
+                isLogged:false,
+                cart:cart.count?cart.count:0
             })
         }
         return res.render('User/product-view',{
@@ -115,7 +141,8 @@ export const productViewLoad = async(req,res)=>{
             variant:products.variant,
             Relatedproducts:Relatedproducts.data,
             error:'',
-            isLogged:req.session.user||''
+            isLogged:req.session.user||'',
+            cart:cart.count?cart.count:0
         })
     }catch(e){
         console.log("Error: ",e)
@@ -157,9 +184,14 @@ export const VariantFilter = async(req,res)=>{
 export const productShowcaseLoad = async (req,res)=>{
     try{
         let products = await ProductsLoad({})
-        
-        let wishlist = await whishlistData({userId:req.session.user?.id})
-        let cart = await cartCount(req.session.user?.id)
+        let userId = req.session?.user?.id ||req.session?.user?._id
+        let wishlist = []
+        let cart = 0
+        if(userId){
+
+            wishlist = await whishlistData({userId:userId})
+            cart = await cartCount(userId)
+        }
         
         return res.render('User/product-showcase',{
             product:products.data,

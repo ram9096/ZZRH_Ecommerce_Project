@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#ZRI1 - Fashion Store</title>
+    <title>#Raftaara - Fashion Store</title>
     <link rel="stylesheet" href="/css/output.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -136,9 +136,131 @@
             padding:2px 8px;
             border-radius:50px;
         }
+
+        /* ── RESPONSIVE ADDITIONS ONLY ── */
+
+        /* Hero banner image height */
+        .hero-banner {
+            height: 510px;
+        }
+        @media (max-width: 768px) {
+            .hero-banner {
+                height: 260px;
+            }
+        }
+
+        /* Product card image height */
+        .product-img-wrap {
+            height: 350px;
+        }
+        @media (max-width: 480px) {
+            .product-img-wrap {
+                height: 260px;
+            }
+        }
+
+        /* CTA section */
+        .cta-section-wrap {
+            height: 800px;
+        }
+        @media (max-width: 768px) {
+            .cta-section-wrap {
+                height: auto;
+                min-height: 420px;
+            }
+            .cta-section-wrap img {
+                position: relative !important;
+                height: 420px;
+                object-position: center top;
+            }
+            .cta-overlay {
+                padding: 24px 20px !important;
+            }
+            .cta-heading {
+                font-size: 36px !important;
+                line-height: 1.15 !important;
+            }
+            .cta-sub {
+                font-size: 14px !important;
+            }
+            .cta-btn {
+                font-size: 18px !important;
+                padding: 10px 24px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .cta-heading {
+                font-size: 26px !important;
+            }
+        }
+
+        /* Footer brand heading */
+        .footer-brand {
+            font-size: clamp(48px, 14vw, 125px);
+        }
+
+        /* Marquee font size */
+        .marquee-track {
+            font-size: clamp(28px, 8vw, 60px);
+        }
+
+        /* Hero section padding */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 36px 16px 32px;
+            }
+        }
+        .animate-fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #ef4444;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body class="bg-white">
+    <div id="loadingOverlay" class="loading-overlay">
+    <div class="text-center">
+      <div class="spinner mx-auto mb-4"></div>
+      <p class="text-white text-xl font-semibold">Uploading product...</p>
+      <p class="text-gray-300 text-sm mt-2">Please wait while we process your request</p>
+    </div>
+  </div>
 
     <!-- Header/Navigation -->
      <% if (error) { %>
@@ -155,55 +277,11 @@
       <% } %>
      
      <%- include('../Partials/nav-bar') %>
-
-    <!-- Mobile Menu Button -->
-    <button id="mobileMenuButton" class="md:hidden border border-black px-4 py-1 rounded text-sm font-clash">
-      Menu
-    </button>
-
-    <!-- Login/Sign-up Button (Hidden on mobile until we toggle menu) -->
     
   </header>
-
-  <!-- Mobile Menu (initially hidden) -->
-  <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 space-y-4 font-clash">
-    <a href="#" class="block hover:underline">New Arrival</a>
-    <a href="#" class="block hover:underline">Men's collection</a>
-    <a href="#" class="block hover:underline">About Us</a>
-    
-    <div class="flex items-center gap-4">
-            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </button>
-            <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-            </button>
-            <a href="/profile/wishlist">
-                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                    </svg>
-                </button>
-            </a>
-            <a href="/profile">
-                <button class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                </button>
-            </a>
-            
-        </div>
-    
-  </div>
-
     <!-- Hero Section -->
     <section class="container mx-auto px-4 ">
-        <div class="bg-gray-100 rounded-3xl overflow-hidden relative" style="height: 510px;">
+        <div class="hero-banner bg-gray-100 rounded-3xl overflow-hidden relative">
             <img src="/banner.png" 
                  alt="Hero" 
                  class="w-full h-full object-cover">
@@ -224,11 +302,12 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
             <!-- Product Cards -->
             <% product.forEach(product=>{ %>
+                <% const save = product.basePrice - product.price %>
                 <% const isWishlist = wishlist.some(e => e.variantId._id.toString() === product._id.toString() ) %>
                 <div class="product-card">
-                    <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                    <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
                         <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
-                            <img src="/<%= product.image[0] %>" 
+                            <img src="<%= product.image[0] %>" 
                                 alt="<%= product.products[0].name %>" 
                                 loading="lazy"
                                 class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
@@ -258,6 +337,12 @@
                         <div>
                             <h3 class="font-medium text-sm mb-1"><%= product.products[0].name %></h3>
                             <p class="text-lg font-semibold">₹<%= product.price %></p>
+                            <% if(save <= 0) { %>
+                                
+                            <% } else { %>
+                                <span class="price-save">Save ₹<%= save.toFixed(2) %></span>
+                                
+                            <% } %>
                             <% if (product.stock <= 0) { %>
                                 <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
                             <% } %>
@@ -283,13 +368,13 @@
     </section>
 
 
-    <div class="countdown-strip">
+    <!-- <div class="countdown-strip">
     ⏳ &nbsp; Offers end in &nbsp; <span class="timer" id="countdown">02:14:38</span> &nbsp; — Don't miss out!
-    </div>
+    </div> -->
     <header class="hero">
         <div class="hero-badge">🔥 Limited Time</div>
         <h1>Offers <em>you can't</em><br>afford to skip</h1>
-        <p class="hero-sub">Curated deals on our most-loved pieces — up to 60% off</p>
+        <p class="hero-sub">Curated deals on our most-loved pieces — up to 40% off</p>
     </header>
     <section class="container mx-auto px-4 py-12">
 
@@ -313,8 +398,8 @@
                     <!-- Product Image with Wishlist Button -->
                     <% if(product.status==true){%>
                         <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
-                            <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
-                                <img src="/<%= product.image[0] %>" 
+                            <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
+                                <img src="<%= product.image[0] %>" 
                                     alt="<%= product.productId.name %>" 
                                     loading="lazy"
                                     class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
@@ -328,8 +413,8 @@
                             </div>
                         </a>
                     <% }else{%>
-                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
-                            <img src="/<%= product.image[0] %>" 
+                        <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
+                            <img src="<%= product.image[0] %>" 
                                 alt="<%= product.productId.name %>" 
                                 loading="lazy"
                                 class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
@@ -362,7 +447,7 @@
                             <% if(save <= 0) { %>
                                 <span class="price-save">Offer expired or getting started</span>
                             <% } else { %>
-                                <span class="price-save">Save ₹<%= save %></span>
+                                <span class="price-save">Save ₹<%= save.toFixed(2) %></span>
                                 <span class="price-save"><%= product.appliedOffer.name ? product.appliedOffer.name:'Offer Inactive' %></span>
                             <% } %>
                             <% if (product.stock <= 0||!product.status) { %>
@@ -400,20 +485,20 @@
 
     <!-- CTA Section -->
     <section class="container mx-auto px-4 py-12 font-bloverly">
-        <div class=" rounded-3xl overflow-hidden relative" style="height: 800px;">
+        <div class="cta-section-wrap rounded-3xl overflow-hidden relative">
             <img src="/Background-image.jpg" 
             loading="lazy"
                  alt="Fashion" 
                  class="w-full h-full object-cover ">
-            <div class="absolute inset-0 items-left justify-center text-white p-8">
-                <h2 class="text-[90px] font-light  text-left">
+            <div class="cta-overlay absolute inset-0 items-left justify-center text-white p-8">
+                <h2 class="cta-heading font-light text-left" style="font-size:clamp(28px,6vw,90px); line-height:1.1;">
                     Feel more retromantic - feel<br>free to step into timeless<br>fashion with a twist.
                 </h2>
-                <p class="text-[20px] mb-8 text-left max-w-xl opacity-90 font-clash">
+                <p class="cta-sub mb-8 text-left max-w-xl opacity-90 font-clash" style="font-size:clamp(13px,2vw,20px);">
                     Sign up today to receive exclusive deals and unlock fashion<br>
                     collections that define your unique style every season
                 </p>
-                <button class="text-[40px] border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash">
+                <button class="cta-btn border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash" style="font-size:clamp(16px,3vw,40px);">
                     Thank you for clicking
                 </button>
             </div>
@@ -422,7 +507,7 @@
 
     <!-- Marquee -->
     <div class="bg-black text-white py-4 overflow-hidden marquee font-clash text-bold">
-        <div class="whitespace-nowrap marquee-track text-6xl font-bold">
+        <div class="whitespace-nowrap marquee-track font-bold">
             WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE * WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE *
         </div>
     </div>
@@ -431,47 +516,23 @@
     <footer class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-                <h3 class="text-[60px] md:text-[125px] font-light mb-4 font-bloverly">#ZZRH</h3>
+                <h3 class="footer-brand font-light mb-4 font-bloverly">#ZZRH</h3>
             </div>
             
-            <div>
-                <h4 class="font-medium mt-10 mb-3 font-clash">Navigation</h4>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="#" class="hover:text-gray-900">About Us</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Collection</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Contact</a></li>
-                </ul>
-            </div>
             
-            <div>
-                <h4 class="font-medium mb-3 mt-10 font-clash">Collection</h4>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="#" class="hover:text-gray-900">New Arrival</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Men's</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Women's</a></li>
-                    <li><a href="#" class="hover:text-gray-900">Collection</a></li>
-                </ul>
-            </div>
-            
-            <div>
-                <h4 class="font-medium mb-3 mt-10 font-clash">Contact Us</h4>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li>###@gmail.com</li>
-                    <li>##91-000000</li>
-                </ul>
-            </div>
         </div>
-        <div class="border-t border-gray-200 pt-8 flex justify-between text-xs text-gray-600">
+        <div class="border-t border-gray-200 pt-8 flex flex-wrap gap-4 justify-between text-xs text-gray-600">
             <p>Copyright@2025</p>
-            <div class="space-x-6">
-                <a href="#" class="hover:text-gray-900">Terms and conditions</a>
-                <a href="#" class="hover:text-gray-900">Privacy Policy</a>
-            </div>
+            
         </div>
     </footer>
 
     <script>
-
+        
+        if('<%= search %>'){
+            
+            valueBox.value = '<%= search %>' 
+        }
         const menuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
         const cartbtn = document.getElementById('addToCartBtn')
@@ -502,7 +563,7 @@
 
                 const isFilled = icon.classList.contains("fa-solid");
                 
-
+                document.getElementById('loadingOverlay').classList.add('active');
                 try{
 
                     const request = await fetch('/profile/wishlist/update',{
@@ -515,6 +576,7 @@
                             action:isFilled ? "ADD":"REMOVE"
                         })
                     })
+                    document.getElementById('loadingOverlay').classList.remove('active');
                     const result = await request.json()
                     if(!result.success){
                         return Swal.fire({
@@ -543,7 +605,7 @@
         })
             
         async function addToCart(variantId){
-
+            document.getElementById('loadingOverlay').classList.add('active');
             try{
                 const request = await fetch('/cart/add-cart',{
                     method:"POST",
@@ -552,10 +614,11 @@
                     },
                     body:JSON.stringify({
                         id:variantId,
-                        userId:"<%= isLogged.id %>",
+                        userId:"<%= isLogged.id?isLogged.id:isLogged._id %>",
                         qty:1
                     })
                 })
+                document.getElementById('loadingOverlay').classList.remove('active');
                 const result = await request.json()
                 if(!result.success){
                     return Swal.fire({
@@ -583,6 +646,7 @@
         menuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
+        
     </script>
 
     <style>

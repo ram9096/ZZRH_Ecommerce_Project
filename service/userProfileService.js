@@ -149,6 +149,7 @@ export const AddressAddLogic = async (_id,username,phone_number,postal_code,city
         }
 
         let addressExist = await addressModel.findOne({
+            userId:_id,
             username,
             street_address,
             country,

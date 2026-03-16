@@ -1,3 +1,4 @@
+import { chartData, topSellingProduct } from "../service/admin/salesReportService.js";
 import {  adminLoginLogic,  adminUserEditLogic, adminUsersLogic, categoryModelLoad, dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
 
 
@@ -10,10 +11,19 @@ export const adminLoginLoad = (req,res)=>{
     }
     return res.status(200).render('Admin/login-page',{error:''})
 }
-export const adminHomeLoad = (req,res)=>{
+export const adminHomeLoad = async (req,res)=>{
+
+    let order = await chartData()
+    let product = await topSellingProduct()
     if(req.session.isAdmin){
         return res.render('Admin/home-page',{
-            activePage:'Dashboard'
+            activePage:'Dashboard',
+            order:order.data,
+            revenue:order.fullRevenue,
+            discount:order.fullDiscount,
+            total:order.totalOrders,
+            product:product.product,
+            category:product.category
         })
     }
     return res.redirect('/admin/login')
