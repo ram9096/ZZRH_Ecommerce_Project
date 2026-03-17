@@ -105,9 +105,13 @@ export const productViewLoad = async(req,res)=>{
         let productId = req.params.id
         let color = req.query.color
         let size = req.query.size
-        let userId = req.session.user.id ||req.session.user._id
+        let userId = req.session?.user?.id ||req.session?.user?._id
         let products = await ProductvariantDetails(productId,color,size)
-        let cart = await cartCount(userId)
+        let cart = 0
+        if(userId){
+
+            cart = await cartCount(userId)
+        }
         let Relatedproducts = await ProductsLoad({
             $or: [
                 { color: color },

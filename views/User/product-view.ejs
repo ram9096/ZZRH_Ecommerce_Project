@@ -384,6 +384,31 @@
         const decreaseBtn = document.getElementById('decreaseBtn');
         const buyNowBtn = document.getElementById('buyNowBtn');
         const addToCartBtn = document.getElementById('addToCartBtn');
+
+        const thumbnail = [img2, img3, img4];
+        thumbnail.forEach(t => {
+            t.addEventListener('click', () => {
+                let temp = img1.src;
+                img1.src = t.src;
+                t.src = temp;
+            });
+        });
+
+        const zoomContainer = document.getElementById('zoomContainer');
+        const ZOOM_LEVEL = 2.5;
+        
+        zoomContainer.addEventListener('mousemove', (e) => {
+            const rect = zoomContainer.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.width) * 100;
+            img1.style.transformOrigin = `${x}% ${y}%`;
+            img1.style.transform = `scale(${ZOOM_LEVEL})`;
+        });
+
+        zoomContainer.addEventListener('mouseleave', () => {
+            img1.style.transform = 'scale(1)';
+            img1.style.transformOrigin = 'center';
+        });
         
         const stockBadgeContainer = document.getElementById('stockBadgeContainer');
         const change = document.getElementById('change')
@@ -655,30 +680,7 @@
             }
         });
 
-        const thumbnail = [img2, img3, img4];
-        thumbnail.forEach(t => {
-            t.addEventListener('click', () => {
-                let temp = img1.src;
-                img1.src = t.src;
-                t.src = temp;
-            });
-        });
-
-        const zoomContainer = document.getElementById('zoomContainer');
-        const ZOOM_LEVEL = 2.5;
         
-        zoomContainer.addEventListener('mousemove', (e) => {
-            const rect = zoomContainer.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.width) * 100;
-            img1.style.transformOrigin = `${x}% ${y}%`;
-            img1.style.transform = `scale(${ZOOM_LEVEL})`;
-        });
-
-        zoomContainer.addEventListener('mouseleave', () => {
-            img1.style.transform = 'scale(1)';
-            img1.style.transformOrigin = 'center';
-        });
 
         menuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');

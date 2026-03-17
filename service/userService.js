@@ -196,7 +196,13 @@ export const ProductsLoad = async (filter,limit = null)=>{
                 from: "offers",
                 localField: "appliedOffer",
                 foreignField: "_id",
-                as: "offer"
+                as: "appliedOffer"
+            }
+        },
+        {
+            $unwind: {
+                path: "$appliedOffer",
+                preserveNullAndEmptyArrays: true
             }
         },
 

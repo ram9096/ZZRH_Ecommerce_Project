@@ -444,11 +444,11 @@
                             <p class="text-lg font-semibold">
                                 <span class="text-gray-500 line-through">₹<%= product.discount %></span> ₹<%= product.price %>
                             </p>
-                            <% if(save <= 0) { %>
+                            <% if(save <= 0||!save) { %>
                                 <span class="price-save">Offer expired or getting started</span>
                             <% } else { %>
                                 <span class="price-save">Save ₹<%= save.toFixed(2) %></span>
-                                <span class="price-save"><%= product.appliedOffer.name ? product.appliedOffer.name:'Offer Inactive' %></span>
+                                <span class="price-save"><%= product.appliedOffer?.name ? product.appliedOffer.name:'Offer Inactive' %></span>
                             <% } %>
                             <% if (product.stock <= 0||!product.status) { %>
                                 <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>

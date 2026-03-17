@@ -381,7 +381,7 @@
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-6 py-8">
-        <div class="flex gap-8">
+        <div class="flex flex-col lg:flex-row gap-8">
             <!-- Sidebar -->
             <%- include('../Partials/user-sidebar') %>
 
@@ -467,7 +467,7 @@
                                             <i class="fas fa-check-circle"></i> Active
                                         </span>
                                     </div>
-                                    <div class="link-url-text" id="linkUrl">localhost:5000/login?ref=<%= link!=null ? link:"" %></div>
+                                    <div class="link-url-text" id="linkUrl">https://raftaara.in/login?ref=<%= link!=null ? link:"" %></div>
                                     <div class="flex gap-2 mt-3">
                                         <button class="btn-action" style="position:relative;" onclick="copyLink()">
                                             <i class="fas fa-copy"></i> Copy Link
@@ -594,7 +594,7 @@
             // Fake async
             setTimeout(() => {
                 
-                currentLink = 'localhost:5000/login?ref=' + val;
+                currentLink = 'https://raftaara.in/login?ref=' + val;
                 linkUrl.textContent = currentLink;
 
                 // Show link box

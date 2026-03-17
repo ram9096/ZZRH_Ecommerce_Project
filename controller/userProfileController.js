@@ -141,9 +141,9 @@ export const referalLinkGeneratorLoad = async (req,res)=>{
 
         return res.render('User/referal-page',{
             isLogged:req.session.user||'',
-            name:"usern",
-            email:"email",       
-            mobile:"mobil",
+            name:user.username,
+            email:user.email,       
+            mobile:"mobile",
             pageActive:"LINK",
             link:referaLink ? referaLink.token : null,
             balance:user.wallet?user.wallet.toFixed(2):0,

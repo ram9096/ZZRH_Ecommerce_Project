@@ -30,6 +30,7 @@ app.use(express.static("uploads"))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.set('view engine','ejs')
+app.set("trust proxy", 1);
 app.use((req, res, next) => {
     res.set(
         "Cache-Control",
@@ -59,6 +60,7 @@ app.use(session({
 app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
+
 passport.serializeUser(async(user,done)=>{
     done(null,user._id)
 })
@@ -76,7 +78,7 @@ passport.use(
     new GoogleStrategy({ 
         clientID:process.env.CLIENT_ID,
         clientSecret:process.env.CLIENT_SECRET,
-        callbackURL:"/auth/google/callback",
+        callbackURL:"https://raftaara.in/auth/google/callback",
         passReqToCallback: true
     },
     async (req,accessToken,refreshToken,profile,done)=>{

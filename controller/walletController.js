@@ -24,9 +24,9 @@ export const walletLoad = async (req,res)=>{
         }
         return res.render('User/wallet',{
             isLogged:req.session.user||'',
-            name:"usern",
-            email:"email",       
-            mobile:"mobil",
+            name:user.username,
+            email:user.email,       
+            mobile:"mobile",
             pageActive:"WALLET",
             balance: user.wallet.toFixed(2)||0,
             transaction:transaction.data,
