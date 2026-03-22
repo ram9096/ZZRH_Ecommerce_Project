@@ -1,3 +1,4 @@
+import addressModel from "../model/addressModel.js"
 import cartModel from "../model/cartModel.js"
 import couponModel from "../model/couponModel.js"
 import orderSchema from "../model/orderModel.js"
@@ -6,6 +7,7 @@ import variantModel from "../model/variantModel.js"
 import walletModel from "../model/walletModel.js"
 import { couponApplyLogic } from "./admin/couponService.js"
 import { cartData } from "./cartService.js"
+import { addressFetcher } from "./userProfileService.js"
 
 export const orderDetailsLoad = async (_id)=>{
     try{
@@ -104,7 +106,18 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
             await user.save()
 
         }
+        let address = await addressModel.findOne({_id:userDetails.addressId})
         
+        let shippingAddress = {
+            username: address.username,
+            phone_number: address.phone_number,
+            street_address: address.street_address,
+            landmark: address.landmark,
+            city: address.city,
+            state: address.state,
+            postal_code: address.postal_code,
+            country: address.country
+        }
         let newOrder = new orderSchema({
 
             userId:userDetails.id?userDetails.id:userDetails._id,
@@ -113,6 +126,7 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
             subTotal,
             taxAmount,
             totalAmount,
+            shippingAddress:shippingAddress,
             orderMethod:method,
             orderStatus: "placed",
             deliveryStatus: "pending",

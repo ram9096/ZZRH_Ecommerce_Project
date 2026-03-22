@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= product.name %> - Raftaara</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.png">
     <link rel="stylesheet" href="/css/output.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
@@ -279,8 +280,10 @@
                         </div>
                     </div>
                     <% if(isLogged&&selectedVariant.status==true&&selectedVariant.stock>0){ %>
+                        
+                        <% const isWishlist = wishlist.some(u=>u?.variantId?._id.toString() == selectedVariant?._id.toString()) %>
                         <button id="heartBtn"  class="text-red-500 text-3xl hover:text-red-600" data-variant="<%= selectedVariant._id %>">
-                            <i id="change" class="fa-regular fa-heart transition-transform duration-200"></i>
+                            <i id="change" class="<%= isWishlist ? 'fa-solid' : 'fa-regular' %> fa-heart transition-transform duration-200"></i>
                         </button>
                     <% } %>
                 </div>
@@ -328,21 +331,7 @@
         </div>
 
         <!-- Customer Reviews Section -->
-        <section class="mt-16">
-            <h2 class="text-3xl font-semibold mb-8">Customer Reviews</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1">
-                    <div class="flex items-baseline gap-2 mb-4">
-                        <span class="text-5xl font-bold">4.2</span>
-                        <div class="flex text-yellow-400">
-                            <span class="star-filled">★★★★</span>
-                            <span class="star-empty">★</span>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600 mb-6">Based on 121 reviews</p>
-                </div>
-            </div>
-        </section>
+        
 
         <!-- Related Products -->
         <section class="container mx-auto px-4 py-12">
@@ -385,14 +374,7 @@
         const buyNowBtn = document.getElementById('buyNowBtn');
         const addToCartBtn = document.getElementById('addToCartBtn');
 
-        const thumbnail = [img2, img3, img4];
-        thumbnail.forEach(t => {
-            t.addEventListener('click', () => {
-                let temp = img1.src;
-                img1.src = t.src;
-                t.src = temp;
-            });
-        });
+        
 
         const zoomContainer = document.getElementById('zoomContainer');
         const ZOOM_LEVEL = 2.5;
@@ -414,8 +396,8 @@
         const change = document.getElementById('change')
     
         change.addEventListener("click", function () {
-            change.classList.toggle("fa-regular");
-            change.classList.toggle("fa-solid");
+            // change.classList.toggle("fa-regular");
+            // change.classList.toggle("fa-solid");
             change.classList.add("animate-heart");
 
             // Remove animation after it finishes
@@ -455,7 +437,7 @@
         heaerbtn.addEventListener('click',async ()=>{
             const id = heaerbtn.dataset.variant
             const isFilled = change.classList.contains("fa-solid")
-            
+            console.log(isFilled)
             document.getElementById('loadingOverlay').classList.add('active');
             try{
 
@@ -465,8 +447,8 @@
                         "Content-Type" : "application/json"
                     },
                     body:JSON.stringify({
-                        productId:id,
-                        action:isFilled ? "ADD":"REMOVE"
+                        productId:currentVariantId,
+                        action:isFilled ? "REMOVE":"ADD"
                     })
                 })
                 const result = await request.json()
@@ -482,7 +464,7 @@
                     });
                 }
 
-                return Swal.fire({
+                Swal.fire({
                     toast: true,
                     icon: 'success',
                     title: result.message,
@@ -490,7 +472,7 @@
                     showConfirmButton: false,
                     timer: 3000
                 });
-
+                return location.reload()
             }catch(e){
 
             }
@@ -670,7 +652,7 @@
                 });
                 const data = await res.json();
                 if (!data.success) return;
-                
+                currentVariantId = data.product._id
                 discount.innerHTML = `₹${data.product.sizes[0].discount}`;
                 price.innerHTML = `₹${data.product.sizes[0].price}`;
                 updateStockDisplay(data.product.sizes[0].stock || 0);

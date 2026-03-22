@@ -53,7 +53,39 @@ const orderSchema = new mongoose.Schema({
       }
     }
   ],
-
+  shippingAddress: {
+      username: {
+          type: String,
+          required: true
+      },
+      phone_number: {
+          type: Number,
+          required: true
+      },
+      street_address: {
+          type: String,
+          required: true
+      },
+      landmark: {
+          type: String
+      },
+      city: {
+          type: String,
+          required: true
+      },
+      state: {
+          type: String,
+          required: true
+      },
+      postal_code: {
+          type: Number,
+          required: true
+      },
+      country: {
+          type: String,
+          required: true
+      }
+  },
   subTotal: {
     type: Number,
     required: true

@@ -50,7 +50,7 @@ export const downloadInvoice = async (req, res) => {
 
     // ===== Shipping Address =====
     doc.font("Helvetica-Bold").text("Shipping Address:", 50, 210);
-    const address = order.shippingAddressId;
+    const address = order.shippingAddress;
     doc.font("Helvetica").text(`${address.street_address || ""}`, 50, 225);
     doc.text(`${address.city || ""}, ${address.state || ""}`, 50, 240);
     doc.text(`${address.pincode || ""}`, 50, 255);

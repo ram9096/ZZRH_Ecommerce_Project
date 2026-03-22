@@ -300,6 +300,7 @@
             </div>
         </div>
     </section>
+    
 
     <!-- Popular Right Now Section -->
    <section class="container mx-auto px-4 py-12">
@@ -490,7 +491,31 @@
         
     </section>
 
-    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+    
+
+    <!-- CTA Section -->
+    <section class="container mx-auto px-4 py-12 font-bloverly">
+        <div class="cta-section-wrap rounded-3xl overflow-hidden relative">
+            <img src="/Background-image.jpg" 
+            loading="lazy"
+                 alt="Fashion" 
+                 class="w-full h-full object-cover ">
+            <div class="cta-overlay absolute inset-0 items-left justify-center text-white p-8">
+                <h2 class="cta-heading font-light text-left" style="font-size:clamp(28px,6vw,90px); line-height:1.1;">
+                    Feel more retromantic - feel<br>free to step into timeless<br>fashion with a twist.
+                </h2>
+                <p class="cta-sub mb-8 text-left max-w-xl opacity-90 font-clash" style="font-size:clamp(13px,2vw,20px);">
+                    Sign up today to receive exclusive deals and unlock fashion<br>
+                    collections that define your unique style every season
+                </p>
+                <button class="cta-btn border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash" style="font-size:clamp(16px,3vw,40px);">
+                    Thank you for clicking
+                </button>
+                
+            </div>
+        </div>
+    </section>
+    <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center">
         <div class="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 relative">
 
         <!-- Close Button -->
@@ -510,7 +535,7 @@
         <h2 class="text-xl font-semibold mb-2">Cool T-Shirt</h2>
 
         <!-- Price -->
-        <p class="text-lg font-bold text-green-600 mb-4">₹999</p>
+        <p class="text-lg font-bold text-green-600 mb-4" id="price-modal">₹999</p>
 
         <!-- Size Dropdown -->
         <select id="size" onchange="handleSizeChange()" class="w-full border rounded-lg p-2 mb-4">
@@ -542,32 +567,6 @@
             </button>
         </div>
     </div>
-
-    
-
-    <!-- CTA Section -->
-    <section class="container mx-auto px-4 py-12 font-bloverly">
-        <div class="cta-section-wrap rounded-3xl overflow-hidden relative">
-            <img src="/Background-image.jpg" 
-            loading="lazy"
-                 alt="Fashion" 
-                 class="w-full h-full object-cover ">
-            <div class="cta-overlay absolute inset-0 items-left justify-center text-white p-8">
-                <h2 class="cta-heading font-light text-left" style="font-size:clamp(28px,6vw,90px); line-height:1.1;">
-                    Feel more retromantic - feel<br>free to step into timeless<br>fashion with a twist.
-                </h2>
-                <p class="cta-sub mb-8 text-left max-w-xl opacity-90 font-clash" style="font-size:clamp(13px,2vw,20px);">
-                    Sign up today to receive exclusive deals and unlock fashion<br>
-                    collections that define your unique style every season
-                </p>
-                <button class="cta-btn border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash" style="font-size:clamp(16px,3vw,40px);">
-                    Thank you for clicking
-                </button>
-                
-            </div>
-        </div>
-    </section>
-
     <!-- Marquee -->
     <div class="bg-black text-white py-4 overflow-hidden marquee font-clash text-bold">
         <div class="whitespace-nowrap marquee-track font-bold">
@@ -595,14 +594,16 @@
         const sizeSelect = document.getElementById('size');
         const addBtn = document.getElementById('addBtn');
         function handleSizeChange() {
-            const size = document.getElementById("size").value;
+            const size = document.getElementById("size");
             const addBtn = document.getElementById("addBtn");
-
-            if (size) {
+            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex]
+            if (size.value) {
                 addBtn.disabled = false;   
             } else {
                 addBtn.disabled = true;    
             }
+
+            document.getElementById('price-modal').textContent = "₹" + selectedOption.dataset.price
         }
         async function openModal(id,color,img) {
             try{
@@ -640,12 +641,13 @@
                     const option = document.createElement("option");
                     option.value = size._id;
                     option.textContent = size.size;
+                    option.dataset.price = size.price;
                     select.appendChild(option);
                 });
-
+                document.getElementById('price-modal').textContent = "₹"+result.product[0].price
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
-
+                document.body.style.overflow = "hidden";
                 
             }catch(e){
                 console.log(e)
@@ -655,6 +657,7 @@
         function closeModal() {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        document.body.style.overflow = "auto";
         }
         
         if('<%= search %>'){

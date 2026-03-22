@@ -354,11 +354,11 @@
                             </h3>
                             
                             <div class="text-sm text-gray-700 leading-relaxed">
-                                <p class="font-semibold mb-2"><%= order[0].shippingAddressId.username %></p>
-                                <p><%= order[0].shippingAddressId.street_address %></p>
-                                <p><%= order[0].shippingAddressId.city %>, <%= order[0].shippingAddressId.state %></p>
-                                <p>PIN: <%= order[0].shippingAddressId.postal_code %>, <%= order[0].shippingAddressId.country %></p>
-                                <p class="mt-2 text-gray-600">Phone: +91 <%= order[0].shippingAddressId.phone_number %></p>
+                                <p class="font-semibold mb-2"><%= order[0].shippingAddress.username %></p>
+                                <p><%= order[0].shippingAddress.street_address %></p>
+                                <p><%= order[0].shippingAddress.city %>, <%= order[0].shippingAddress.state %></p>
+                                <p>PIN: <%= order[0].shippingAddress.postal_code %>, <%= order[0].shippingAddress.country %></p>
+                                <p class="mt-2 text-gray-600">Phone: +91 <%= order[0].shippingAddress.phone_number %></p>
                             </div>
                         </div>
 

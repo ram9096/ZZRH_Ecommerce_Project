@@ -113,6 +113,8 @@ export const productViewLoad = async(req,res)=>{
         let userId = req.session?.user?.id ||req.session?.user?._id
         
         let products = await ProductvariantDetails(productId,color,size)
+        let wishList = await whishlistData({userId:userId})
+        
         let cart = 0
         if(userId){
 
@@ -142,7 +144,8 @@ export const productViewLoad = async(req,res)=>{
             Relatedproducts:Relatedproducts.data,
             error:'',
             isLogged:req.session.user||'',
-            cart:cart.count?cart.count:0
+            cart:cart.count?cart.count:0,
+            wishlist:wishList.data ? wishList.data:[]
         })
     }catch(e){
         console.log("Error: ",e)

@@ -11,42 +11,52 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.9);
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
-        }
-        .hover-lift {
-            transition: all 0.3s ease;
-        }
-        .hover-lift:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        .profile-avatar {
-            background: linear-gradient(135deg, #6b7280 0%, #1f2937 100%);
-        }
-        .cancelled-overlay {
-            position: relative;
-        }
-        .cancelled-overlay::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            pointer-events: none;
-        }
-</style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background: rgba(255, 255, 255, 0.9);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+            }
+            .hover-lift {
+                transition: all 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            }
+            .profile-avatar {
+                background: linear-gradient(135deg, #6b7280 0%, #1f2937 100%);
+            }
+            .cancelled-overlay {
+                position: relative;
+            }
+            .cancelled-overlay::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                pointer-events: none;
+            }
+            @keyframes shine {
+                0% {
+                    left: -50%;
+                }
+                100% {
+                    left: 150%;
+            
+                }    
+            }
+            
+    </style>
 <body class="bg-gray-50">
      <%- include('../Partials/nav-bar') %>
      
@@ -113,7 +123,7 @@
                                     
                                     <div class="flex items-center gap-2">
                                         <% if(o.variantId.status==true&&o.variantId.stock>0) {%>
-                                            <button  data-id="<%= o.variantId._id %>" class="cart w-full bg-black text-white py-3 px-6 rounded hover:bg-gray-800 transition-colors font-medium ">
+                                            <button onclick="openModal('<%= o.variantId._id._id %>','<%= o.variantId.color %>','<%= o.variantId.image[0] %>')"  data-id="<%= o.variantId._id %>" class="cart w-full bg-black text-white py-3 px-6 rounded hover:bg-gray-800 transition-colors font-medium ">
                                                 Add to cart
                                             </button>
                                         <% }else{ %>
@@ -135,42 +145,157 @@
         
      </div>
 
+     <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 relative">
+
+        <!-- Close Button -->
+        <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-500 hover:text-black">
+            ✕
+        </button>
+
+        <!-- Product Image -->
+        <img
+            src=""
+            alt="Product"
+            id="modal-img"
+            class="w-full h-52 object-cover rounded-xl mb-4"
+        />
+
+        <!-- Product Name -->
+        <h2 class="text-xl font-semibold mb-2">Cool T-Shirt</h2>
+
+        <!-- Price -->
+        <p class="text-lg font-bold text-green-600 mb-4" id="price-modal">₹999</p>
+
+        <!-- Size Dropdown -->
+        <select id="size" onchange="handleSizeChange()" class="w-full border rounded-lg p-2 mb-4">
+            <option value="">Select Size</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+        </select>
+
+        <!-- Add to Cart Button -->
+            <button
+                id="addBtn"
+                onclick="addToCart(document.getElementById('size').value)"
+                class="relative overflow-hidden w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 
+                    text-white py-2 rounded-lg font-semibold
+                    shadow-lg hover:shadow-yellow-300/50
+                    transition-all duration-300
+                    disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed"
+                disabled
+            >
+                Add to Cart
+
+                <!-- Shine Effect -->
+                <span class="absolute inset-0">
+                    <span class="absolute -left-1/2 top-0 h-full w-1/2 bg-white/30 skew-x-[-20deg] 
+                                animate-[shine_2s_infinite]"></span>
+                </span>
+            </button>
+        </div>
+    </div>
+
       <script>
+        const modal = document.getElementById('modal');
+        const sizeSelect = document.getElementById('size');
+        const addBtn = document.getElementById('addBtn');
+        function handleSizeChange() {
+            const size = document.getElementById("size");
+            const addBtn = document.getElementById("addBtn");
+            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex]
+            if (size.value) {
+                addBtn.disabled = false;   
+            } else {
+                addBtn.disabled = true;    
+            }
+
+            document.getElementById('price-modal').textContent = "₹" + selectedOption.dataset.price
+        }
+        async function openModal(id,color,img) {
+            try{
+                const request = await fetch('/variant-detail',{
+                    method:"POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body:JSON.stringify({
+                        id,
+                        color
+                    })
+                })
+
+                const result = await request.json()
+                
+                if(!result.success){
+                    return Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+                
+                const image = document.getElementById('modal-img')
+                image.src = img
+                const select = document.getElementById("size");
+
+                // Add new options
+                select.innerHTML = `<option value="">Select Size</option>`;
+                result.product.forEach(size => {
+                    const option = document.createElement("option");
+                    option.value = size._id;
+                    option.textContent = size.size;
+                    option.dataset.price = size.price;
+                    select.appendChild(option);
+                });
+                document.getElementById('price-modal').textContent = "₹"+result.product[0].price
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+
+                
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
         const menuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
-        const cart = document.querySelectorAll('.cart')
-        cart.forEach(c=>{
-
-            c.addEventListener('click',async(e)=>{
-                let id = c.dataset.id 
-
-                  
-                try{
-
-                    const request = await fetch('/cart/add-cart',{
-                        method:"POST",
-                        headers:{
-                            "Content-Type":"application/json"
-                        },
-                        body:JSON.stringify({
-                            id:id,
-                            userId:"<%= isLogged.id?isLogged.id:isLogged._id %>",
-                            qty:1
-                        })
+        async function addToCart(variantId){
+            //document.getElementById('loadingOverlay').classList.add('active');
+            try{
+                const request = await fetch('/cart/add-cart',{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        id:variantId,
+                        userId:"<%= isLogged.id?isLogged.id:isLogged._id %>",
+                        qty:1
                     })
-                    const result = await request.json()
-                    
-                    if(!result.success){
-                        return Swal.fire({
-                            toast: true,
-                            icon: 'error',
-                            title: result.message,
-                            position: 'top-right',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                    }
+                })
+                //document.getElementById('loadingOverlay').classList.remove('active');
+                const result = await request.json()
+                if(!result.success){
                     return Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: result.message,
+                        position: 'top-right',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+                return Swal.fire({
                         toast: true,
                         icon: 'success',
                         title: result.message,
@@ -181,8 +306,8 @@
                 }catch(e){
     
                 }
-            })
-        })
+        }
+        
         menuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
