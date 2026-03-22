@@ -179,7 +179,9 @@ export const AddressAddLogic = async (_id,username,phone_number,postal_code,city
             country,
             isDefault
         })
-
+        if(isDefault){
+            await addressModel.updateMany({userId:_id},{isDefault:false})
+        }
         await newAddress.save()
         let address = await addressModel.findOne({
             username,
@@ -252,7 +254,9 @@ export const AddressEditLogic = async (userId,username,phone_number,postal_code,
         edit_address.landmark = landmark
         edit_address.country = country
         edit_address.isDefault = isDefault
-
+        if(isDefault){
+            await addressModel.updateMany({userId},{isDefault:false})
+        }
         await edit_address.save()
 
         return {
