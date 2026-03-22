@@ -605,3 +605,44 @@ export const applyOffer = async (_id,action)=>{
         console.log(e)
     }
 }
+
+export const productVariantColorFetch = async(id,color)=>{
+    try{
+
+        if(!id||!color){
+            return {
+                success:false,
+                message:"Error while loading"
+            }
+        }
+        const variant = await variantModel.find({_id:id})
+        if(!variant){
+            return {
+                success:false,
+                message:"Error while loading"
+            }
+        }
+        const data = await variantModel.find({
+            productId:variant[0].productId,
+            color:color
+        })
+        
+        if(!data){
+            return {
+                success:false,
+                message:"Error while loading data"
+            }
+        }
+
+        return {
+            success:true,
+            data:data
+        }
+    }catch(e){
+        console.log(e)
+        return {
+            success:false,
+            message:"server error"
+        }
+    }
+}

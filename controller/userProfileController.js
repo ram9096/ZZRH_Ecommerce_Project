@@ -135,9 +135,10 @@ export const userAddressLoad = async (req,res)=>{
 
 export const referalLinkGeneratorLoad = async (req,res)=>{
     try{
-        let referaLink = await referalLinkFetch(req.session.user.id)
+        let userId = req.session.user.id||req.session.user._id
+        let referaLink = await referalLinkFetch(userId)
         let user = await findUserByEmail(req.session.user.email)
-        let cart = await cartCount(req.session.user.id)
+        let cart = await cartCount(userId)
 
         return res.render('User/referal-page',{
             isLogged:req.session.user||'',

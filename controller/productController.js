@@ -1,6 +1,7 @@
 import { offerDataLoad } from "../service/admin/offerService.js";
 import {   dataLoad, productModelLoad, variantLoad } from "../service/adminService.js";
-import { adminProductEditLogic, adminProductsAddLogic, offerAddLogic } from "../service/productService.js";
+import { adminProductEditLogic, adminProductsAddLogic, offerAddLogic, productVariantColorFetch } from "../service/productService.js";
+import { ProductvariantDetails } from "../service/userService.js";
 
 //Page renderings--------------------------------------------------------------------
 
@@ -226,6 +227,36 @@ export const offerAddProduct = async (req,res)=>{
 
     }catch(e){
         return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
+
+export const variantDetailsFetcher = async (req,res)=>{
+
+    try{
+
+        const { id,color } = req.body
+        
+        const products = await productVariantColorFetch(id,color)
+        
+        if(!products.success){
+            return res.json({
+                success:false,
+                message:products.message
+            })
+        }
+        
+        return res.json({
+            success:true,
+            product:products.data
+        })
+
+    }catch(e){
+
+        console.log(e)
+        return res.json({
             success:false,
             message:"Server error"
         })

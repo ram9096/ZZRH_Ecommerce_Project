@@ -13,8 +13,8 @@ export const whishlistLoad = async (req,res)=>{
         if(!data){
             return res.render('User/whishlist',{
                 isLogged:req.session.user||'',
-                name:user.name,
-                email:'',
+                name:user.username,
+                email:user.email,
                 order:[],
                 pageActive:"WISHLIST",
                 cart:cart.count||0
@@ -22,8 +22,8 @@ export const whishlistLoad = async (req,res)=>{
         }
         return res.render('User/whishlist',{
             isLogged:req.session.user||'',
-            name:user.name,
-            email:'',
+            name:user.username,
+            email:user.email,
             order:data.data,
             pageActive:"WISHLIST",
             cart:cart.count||0

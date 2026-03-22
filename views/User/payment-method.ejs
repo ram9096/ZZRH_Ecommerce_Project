@@ -202,6 +202,10 @@
                             </div>
                             <span >₹<%= offer.toFixed(2) %></span>
                         </div>
+                        <div class="flex justify-between text-sm items-center">
+                            <span >Tax</span>
+                            <span id="tax">₹0.00</span>
+                        </div>
                     </div>
 
                     
@@ -509,9 +513,12 @@
                 const price = Number(qtyEl.dataset.price);
                 subtotal += qty * price;
             });
+            let tax = (subtotal*0.05).toFixed(2)
+            let total = subtotal+Number(tax)
 
             document.getElementById('subtotal').textContent = '₹' + subtotal;
-            document.getElementById('total').textContent = '₹' + subtotal;
+            document.getElementById('tax').textContent = '₹' + (0.05*subtotal).toFixed(2)
+            document.getElementById('total').textContent = '₹' + total.toFixed(2);
         }
         function handleAddressSelection(value) {
             if (value) {

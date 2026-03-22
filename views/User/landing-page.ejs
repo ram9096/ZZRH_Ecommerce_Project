@@ -5,86 +5,269 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>#Raftaara - Fashion Store</title>
     <link rel="stylesheet" href="/css/output.css">
-
+    <link rel="icon" type="image/x-icon" href="/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-     <link rel="preload" href="/BLOVERLY.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/ClashDisplay-Regular.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="/BLOVERLY.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/ClashDisplay-Regular.woff" as="font" type="font/woff" crossorigin>
 
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
         
-      
-        
+        :root {
+            --cream:#faf9f7;
+            --card-bg:#f3f1ee;
+            --accent:#c8102e;
+            --accent-light:#f5e0e4;
+            --accent-mid:#e8a0ad;
+            --text-primary:#1a1a1a;
+            --text-muted:#7a7a7a;
+            --text-light:#a8a8a8;
+            --shadow-sm:0 2px 12px rgba(0,0,0,.06);
+            --shadow-md:0 6px 24px rgba(0,0,0,.1);
+            --radius:18px;
+        }
         .serif-font {
             font-family: 'Playfair Display', serif;
         }
-        
-        
-        
+       
         .font-bloverly {
           font-family: "bloverly", system-ui, sans-serif;
         }
         .font-clash {
           font-family: "Clash-display", system-ui, sans-serif;
         }
+
+        .hero {
+            position:relative;
+            background:#1a1a1a;
+            color:#fff;
+            padding:56px 24px 52px;
+            text-align:center;
+            overflow:hidden;
+        }
+        .hero::before {
+            content:'';
+            position:absolute;
+            inset:0;
+            background:
+            radial-gradient(ellipse 70% 60% at 20% 50%, rgba(200,16,46,.18) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 80% at 80% 40%, rgba(200,16,46,.12) 0%, transparent 70%);
+            pointer-events:none;
+        }
+        .hero-badge {
+            display:inline-block;
+            background:var(--accent);
+            color:#fff;
+            font-size:.72rem;
+            font-weight:600;
+            letter-spacing:.18em;
+            text-transform:uppercase;
+            padding:6px 18px;
+            border-radius:50px;
+            margin-bottom:18px;
+            position:relative;
+            animation:pulse-badge 2.4s ease-in-out infinite;
+        }
+        @keyframes pulse-badge {
+            0%,100%{ box-shadow:0 0 0 0 rgba(200,16,46,.45); }
+            50%   { box-shadow:0 0 0 8px rgba(200,16,46,0); }
+        }
+        .hero h1 {
+            font-family:'Playfair Display',serif;
+            font-weight:300;
+            font-size:clamp(2.4rem,6vw,3.8rem);
+            letter-spacing:-.02em;
+            line-height:1.1;
+            position:relative;
+        }
+        .hero h1 em {
+            font-style:italic;
+            color:var(--accent-mid);
+        }
+        .hero-sub {
+            margin-top:14px;
+            color:#9a9a9a;
+            font-size:.88rem;
+            font-weight:400;
+            position:relative;
+        }
+
+        .countdown-strip {
+            background:var(--accent);
+            color:#fff;
+            text-align:center;
+            padding:10px 16px;
+            font-size:.78rem;
+            font-weight:500;
+            letter-spacing:.06em;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+        }
+        .countdown-strip .timer {
+            font-family:'Playfair Display',serif;
+            font-size:.95rem;
+            font-weight:600;
+            letter-spacing:.04em;
+        }
+        .badge-discount {
+            position:absolute;
+            top:14px;
+            left:14px;
+            background:var(--accent);
+            color:#fff;
+            font-size:.72rem;
+            font-weight:600;
+            padding:5px 11px;
+            border-radius:50px;
+            z-index:2;
+            letter-spacing:.02em;
+        }
+        .price-save {
+            font-size:.72rem;
+            color:var(--accent);
+            font-weight:600;
+            background:var(--accent-light);
+            padding:2px 8px;
+            border-radius:50px;
+        }
+        .product-img-wrap {
+            height: 350px;
+        }
+        @media (max-width: 480px) {
+            .product-img-wrap {
+                height: 260px;
+            }
+        }
+
+        /* ── Responsive fixes ── */
+
+        /* Hero: fixed px height only on desktop; fluid on mobile */
+        .hero-banner {
+            height: 220px;
+        }
+        @media (min-width: 640px) {
+            .hero-banner { height: 360px; }
+        }
+        @media (min-width: 1024px) {
+            .hero-banner { height: 510px; }
+        }
+
+        /* CTA section */
+        .cta-banner {
+            height: auto;
+            min-height: 340px;
+        }
+        @media (min-width: 768px) {
+            .cta-banner { height: 560px; }
+        }
+        @media (min-width: 1024px) {
+            .cta-banner { height: 800px; }
+        }
+
+        /* CTA headline */
+        .cta-headline {
+            font-size: clamp(1.5rem, 5vw, 5.625rem); /* 90px max */
+            line-height: 1.1;
+        }
+
+        /* CTA sub-text */
+        .cta-subtext {
+            font-size: clamp(0.85rem, 2vw, 1.25rem);
+        }
+
+        /* CTA button */
+        .cta-btn {
+            font-size: clamp(1rem, 3vw, 2.5rem);
+            padding: 0.5rem 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            .cta-btn { padding: 0.75rem 2rem; }
+        }
+
+        /* Logo */
+        .logo-text {
+            font-size: clamp(2rem, 8vw, 7.8125rem); /* 125px max */
+        }
+
+        /* Footer logo */
+        .footer-logo {
+            font-size: clamp(2rem, 8vw, 7.8125rem);
+        }
+
+        /* Marquee font size */
+        .marquee-track {
+            font-size: clamp(1.5rem, 6vw, 3.75rem); /* 60px max */
+        }
+
+        /* Product card image */
+        .product-img {
+            height: 220px;
+        }
+        @media (min-width: 768px) {
+            .product-img { height: 280px; }
+        }
+        @media (min-width: 1024px) {
+            .product-img { height: 350px; }
+        }
+
+        /* Marquee animation (unchanged) */
+        @keyframes marquee-left {
+            from { transform: translateX(100%); }
+            to   { transform: translateX(-100%); }
+        }
+        .marquee {
+            width: 100%;
+            overflow: hidden;
+            background: #000000;
+            white-space: nowrap;
+        }
+        .marquee-track {
+            display: inline-block;
+            animation: marquee-left 50s linear infinite;
+            font-weight: 700;
+        }
+        .marquee-track span {
+            display: inline-block;
+            padding: 0 2rem;
+            font-weight: 500;
+        }
+        .marquee:hover .marquee-track,
+        .marquee:active .marquee-track {
+            animation-play-state: paused;
+        }
     </style>
 </head>
 <body class="bg-white">
-    <!-- Header/Navigation -->
-     <% if (error) { %>
-        <script>
-          Swal.fire({
-                toast: true,
-                icon: 'error',
-                title: '<%=error%>',
-                position: 'top-right',
-                showConfirmButton: false,
-                timer: 3000
-            });
-        </script>
-      <% } %>
      
     <header class="py-4 px-6 md:py-6 md:px-16 flex justify-between items-center">
-    <!-- Logo -->
-     <a href="/">
-         <div class="text-[60px] md:text-[125px] font-bloverly tracking-tight" style="font-family: bloverly;font-weight: lighter;">
-           #Raftaara
-         </div>
-     </a>
-    <!-- <a href="/logout">logout</a> -->
+        <a href="/">
+            <div class="logo-text font-bloverly tracking-tight" style="font-family: bloverly; font-weight: lighter;">
+                #Raftaara
+            </div>
+        </a>
 
-    <!-- Desktop Navigation -->
-    
-    
+        <a href="/login">
+            <button class="md:block px-4 py-2 rounded-lg text-sm font-semibold bg-black text-white hover:bg-gray-800 transition duration-300 shadow-sm">
+                Login / Sign Up
+            </button>
+        </a>
+    </header>
 
-    <!-- Mobile Menu Button -->
-   
-
-    <!-- Login/Sign-up Button (Hidden on mobile until we toggle menu) -->
-
-       <a href="/login">
-      <button class=" md:block border border-black p-1 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
-      Login/sign-up
-    </button>
-    </a>
-    
-  </header>
-
-  <!-- Mobile Menu (initially hidden) -->
-  <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 space-y-4 font-clash">
-     <a href="/login">
-      <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
-      Login/sign-up
-    </button>
-    </a>
-    
-  </div>
+    <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 space-y-4 font-clash">
+        <a href="/login">
+            <button class="hidden md:block border border-black px-6 py-2 rounded-md text-sm font-clash hover:bg-black hover:text-white transition">
+                Login/sign-up
+            </button>
+        </a>
+    </div>
 
     <!-- Hero Section -->
-    <section class="container mx-auto px-4 ">
-        <div class="bg-gray-100 rounded-3xl overflow-hidden relative" style="height: 510px;">
+    <section class="container mx-auto px-4">
+        <div class="bg-gray-100 rounded-3xl overflow-hidden relative hero-banner">
             <img src="/banner.png" 
                  alt="Hero" 
                  class="w-full h-full object-cover">
@@ -98,21 +281,17 @@
     <section class="container mx-auto px-4 py-12">
         <h2 class="text-4xl serif-font font-light mb-8 font-bloverly">Popular Right Now</h2>
         
-        <!-- Filters -->
-      
-        <!-- Product Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
-            <!-- Product 1 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12 font-clash">
             <% product.forEach(product=>{ %>
                 <a href="/products">
                     <div class="product-card">
-                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative" style="height: 350px;">
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3 relative product-img">
                             <img src="<%= product.image[0] %>" 
                                 alt="Brown Jacket" 
                                 loading="lazy"
                                 class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
                             <% if (product.stock <= 0) { %>
-                                <div class="absolute inset-0 flex items-center justify-center  bg-opacity-40">
+                                <div class="absolute inset-0 flex items-center justify-center bg-opacity-40">
                                     <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
                                         Out of Stock
                                     </span>
@@ -127,7 +306,6 @@
                                     <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
                                 <% } %>
                             </div>
-                            
                         </div>
                     </div>
                 </a>
@@ -135,60 +313,124 @@
         </div>
 
         <div class="flex justify-end">
-            <a  class="mr-10" href="/products">Shop more →</a>
+            <a class="mr-10" href="/products">Shop more →</a>
         </div>
     </section>
-    <!-- Winter Styles Section -->
-    <!-- <section class="container mx-auto px-4 py-12 ">
-        <h2 class="text-4xl  font-light mb-8 font-bloverly">Winter Styles 2025</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-clash">
-            <div class="product-card">
-                <div class="bg-gray-100 rounded-2xl overflow-hidden mb-3" style="height: 350px;">
-                    <img src="https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=350&fit=crop" 
-                         alt="Brown Jacket" 
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="font-medium text-sm mb-1">BROWN JACKET</h3>
-                        <p class="text-lg font-semibold">₹1899</p>
-                    </div>
-                    <button class="text-xs border border-gray-900 px-4 py-1 rounded-full hover:bg-gray-900 hover:text-white transition">
-                        Add to cart
-                    </button>
-                </div>
-            </div>
-
-            
-        </div>
-    </section> -->
 
     <!-- CTA Section -->
     <section class="container mx-auto px-4 py-12 font-bloverly">
-        <div class=" rounded-3xl overflow-hidden relative" style="height: 800px;">
+        <div class="rounded-3xl overflow-hidden relative cta-banner">
             <img src="/Background-image.jpg" 
                  alt="Fashion" 
-                 class="w-full h-full object-cover ">
-            <div class="absolute inset-0 items-left justify-center text-white p-8">
-                <h2 class="text-[90px] font-light  text-left">
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0 items-left justify-center text-white p-5 md:p-8">
+                <h2 class="cta-headline font-light text-left">
                     Feel more retromantic - feel<br>free to step into timeless<br>fashion with a twist.
                 </h2>
-                <p class="text-[20px] mb-8 text-left max-w-xl opacity-90 font-clash">
+                <p class="cta-subtext mb-6 md:mb-8 text-left max-w-xl opacity-90 font-clash">
                     Sign up today to receive exclusive deals and unlock fashion<br>
                     collections that define your unique style every season
                 </p>
-                <button class="text-[40px] border border-white px-8 py-3 rounded-full hover:bg-white hover:text-blue-500 transition text-sm font-clash">
+                <button class="cta-btn border border-white rounded-full hover:bg-white hover:text-blue-500 transition font-clash">
                     Thank you for clicking
                 </button>
             </div>
         </div>
     </section>
-    
 
+    <header class="hero">
+        <div class="hero-badge">🔥 Limited Time</div>
+        <h1>Offers <em>you can't</em><br>afford to skip</h1>
+        <p class="hero-sub">Curated deals on our most-loved pieces — up to 40% off</p>
+    </header>
+    <section class="container mx-auto px-4 py-12">
+
+        <h2 class="text-4xl serif-font font-light mb-8 font-bloverly"></h2>
+        
+       
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 font-clash">
+            <% offer.forEach(product=>{ %>
+                
+                <div class="product-card relative">
+
+                    <!-- Discount Badge -->
+                    <% if(product.appliedOffer?.discountType == 'PERCENTAGE') { %>
+                        <span class="badge-discount"><%= product.appliedOffer?.discountValue %>% OFF</span>
+                    <% } else { %>
+                        <span class="badge-discount"><%= product.appliedOffer?.discountValue %> FLAT OFF</span>
+                    <% } %>
+
+                    <!-- Product Image with Wishlist Button -->
+                    <% if(product.status==true){%>
+                        <a href="/home/product-details/<%= product.productId._id %>?size=<%= product.size %>&color=<%= product.color %>">
+                            <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
+                                <img src="<%= product.image[0] %>" 
+                                    alt="<%= product.productId.name %>" 
+                                    loading="lazy"
+                                    class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                                <% if (product.stock <= 0) { %>
+                                    <div class="absolute inset-0 flex items-center justify-center bg-opacity-40">
+                                        <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                            Out of Stock
+                                        </span>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </a>
+                    <% }else{%>
+                        <div class="product-img-wrap bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
+                            <img src="<%= product.image[0] %>" 
+                                alt="<%= product.productId.name %>" 
+                                loading="lazy"
+                                class="w-full h-full object-cover <%= product.stock <= 0 ? 'opacity-50' : '' %>">
+                            <% if (product.stock <= 0) { %>
+                                <div class="absolute inset-0 flex items-center justify-center bg-opacity-40">
+                                    <span class="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm">
+                                        Out of Stock
+                                    </span>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% } %>
+                    <!-- Product Info -->
+                    <div class="flex justify-between items-start mb-3">
+                        <% const save = product.basePrice - product.price %>
+                        <div>
+                            <h3 class="font-medium text-sm mb-1"><%= product.productId.name %></h3>
+                            <p class="text-lg font-semibold">
+                                <span class="text-gray-500 line-through">₹<%= product.discount %></span> ₹<%= product.price %>
+                            </p>
+                            <% if(save <= 0||!save) { %>
+                                <span class="price-save">Offer expired or getting started</span>
+                            <% } else { %>
+                                <span class="price-save">Save ₹<%= save.toFixed(2) %></span>
+                                <span class="price-save"><%= product.appliedOffer?.name ? product.appliedOffer.name:'Offer Inactive' %></span>
+                            <% } %>
+                            <% if (product.stock <= 0||!product.status) { %>
+                                <p class="text-red-600 text-xs mt-1">Currently Unavailable</p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                     
+                    
+
+                </div>
+            <% }) %>
+        </div>
+
+        <div class="flex justify-end">
+            <a  class="mr-10" href="/products">Shop more →</a>
+        </div>
+        
+    </section>
+    
     <!-- Marquee -->
     <div class="bg-black text-white py-4 overflow-hidden marquee font-clash text-bold">
-        <div class="whitespace-nowrap marquee-track text-6xl font-bold">
+        <div class="whitespace-nowrap marquee-track">
             WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE * WITH UNIQUE STYLES * ELEVATE YOUR WARDROBE *
         </div>
     </div>
@@ -197,82 +439,19 @@
     <footer class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-                <h3 class="text-[60px] md:text-[125px] font-light mb-4 font-bloverly">#ZZRH</h3>
+                <h3 class="footer-logo font-light mb-4 font-bloverly">#ZZRH</h3>
             </div>
-            
-            <div>
-               
-            </div>
-            
-            <div>
-                
-            </div>
-            
-            <div>
-                
-            </div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-        <div class="border-t border-gray-200 pt-8 flex justify-between text-xs text-gray-600">
+        <div class="border-t border-gray-200 pt-8 flex flex-col sm:flex-row justify-between gap-3 text-xs text-gray-600">
             <p>Copyright@2025</p>
-            <div class="space-x-6">
+            <div class="flex gap-4 sm:space-x-6">
                 <a href="#" class="hover:text-gray-900">Terms and conditions</a>
                 <a href="#" class="hover:text-gray-900">Privacy Policy</a>
             </div>
         </div>
     </footer>
-
-    <script>
-    //   const menuButton = document.getElementById('mobileMenuButton');
-    //   const mobileMenu = document.getElementById('mobileMenu');
-
-    //   menuButton.addEventListener('click', () => {
-    //     mobileMenu.classList.toggle('hidden');
-    //   });
-    </script>
-
-    <style>
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        .animate-marquee {
-            animation: marquee 100s linear infinite;
-            display: inline-block;
-        }
-        .marquee {
-            width: 100%;
-            overflow: hidden;
-            background: #000000;
-            white-space: nowrap;
-        }
-
-        .marquee-track {
-            display: inline-block;
-            animation: marquee-left 50s linear infinite;
-        }
-
-        .marquee-track span {
-            display: inline-block;
-            padding: 0 2rem;
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        @keyframes marquee-left {
-        from {
-            transform: translateX(-100%);
-        }
-        to {
-            transform: translateX(100%);
-        }
-        }
-        .marquee:hover .marquee-track,
-        .marquee:active .marquee-track {
-        animation-play-state: paused;
-        }
-
-
-    </style>
 </body>
 </html>

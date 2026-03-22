@@ -72,35 +72,43 @@ export const downloadInvoice = async (req, res) => {
     let y = tableTop + 25;
     doc.font("Helvetica");
     const cancelledVariants = order.cancelledAt?.[0]?.cancelledProducts || [];
+    const returned = order.returnedAt?.[0]?.variant||[]
+    console.log(returned)
     order.orderItems.forEach((item) => {
 
       const isCancelled = cancelledVariants.some(
         id => id.toString() === item.variantId.toString()
       );
-
+      const isReturned = returned === "all" || returned === item.variantId.toString()
+       if (isCancelled) doc.fillColor("red");
+      else if (isReturned) doc.fillColor("orange");
+      else doc.fillColor("black");
       const itemText = `${item.productName} (${item.variantName})`;
       const priceText = `₹${item.price.toFixed(2)}`;
       const totalText = `₹${(item.price * item.quantity).toFixed(2)}`;
 
       // Draw normal text
-      doc.fillColor(isCancelled ? "red" : "black");
+       if (isCancelled) doc.fillColor("red");
+      else if (isReturned) doc.fillColor("orange");
+      else doc.fillColor("black");
 
       doc.text(itemText, itemX, y);
       doc.text(item.quantity.toString(), quantityX, y);
       doc.text(priceText, priceX, y);
       doc.text(totalText, totalX, y);
 
-      // 🔥 STRIKE THROUGH
-      if (isCancelled) {
-        const lineY = y + 7; // adjust vertical position
 
-        doc
-          .moveTo(itemX, lineY)
-          .lineTo(totalX + 60, lineY) // extend till end of total
-          .strokeColor("red")
-          .lineWidth(1)
-          .stroke();
-      }
+        if (isCancelled || isReturned) {
+          const lineY = y + 7;
+
+          doc
+            .moveTo(itemX, lineY)
+            .lineTo(totalX + 60, lineY)
+            .strokeColor(isCancelled ? "red" : "orange")
+            .lineWidth(1)
+            .stroke();
+        }
+
 
       y += 20;
     });

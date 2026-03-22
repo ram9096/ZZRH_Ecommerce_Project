@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 - Page Not Found</title>
+   <link rel="stylesheet" href="/css/output.css">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    .giant-404 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(200px, 40vw, 520px);
+      line-height: 0.85;
+      color: #e3000f;
+      letter-spacing: -0.02em;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Blur vignette overlay */
+    .vignette {
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, transparent 30%, #0a0a0a 100%);
+    }
+
+    /* Center text blur glow */
+    .center-glow {
+      text-shadow: 0 0 40px rgba(255,255,255,0.15);
+    }
+
+    /* Handwritten GO BACK button */
+    .go-back {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .go-back::after {
+      content: '';
+      position: absolute;
+      left: -30px;
+      right: -60px;
+      bottom: -4px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6) 20%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.4) 80%, transparent);
+      border-radius: 2px;
+    }
+
+    /* Slanted line through go back */
+    .go-back::before {
+      content: '';
+      position: absolute;
+      left: -40px;
+      right: -100px;
+      top: 50%;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5) 20%, rgba(255,255,255,0.7) 50%, transparent);
+      transform: rotate(-3deg);
+    }
+
+    .go-back:hover {
+      color: #e3000f;
+    }
+
+    /* Depth blur on left "4" and right "4" */
+    .blur-left {
+      filter: blur(6px);
+      opacity: 0.85;
+    }
+    .blur-right {
+      filter: blur(6px);
+      opacity: 0.85;
+    }
+    .sharp-center {
+      filter: blur(0px);
+    }
+
+    /* Noise grain */
+    .grain::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* Fade in animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .delay-1 { animation-delay: 0.15s; opacity: 0; }
+    .delay-2 { animation-delay: 0.3s;  opacity: 0; }
+    .delay-3 { animation-delay: 0.45s; opacity: 0; }
+  </style>
+</head>
+<body class="grain relative w-screen h-screen flex items-center justify-center">
+
+  <!-- Giant 404 background -->
+  <div class="absolute inset-0 flex items-center justify-center select-none pointer-events-none overflow-hidden">
+    <div class="flex items-center justify-center gap-0 giant-404">
+      <span class="blur-left">4</span>
+      <span class="sharp-center">0</span>
+      <span class="blur-right">4</span>
+    </div>
+  </div>
+
+  <!-- Vignette overlay -->
+  <div class="vignette absolute inset-0 pointer-events-none z-10"></div>
+
+  <!-- Center content -->
+  <div class="relative z-20 text-center flex flex-col items-center gap-1 center-glow">
+
+    <!-- 404 label -->
+    <p class="fade-up delay-1 text-white text-xs font-bold tracking-[0.3em] uppercase opacity-80" style="font-family: 'Anton', sans-serif; letter-spacing: 0.35em;">
+      404
+    </p>
+
+    <!-- Subtitle -->
+    <p class="fade-up delay-2 text-white text-[10px] tracking-[0.25em] uppercase" style="letter-spacing: 0.28em;">
+      Sorry, we couldn't find this page
+    </p>
+
+    <!-- Go Back -->
+    <div class="fade-up delay-3 mt-1">
+      <a href="javascript:history.back()" class="go-back">Go Back</a>
+    </div>
+
+  </div>
+
+  <!-- Bottom text -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center fade-up delay-3">
+    <p class="text-white text-[9px] tracking-[0.2em] uppercase leading-relaxed opacity-60"
+       style="letter-spacing: 0.2em; font-family: 'Anton', sans-serif;">
+      The page you are looking for doesn't<br/>exist or an other error occurred.
+    </p>
+  </div>
+
+</body>
+</html>

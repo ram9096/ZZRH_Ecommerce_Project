@@ -9,13 +9,17 @@ import { whishlistData } from "../service/whishlistService.js";
 export const userLandingLoad = async(req, res) => {
     try{
         let products = await ProductsLoad({},5)
+        let offer = await offeredProducts()
         if(req.session.user){
             return res.redirect('/home')
         }
-        return res.render("User/landing-page",{product:products.data,error:''});
+        return res.render("User/landing-page",{
+            product:products.data,
+            offer:offer.data?offer.data:[]
+        });
     }catch(er){
         console.log("Server error ",er)
-        return res.status(500).render("User/landing-page",{product:[],error:"Server error"})
+        return res.redirect('/login')
     }
 };
 
@@ -102,10 +106,12 @@ export const forgotPasswordLoad = (req,res)=>{
 
 export const productViewLoad = async(req,res)=>{
     try{
+        
         let productId = req.params.id
         let color = req.query.color
         let size = req.query.size
         let userId = req.session?.user?.id ||req.session?.user?._id
+        
         let products = await ProductvariantDetails(productId,color,size)
         let cart = 0
         if(userId){
@@ -126,17 +132,7 @@ export const productViewLoad = async(req,res)=>{
             ]
         })
         if(!products.success){
-            return res.render('User/product-view',{
-                product:[],
-                color:[],
-                size:[],
-                error:products.error,
-                variant:[],
-                RelatedProducts:[],
-                error:products.message,
-                isLogged:false,
-                cart:cart.count?cart.count:0
-            })
+            return res.redirect('/404')
         }
         return res.render('User/product-view',{
             product:products.product,
@@ -212,6 +208,16 @@ export const productShowcaseLoad = async (req,res)=>{
     }
 }
 
+export const pageNotFound = (req,res)=>{
+    try{
+        
+        return res.render('User/page-not-found')
+
+    }catch(e){
+        console.log(e)
+        return res.redirect('/login')
+    }
+}
 
 // -----------------controllers-----------------
 

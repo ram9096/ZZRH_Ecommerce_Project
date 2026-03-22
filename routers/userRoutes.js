@@ -1,5 +1,5 @@
 import express from "express"
-import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad, productShowcaseLoad, productFilter, VariantFilter } from "../controller/userController.js"
+import { userLoginload,userRegister,verifyotp,generateotpload,homePageLoad,userLandingLoad, userRegisterLoad, userLogin, emailVerificationLoad, userLogout, forgotPasswordLoad, emailVerification, forgotPassword, productViewLoad, resentOtp, productLisitingLoad, productShowcaseLoad, productFilter, VariantFilter, pageNotFound } from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/userMiddleware.js"
 import { referalLingGenerator, referalLinkGeneratorLoad, userAddressAdd, userAddressDelete, userAddressEdit, userAddressLoad, userEmailEdit, userEmailEditLoad, userNameEdit, userNameEditLoad, userPasswordEdit, userPasswordEditLoad, userProfileLoad } from "../controller/userProfileController.js"
 import { cartLoad } from "../controller/cartController.js"
@@ -10,6 +10,7 @@ import { captureOrder, createOrder } from "../utils/paypal.js"
 import { couponApply } from "../controller/Admin/couponController.js"
 import { whishlistLoad, wishlistUpdate } from "../controller/whishlistController.js"
 import { walletLoad } from "../controller/walletController.js"
+import { variantDetailsFetcher } from "../controller/productController.js"
 let router = express.Router()
 
 router.get('/',userLandingLoad)
@@ -34,6 +35,7 @@ router.use('/cart',isAuthenticated,CartRoutes)
 router.use('/checkout',checkOutRoutes)
 router.use('/order',isAuthenticated,OrderRoutes)
 router.get('/profile/wallet',isAuthenticated,walletLoad)
+router.get('/404',pageNotFound)
 
 router.post('/login',userLogin)
 router.post('/register',userRegister)
@@ -54,4 +56,5 @@ router.post('/paypal/create-order',createOrder)
 router.post('/paypal/capture-order',captureOrder)
 router.post('/coupon-apply',couponApply)
 router.post('/profile/wishlist/update',isAuthenticated,wishlistUpdate)
+router.post('/variant-detail',variantDetailsFetcher)
 export default router;

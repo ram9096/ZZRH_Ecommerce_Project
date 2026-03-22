@@ -136,7 +136,7 @@ export const OrderLogic = async (userDetails,method,coupon)=>{
         if(method == "WALLET"){
 
             let transaction = new walletModel({
-                userId:userDetails.id,
+                userId:userDetails.id?userDetails.id:userDetails._id,
                 type:"debit",
                 amount:totalAmount,
                 reason:"Order Transfer",
