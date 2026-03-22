@@ -386,7 +386,7 @@
                 let newtotal = Number(total.textContent.replace('₹',''))
                 
                 coupon.textContent = '₹' + result.discount 
-                total.textContent = '₹' +(newtotal-result.discount)
+                total.textContent = '₹' +(newtotal-result.discount).toFixed(2)
                 apply.disabled = true
                 code.disabled = true
                 
