@@ -110,7 +110,7 @@ export const generateOtp = async (email) => {
         console.log("OTP:", otp);
 
         user.otp = bcrypt.hashSync(otp, 10);
-        user.otpExpires = Date.now() + 30 * 1000;
+        user.otpExpires = Date.now() + 3*60 * 1000;
         await user.save();
         await sentOtp(email, otp);
         return { success: true, data: user };
